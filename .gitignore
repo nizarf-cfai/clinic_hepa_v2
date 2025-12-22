@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Chrome or browser profiles
+chrome_profile/
+output/
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp

@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+websockets
+google-genai
+python-dotenv
+google-auth
+requests
+grpcio
+google-cloud-storage

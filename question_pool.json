@@ -1,0 +1,65 @@
+[
+    {
+        "content": "What brings you in today?",
+        "qid": "00001",
+        "rank": 9,
+        "status": null,
+        "answer": null
+    },
+    {
+        "content": "What are all the medications you are currently taking, including over-the-counter drugs and supplements?",
+        "qid": "00004",
+        "rank": 5,
+        "status": null,
+        "answer": null
+    },
+    {
+        "content": "Do you have any known drug allergies?",
+        "qid": "00005",
+        "rank": 6,
+        "status": null,
+        "answer": null
+    },
+    {
+        "content": "Have you had any surgeries in the past?",
+        "qid": "00006",
+        "rank": 7,
+        "status": null,
+        "answer": null
+    },
+    {
+        "qid": "A1B2C",
+        "content": "Have you experienced any confusion, drowsiness, or bleeding from your gums or nose recently?",
+        "status": null,
+        "answer": null,
+        "rank": 8
+    },
+    {
+        "qid": "D3E4F",
+        "content": "Did you experience any fever, chills, or right upper quadrant pain around the time you started taking the antibiotics or noticed the jaundice?",
+        "status": null,
+        "answer": null,
+        "rank": 1
+    },
+    {
+        "qid": "G5H6I",
+        "content": "How severe is the jaw pain now on a scale of 1 to 10, and have you noticed any swelling or redness around the jaw area?",
+        "status": null,
+        "answer": null,
+        "rank": 3
+    },
+    {
+        "qid": "XYZ78",
+        "content": "Is the jaw pain still present, or has it completely resolved since you stopped taking the Tylenol?",
+        "status": null,
+        "answer": null,
+        "rank": 4
+    },
+    {
+        "qid": "L9M0N",
+        "content": "What is the name of your blood pressure medication, and what dose do you take daily?",
+        "status": null,
+        "answer": null,
+        "rank": 2
+    }
+]

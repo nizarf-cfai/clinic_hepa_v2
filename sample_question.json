@@ -1,0 +1,58 @@
+[
+  {
+    "content": "What brings you in today?",
+    "qid": "00001",
+    "rank": 8,
+    "status": null,
+    "answer": null
+  },
+  {
+    "content": "What are all the medications you are currently taking, including over-the-counter drugs and supplements?",
+    "qid": "00004",
+    "rank": 5,
+    "status": null,
+    "answer": null
+  },
+  {
+    "content": "Do you have any known drug allergies?",
+    "qid": "00005",
+    "rank": 6,
+    "status": null,
+    "answer": null
+  },
+  {
+    "content": "Have you had any surgeries in the past?",
+    "qid": "00006",
+    "rank": 7,
+    "status": null,
+    "answer": null
+  },
+  {
+    "qid": "A1B2C",
+    "content": "Can you estimate how many Extra Strength Tylenol pills (325mg each) or Tylenol PM pills (500mg acetaminophen) you were taking per day during that period?",
+    "status": "asked",
+    "answer": null,
+    "rank": 1
+  },
+  {
+    "qid": "D3E4F",
+    "content": "Have you experienced any abdominal pain, particularly in your upper right side, or have you noticed any changes in the color of your urine or stools?",
+    "status": null,
+    "answer": null,
+    "rank": 2
+  },
+  {
+    "qid": "G5H6I",
+    "content": "Does the itching get worse at any particular time of day or night, or after eating certain foods?",
+    "status": "asked",
+    "answer": null,
+    "rank": 3
+  },
+  {
+    "qid": "XYZ78",
+    "content": "Is the jaw pain still present, or has it completely resolved since you stopped taking the Tylenol?",
+    "status": null,
+    "answer": null,
+    "rank": 4
+  }
+]

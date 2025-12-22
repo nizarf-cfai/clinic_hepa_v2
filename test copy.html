@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedForce AI - Raw Data Monitor</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: grid; grid-template-columns: 350px 1fr; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        .log-container { flex-grow: 1; overflow-y: auto; background: #0f172a; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 11px; margin-top: 15px; }
+        
+        /* Main Layout */
+        .main { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        
+        .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        h2 { margin-top: 0; font-size: 14px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        /* Raw Data Blocks */
+        pre { 
+            background: #1e293b; 
+            color: #f8fafc; 
+            padding: 12px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            overflow: auto; 
+            max-height: 300px; 
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .online { background: #dcfce7; color: #166534; }
+        .offline { background: #fee2e2; color: #991b1b; }
+        .btn-start { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-start:disabled { background: #94a3b8; }
+        
+        .highlight-green { border-top: 4px solid #22c55e; }
+        .highlight-blue { border-top: 4px solid #3b82f6; }
+        .highlight-purple { border-top: 4px solid #a855f7; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>🏥 Session Control</h2>
+        <button id="start-btn" class="btn-start">Start Clinical Session</button>
+        
+        <div style="margin-top:15px; font-size: 12px;">
+            Sim: <span id="sim-status" class="status-badge offline">OFFLINE</span>
+            AI: <span id="trans-status" class="status-badge offline">OFFLINE</span>
+        </div>
+
+        <div class="log-container" id="log-content">
+            <div style="color: #64748b">Waiting for WebSocket...</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="data-grid">
+            
+            <!-- 1. Consolidated AI Update (ai_update) -->
+            <div class="card full-width highlight-blue">
+                <h2>📦 Raw AI Update (Consolidated)</h2>
+                <pre id="raw-ai-update">Waiting for first AI cycle...</pre>
+            </div>
+
+            <!-- 2. Raw Diagnosis Pool (diagnosis) -->
+            <div class="card highlight-green">
+                <h2>🩺 Raw Diagnosis Data (DM)</h2>
+                <pre id="raw-diagnosis">Waiting for diagnosis data...</pre>
+            </div>
+
+            <!-- 3. Raw Question Pool (questions) -->
+            <div class="card highlight-purple">
+                <h2>❓ Raw Question Pool (QM)</h2>
+                <pre id="raw-questions">Waiting for question pool...</pre>
+            </div>
+
+        </div>
+
+        <!-- Supervisor Status -->
+        <div class="card" id="supervisor-card" style="border-top: 4px solid #f59e0b;">
+            <h2>🚨 Supervisor Status</h2>
+            <div id="supervisor-status" style="font-size: 13px; font-weight: bold;">Monitoring interview sufficiency...</div>
+        </div>
+    </div>
+
+    <script>
+        const simStatus = document.getElementById('sim-status');
+        const transStatus = document.getElementById('trans-status');
+        const logContent = document.getElementById('log-content');
+        const startBtn = document.getElementById('start-btn');
+        
+        const rawAiPre = document.getElementById('raw-ai-update');
+        const rawDiagPre = document.getElementById('raw-diagnosis');
+        const rawQuestPre = document.getElementById('raw-questions');
+        const superStatus = document.getElementById('supervisor-status');
+        const superCard = document.getElementById('supervisor-card');
+
+        let simSocket, transSocket;
+        let audioCtx;
+        let nextStartTime = 0;
+        const SAMPLE_RATE = 24000;
+
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+            nextStartTime = audioCtx.currentTime;
+        }
+
+        function playInt16(buffer) {
+            if (!audioCtx) return;
+            const int16 = new Int16Array(buffer);
+            const float32 = new Float32Array(int16.length);
+            for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768;
+            const audioBuf = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
+            audioBuf.getChannelData(0).set(float32);
+            const source = audioCtx.createBufferSource();
+            source.buffer = audioBuf;
+            source.connect(audioCtx.destination);
+            const start = Math.max(nextStartTime, audioCtx.currentTime);
+            source.start(start);
+            nextStartTime = start + audioBuf.duration;
+        }
+
+        startBtn.onclick = () => {
+            initAudio();
+            startBtn.disabled = true;
+            startBtn.innerText = "Session Running";
+
+            transSocket = new WebSocket('ws://127.0.0.1:8000/ws/transcriber');
+            transSocket.binaryType = 'arraybuffer';
+
+            transSocket.onopen = () => {
+                transStatus.innerText = "ONLINE";
+                transStatus.className = "status-badge online";
+                transSocket.send(JSON.stringify({ type: 'start', patient_id: 'P0001' }));
+                startSimulation();
+            };
+
+            transSocket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                
+                // ROUTE DATA TO CORRECT RAW PRE BLOCK
+                if (data.type === 'ai_update') {
+                    rawAiPre.innerText = JSON.stringify(data, null, 2);
+                    if (data.is_finished) {
+                        superStatus.innerHTML = "✅ INTERVIEW COMPLETE";
+                        superCard.style.borderTopColor = "#22c55e";
+                    }
+                } 
+                else if (data.type === 'diagnosis') {
+                    rawDiagPre.innerText = JSON.stringify(data.diagnosis, null, 2);
+                } 
+                else if (data.type === 'questions') {
+                    rawQuestPre.innerText = JSON.stringify(data.questions, null, 2);
+                }
+            };
+        };
+
+        function startSimulation() {
+            simSocket = new WebSocket('ws://127.0.0.1:8000/ws/simulation');
+            simSocket.onopen = () => {
+                simStatus.innerText = "ONLINE";
+                simStatus.className = "status-badge online";
+                simSocket.send(JSON.stringify({ type: 'start', patient_id: 'P0001', gender: 'Male' }));
+            };
+
+            simSocket.onmessage = async (e) => {
+                if (e.data instanceof ArrayBuffer || e.data instanceof Blob) {
+                    const buf = e.data instanceof Blob ? await e.data.arrayBuffer() : e.data;
+                    playInt16(buf);
+                    if (transSocket.readyState === 1) transSocket.send(buf);
+                    return;
+                }
+                const data = JSON.parse(e.data);
+                if (data.type === 'audio' && data.data) {
+                    const binary = Uint8Array.from(atob(data.data), c => c.charCodeAt(0)).buffer;
+                    playInt16(binary);
+                    if (transSocket.readyState === 1) transSocket.send(binary);
+                    return;
+                }
+                const div = document.createElement('div');
+                div.className = 'log-entry';
+                div.innerHTML = `<span style="color:#64748b">[${data.type}]</span> ${data.message || data.data || ''}`;
+                logContent.prepend(div);
+            };
+        }
+    </script>
+</body>
+</html>

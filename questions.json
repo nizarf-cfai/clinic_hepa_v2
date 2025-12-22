@@ -1,0 +1,32 @@
+[
+    {
+        "content": "What brings you in today?",
+        "qid": "00001",
+        "rank": 1,
+        "status": null,
+        "answer": null
+
+    },
+    {
+        "content": "Current Medications",
+        "qid": "00004",
+        "rank": 2,
+        "status": null,
+        "answer": null
+
+    },
+    {
+        "content": "Drug Allergies",
+        "qid": "00005",
+        "rank": 3,
+        "status": null,
+        "answer": null
+    },
+    {
+        "content": "Past Surgeries",
+        "qid": "00006",
+        "rank": 4,
+        "status": null,
+        "answer": null
+    }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "did": "A1B2C",
+    "diagnosis": "Drug-Induced Liver Injury secondary to Amoxicillin-Clavulanate and Acetaminophen (Acute)",
+    "indicators_point": [
+      "Patient reports yellow eyes (jaundice).",
+      "Patient reports itching (pruritus).",
+      "Elevated AST (450 U/L), ALT (620 U/L), and Total Bilirubin (5.2 mg/dL).",
+      "Elevated Alk Phos (180 U/L)",
+      "Recent prescription of Amoxicillin-Clavulanate (Augmentin) 3 weeks ago.",
+      "Frequent use of Tylenol (Acetaminophen) for pain management.",
+      "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently for lingering jaw pain."
+    ],
+    "reasoning": "The patient presents with overt jaundice, pruritus, and significantly elevated liver enzymes (AST, ALT, Alk Phos, Bilirubin), consistent with acute liver injury. The timing of the elevated LFTs and jaundice, occurring shortly after a course of Amoxicillin-Clavulanate and with frequent acetaminophen intake, strongly suggests a drug-induced liver injury. The itching is a common symptom associated with cholestasis. Chronic overuse of acetaminophen is also noted as a potential contributing factor.",
+    "followup_question": "When did the yellowing of your eyes and the itching start in relation to when you finished taking the Augmentin and Tylenol?",
+    "rank": 1,
+    "severity": "Moderate"
+  },
+  {
+    "did": "D3E4F",
+    "diagnosis": "Cholestasis secondary to Hepatotoxicity (Acute)",
+    "indicators_point": [
+      "Patient reports yellow eyes (jaundice).",
+      "Patient reports itching (pruritus).",
+      "Elevated Alk Phos (180 U/L) and Total Bilirubin (5.2 mg/dL).",
+      "INR is borderline (1.2).",
+      "Elevated AST (450 U/L)",
+      "Elevated ALT (620 U/L)"
+    ],
+    "reasoning": "The presence of jaundice, significant itching, and elevated alkaline phosphatase, along with elevated transaminases, indicates a cholestatic pattern of liver injury. This suggests impaired bile flow, which is often a component of drug-induced liver injury. While DILI is a strong possibility, other causes of cholestasis, such as biliary obstruction, should be considered.",
+    "followup_question": "Have you experienced any pain in your upper right abdomen, especially after eating fatty foods, or have you noticed any changes in the color of your stool or urine?",
+    "rank": 2,
+    "severity": "Moderate"
+  }
+]

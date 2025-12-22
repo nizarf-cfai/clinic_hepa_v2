@@ -1,0 +1,111 @@
+import uuid
+from typing import List, Dict, Optional, Any
+import json
+
+class QuestionPoolManager:
+    def __init__(self, initial_questions: List[Dict[str, Any]]):
+        self.questions = initial_questions
+
+        if initial_questions == []:
+            try:
+                with open("question_pool.json", "r") as file:
+                    self.questions = json.load(file)
+            except (FileNotFoundError, json.JSONDecodeError):
+                self.questions = []
+        
+        # Deduplicate and save immediately upon initialization
+        self._save_to_file()
+
+    def _save_to_file(self):
+        """
+        Deduplicates questions by QID (keeping the latest version) 
+        and writes the cleaned list to question_pool.json.
+        """
+        # 1. Deduplicate: Using a dictionary comprehension where QID is the key.
+        # Since dictionaries preserve insertion order in modern Python, 
+        # but subsequent keys overwrite previous ones, the "latest" 
+        # version of a duplicate QID in the list will be preserved.
+        dedup_dict = {q["qid"]: q for q in self.questions}
+        
+        # 2. Update the in-memory list to match the deduplicated state
+        self.questions = list(dedup_dict.values())
+
+        # 3. Save to disk
+        with open("question_pool.json", "w", encoding="utf-8") as file:
+            json.dump(self.questions, file, indent=4)
+
+    def add_questions(self, text_list: List[Dict[str, str]]) -> None:
+        """
+        Reranks all 'None' status questions and adds new ones.
+        """
+        existing_map = {q["qid"]: q for q in self.questions}
+        new_priority_ids = [q.get('qid') for q in text_list]
+        updated_unasked = []
+        
+        # Add/Update prioritized questions
+        for i, q_data in enumerate(text_list):
+            qid = q_data.get('qid')
+            if qid in existing_map:
+                existing_map[qid]["content"] = q_data.get('question')
+                existing_map[qid]["rank"] = i + 1
+                updated_unasked.append(existing_map[qid])
+            else:
+                new_q = {
+                    "qid": qid,
+                    "content": q_data.get('question'),
+                    "status": None,
+                    "answer": None,
+                    "rank": i + 1
+                }
+                self.questions.append(new_q)
+                updated_unasked.append(new_q)
+
+        # Rerank existing unasked questions that were not in the new list
+        others_to_rerank = [
+            q for q in self.questions 
+            if q["status"] is None and q["qid"] not in new_priority_ids
+        ]
+        
+        others_to_rerank.sort(key=lambda x: x.get("rank", 998))
+
+        current_rank = len(updated_unasked) + 1
+        for q in others_to_rerank:
+            q["rank"] = current_rank
+            current_rank += 1
+
+        # This call now handles the deduplication and saving
+        self._save_to_file()
+
+    def get_high_rank_question(self) -> Optional[Dict]:
+        candidates = [q for q in self.questions if q["status"] is None]
+        if not candidates:
+            return None
+        # Return the one with the lowest rank number (1 is highest)
+        return min(candidates, key=lambda x: x["rank"])
+
+    def get_questions_basic(self):
+        return [
+            {"qid": q["qid"], "question": q["content"]}
+            for q in self.questions if q["status"] is None
+        ]
+
+    def get_questions(self) -> List[Dict]:
+        return self.questions
+
+    def update_status(self, qid: str, new_status: str) -> bool:
+        for q in self.questions:
+            if q["qid"] == qid:
+                q["status"] = new_status
+                q["rank"] = 999 
+                self._save_to_file()
+                return True
+        return False
+    
+    def update_answer(self, qid: str, answer: str) -> bool:
+        for q in self.questions:
+            if q["qid"] == qid:
+                q["answer"] = answer
+                q["rank"] = 999
+                self._save_to_file()
+                return True
+        return False
