@@ -90,7 +90,8 @@ class TranscriberLogicThread(threading.Thread):
 
         await self._push_to_ui({
             "type": "questions",
-            "questions": self.qm.questions
+            "questions": self.qm.questions,
+            "source" : "initial_analysis"
         })
         with open(f'output/init_question_{timestamp}.json', 'w', encoding='utf-8') as f:
             json.dump(self.qm.questions, f, indent=4)
@@ -137,7 +138,8 @@ class TranscriberLogicThread(threading.Thread):
 
         await self._push_to_ui({
             "type": "questions",
-            "questions": self.qm.questions
+            "questions": self.qm.questions,
+            "source" : "logic_check"
         })
         with open(f'output/question_{timestamp}.json', 'w', encoding='utf-8') as f:
             json.dump(self.qm.questions, f, indent=4)
