@@ -4,62 +4,41 @@
         "qid": "00001",
         "rank": 999,
         "status": "asked",
-        "answer": "The patient is turning yellow, and their sister noticed their eyes were yellow two days ago."
+        "answer": "my eyes are yellow? My sister said, I look like, I have liver failure. Is that? What's wrong? Am I dying?"
     },
     {
         "content": "Current Medications",
         "qid": "00004",
         "rank": 999,
         "status": "asked",
-        "answer": "Regular Tylenol, maybe six to eight a day for about two weeks, and before that, just one here and there for a toothache a few weeks ago. Also taking Lisinopril for blood pressure for years, and finished antibiotic pills from the dentist about three weeks ago."
+        "answer": "just listen Opera for my blood pressure and the"
     },
     {
-        "content": "Do you have any known drug allergies?",
+        "content": "Drug Allergies",
         "qid": "00005",
-        "rank": 999,
-        "status": "asked",
-        "answer": "No, no allergies."
+        "rank": 4,
+        "status": null,
+        "answer": null
     },
     {
-        "content": "Have you had any surgeries in the past?",
+        "content": "Past Surgeries",
         "qid": "00006",
-        "rank": 999,
-        "status": "asked",
+        "rank": 5,
+        "status": null,
         "answer": null
     },
     {
         "qid": "A1B2C",
-        "content": "Have you experienced any confusion, disorientation, or bleeding from your gums or nose recently?",
+        "content": "Can you tell me exactly how many Tylenol PM or Extra Strength Tylenol pills you have been taking each day, and for how many days?",
         "status": "asked",
-        "answer": "Patient was taking six to eight Tylenol PM or Extra Strength Tylenol pills a day for approximately two weeks, and before that, was taking one here and there for a toothache.",
-        "rank": 1
+        "answer": "I was taking like maybe six or eight a day. My tooth was killing me. I stopped yesterday though, that went on for a couple weeks",
+        "rank": 999
     },
     {
         "qid": "G5H6I",
-        "content": "When was your last blood pressure check, and what was the reading?",
+        "content": "Have you traveled recently, eaten raw shellfish, or had any close contact with someone who has had hepatitis?",
         "status": "asked",
-        "answer": "No, the patient has not traveled, does not eat raw fish, and has not had close contact with anyone who has had hepatitis.",
-        "rank": 4
-    },
-    {
-        "qid": "D3E4F",
-        "content": "On a scale of 0 to 10, how severe is the itching, and have you tried any topical creams or oral antihistamines for it?",
-        "status": "asked",
-        "answer": null,
-        "rank": 2
-    },
-    {
-        "qid": "J7K8L",
-        "content": "Is the jaw pain still present, or has it completely resolved since you stopped taking the Tylenol?",
-        "status": "asked",
-        "answer": "No, the jaw pain stopped after taking the pills, but the pain has returned.",
-        "rank": 5
-    },
-    {
-        "qid": "X1Y2Z",
-        "content": "Can you be more specific about how many beers you typically have in a week, and have you noticed any changes in your bowel habits or experienced any abdominal swelling recently?",
-        "status": null,
-        "answer": null,
-        "rank": 3
+        "answer": "No nothing like that. I've been home. Just working.",
+        "rank": 999
     }
 ]

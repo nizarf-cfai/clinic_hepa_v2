@@ -67,6 +67,7 @@ class SimulationManager:
         self.tm = TranscriptManager()
         self.cycle = 0
         self.running = False
+        self.last_q = []
 
     def fetch_clinical_instruction(self):
         """
@@ -89,15 +90,25 @@ class SimulationManager:
                     print("CLINICAL ASSESSMENT MARKED AS FINISHED.")
                     return "The clinical assessment is complete. Thank the patient and end the session.", True
                 # next_q = data.get("question")
-                next_q_obj = qm.get_high_rank_question()
-                if next_q_obj:
-                    qm.update_status(next_q_obj.get("qid"), "asked") 
-                    next_q = next_q_obj.get("content") 
-                    print(f"NEXT Q FETCHED: {next_q}")
-                    return f"Clinical Goal: Ask about '{next_q}'. Make it sound natural.", False
-                else:
-                    print("NO NEXT Q FETCHED")
-                    return "The clinical assessment is complete. Thank the patient and end the session.", True
+                rank_target = 1
+                while True:
+                    next_q_obj = qm.get_high_rank_question(target_rank=rank_target)
+                    if next_q_obj:
+                        next_q = next_q_obj.get("content")
+                        if next_q not in self.last_q:
+                            self.last_q.append(next_q)
+                            print(f"NEXT Q FETCHED: {next_q}")
+                            return f"Clinical Goal: Ask about '{next_q}'. Make it sound natural.", False
+                        else:
+                            print("DUPLICATE Q SKIPPED", next_q)
+                            rank_target += 1
+                            if rank_target > len(qm.questions):
+                                print("NO NEW Q AVAILABLE")
+                                return "The clinical assessment is complete. Thank the patient and end the session.", True
+                            
+                    else:
+                        print("NO NEXT Q FETCHED")
+                        return "The clinical assessment is complete. Thank the patient and end the session.", True
 
                 
 

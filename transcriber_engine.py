@@ -79,12 +79,13 @@ class TranscriberLogicThread(threading.Thread):
             "", consolidated, self.qm.get_questions_basic()
         )
         self.qm.add_questions(ranked_questions)
-
+        next_q_obj = self.qm.get_high_rank_question()
+        next_q_text = next_q_obj.get("content") if next_q_obj else None
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        await self._push_to_ui({
-            "type": "diagnosis",
-            "diagnosis": self.dm.get_diagnoses()
-        })
+        # await self._push_to_ui({
+        #     "type": "diagnosis",
+        #     "diagnosis": self.dm.get_diagnoses()
+        # })
         # with open(f'output/init_diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
         #     json.dump(self.dm.get_diagnoses(), f, indent=4)
 
@@ -95,6 +96,11 @@ class TranscriberLogicThread(threading.Thread):
         })
         # with open(f'output/init_question_{timestamp}.json', 'w', encoding='utf-8') as f:
         #     json.dump(self.qm.questions, f, indent=4)
+        with open(f'status_update.json', 'w', encoding='utf-8') as f:
+            json.dump({
+                "is_finished": False,
+                "question": next_q_text
+            }, f, indent=4)
         print(f"🩺 [Logic Thread] Initial Analysis Finished.")
 
 
@@ -143,6 +149,12 @@ class TranscriberLogicThread(threading.Thread):
         })
         # with open(f'output/question_{timestamp}.json', 'w', encoding='utf-8') as f:
         #     json.dump(self.qm.questions, f, indent=4)
+
+        with open(f'status_update.json', 'w', encoding='utf-8') as f:
+            json.dump({
+                "is_finished": status.get("end", False),
+                "question": next_q_text
+            }, f, indent=4)
 
         print(f"🩺 [Logic Thread] Checking Questions Finished.")
         

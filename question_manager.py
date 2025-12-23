@@ -80,11 +80,21 @@ class QuestionPoolManager:
         # This call now handles the deduplication and saving
         self._save_to_file()
 
-    def get_high_rank_question(self) -> Optional[Dict]:
+    def get_high_rank_question(self, target_rank: Optional[int] = None) -> Optional[Dict]:
+        # Filter for questions where status is None
         candidates = [q for q in self.questions if q["status"] is None]
+        
         if not candidates:
             return None
-        # Return the one with the lowest rank number (1 is highest)
+
+        # Option 1: If a target rank is specified, find the first match
+        if target_rank is not None:
+            for q in candidates:
+                if q["rank"] == target_rank:
+                    return q
+            return min(candidates, key=lambda x: x["rank"])
+
+        # Option 2: Default behavior - return the one with the lowest rank number
         return min(candidates, key=lambda x: x["rank"])
 
     def get_questions_basic(self):
