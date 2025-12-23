@@ -2,64 +2,64 @@
     {
         "content": "What brings you in today?",
         "qid": "00001",
-        "rank": 9,
-        "status": null,
-        "answer": null
+        "rank": 999,
+        "status": "asked",
+        "answer": "The patient is turning yellow, and their sister noticed their eyes were yellow two days ago."
     },
     {
-        "content": "What are all the medications you are currently taking, including over-the-counter drugs and supplements?",
+        "content": "Current Medications",
         "qid": "00004",
-        "rank": 5,
-        "status": null,
-        "answer": null
+        "rank": 999,
+        "status": "asked",
+        "answer": "Regular Tylenol, maybe six to eight a day for about two weeks, and before that, just one here and there for a toothache a few weeks ago. Also taking Lisinopril for blood pressure for years, and finished antibiotic pills from the dentist about three weeks ago."
     },
     {
         "content": "Do you have any known drug allergies?",
         "qid": "00005",
-        "rank": 6,
-        "status": null,
-        "answer": null
+        "rank": 999,
+        "status": "asked",
+        "answer": "No, no allergies."
     },
     {
         "content": "Have you had any surgeries in the past?",
         "qid": "00006",
-        "rank": 7,
-        "status": null,
+        "rank": 999,
+        "status": "asked",
         "answer": null
     },
     {
         "qid": "A1B2C",
-        "content": "Have you experienced any confusion, drowsiness, or bleeding from your gums or nose recently?",
-        "status": null,
-        "answer": null,
-        "rank": 8
-    },
-    {
-        "qid": "D3E4F",
-        "content": "Did you experience any fever, chills, or right upper quadrant pain around the time you started taking the antibiotics or noticed the jaundice?",
-        "status": null,
-        "answer": null,
+        "content": "Have you experienced any confusion, disorientation, or bleeding from your gums or nose recently?",
+        "status": "asked",
+        "answer": "Patient was taking six to eight Tylenol PM or Extra Strength Tylenol pills a day for approximately two weeks, and before that, was taking one here and there for a toothache.",
         "rank": 1
     },
     {
         "qid": "G5H6I",
-        "content": "How severe is the jaw pain now on a scale of 1 to 10, and have you noticed any swelling or redness around the jaw area?",
-        "status": null,
-        "answer": null,
-        "rank": 3
-    },
-    {
-        "qid": "XYZ78",
-        "content": "Is the jaw pain still present, or has it completely resolved since you stopped taking the Tylenol?",
-        "status": null,
-        "answer": null,
+        "content": "When was your last blood pressure check, and what was the reading?",
+        "status": "asked",
+        "answer": "No, the patient has not traveled, does not eat raw fish, and has not had close contact with anyone who has had hepatitis.",
         "rank": 4
     },
     {
-        "qid": "L9M0N",
-        "content": "What is the name of your blood pressure medication, and what dose do you take daily?",
-        "status": null,
+        "qid": "D3E4F",
+        "content": "On a scale of 0 to 10, how severe is the itching, and have you tried any topical creams or oral antihistamines for it?",
+        "status": "asked",
         "answer": null,
         "rank": 2
+    },
+    {
+        "qid": "J7K8L",
+        "content": "Is the jaw pain still present, or has it completely resolved since you stopped taking the Tylenol?",
+        "status": "asked",
+        "answer": "No, the jaw pain stopped after taking the pills, but the pain has returned.",
+        "rank": 5
+    },
+    {
+        "qid": "X1Y2Z",
+        "content": "Can you be more specific about how many beers you typically have in a week, and have you noticed any changes in your bowel habits or experienced any abdominal swelling recently?",
+        "status": null,
+        "answer": null,
+        "rank": 3
     }
 ]

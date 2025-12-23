@@ -8,7 +8,7 @@ import os
 import time
 import sys
 from google.cloud import speech
-
+from datetime import datetime
 # Local Imports
 import agents
 import diagnosis_manager
@@ -28,6 +28,7 @@ class TranscriberLogicThread(threading.Thread):
         self.websocket = websocket
         self.running = True
         self.daemon = True 
+        self.qc = agents.QuestionCheck()
         # Tracks how many lines we have already processed
         self.last_line_count = 0 
 
@@ -47,7 +48,55 @@ class TranscriberLogicThread(threading.Thread):
             f.write("")
 
         print(f"🩺 [Logic Thread] Monitoring {TRANSCRIPT_FILE}...")
-        loop.run_until_complete(self._logic_loop())
+
+        loop.run_until_complete(self.start_logic())
+
+    async def start_logic(self):
+        """Wrapper to ensure initial analysis runs before the logic loop."""
+        await self.run_initial_analysis()
+        await self._logic_loop()
+
+    async def run_initial_analysis(self):
+        print(f"🩺 [Logic Thread] Initial Analysis Starting...")
+
+        initial_instruction = "Initial file review. Please analyze the patient's medical history and profile."
+        
+        h_coro = self.hepa_agent.get_hepa_diagnosis(initial_instruction, self.patient_info)
+        g_coro = self.gen_agent.get_gen_diagnosis(initial_instruction, self.patient_info)
+        
+        hepa_res, gen_res = await asyncio.gather(h_coro, g_coro)
+
+        # print("HEPA RES:", hepa_res)
+        # print("GEN RES:", gen_res)
+        # 2. Consolidate
+        consolidated = await self.consolidate_agent.consolidate_diagnosis(
+            self.dm.diagnoses, hepa_res + gen_res
+        )
+        self.dm.diagnoses = consolidated
+
+        # 3. Check Status & Questions
+        ranked_questions = await self.merger_agent.process_question(
+            "", consolidated, self.qm.get_questions_basic()
+        )
+        self.qm.add_questions(ranked_questions)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        await self._push_to_ui({
+            "type": "diagnosis",
+            "diagnosis": self.dm.get_diagnoses()
+        })
+        with open(f'output/init_diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
+            json.dump(self.dm.get_diagnoses(), f, indent=4)
+
+        await self._push_to_ui({
+            "type": "questions",
+            "questions": self.qm.questions
+        })
+        with open(f'output/init_question_{timestamp}.json', 'w', encoding='utf-8') as f:
+            json.dump(self.qm.questions, f, indent=4)
+        print(f"🩺 [Logic Thread] Initial Analysis Finished.")
+
+
 
     async def _push_to_ui(self, payload):
         if self.websocket and self.main_loop:
@@ -59,9 +108,48 @@ class TranscriberLogicThread(threading.Thread):
             except Exception:
                 pass
 
+    async def _check_q(self, transcript, question_pool):
+        print(f"🩺 [Logic Thread] Checking Questions...")
+        answered_list = await self.qc.check_question(transcript, question_pool)
+        for aq in answered_list:
+            print(f"✅ [Question Check] QID {aq['qid']} answered with: {aq['answer']}")
+            self.qm.update_status(aq['qid'], "asked")
+            self.qm.update_answer(aq['qid'], aq['answer'])
+
+        
+        status = await self.supervisor.check_completion(transcript, self.dm.diagnoses)
+        next_q_obj = self.qm.get_high_rank_question()
+        next_q_text = next_q_obj.get("content") if next_q_obj else None
+
+        with open('status_update.json', 'w', encoding='utf-8') as f:
+            json.dump({
+                "is_finished": status.get("end", False),
+                "question": next_q_text
+            }, f, indent=4)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        await self._push_to_ui({
+            "type": "diagnosis",
+            "diagnosis": self.dm.get_diagnoses()
+        })
+        with open(f'output/diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
+            json.dump(self.dm.get_diagnoses(), f, indent=4)
+
+        await self._push_to_ui({
+            "type": "questions",
+            "questions": self.qm.questions
+        })
+        with open(f'output/question_{timestamp}.json', 'w', encoding='utf-8') as f:
+            json.dump(self.qm.questions, f, indent=4)
+
+        print(f"🩺 [Logic Thread] Checking Questions Finished.")
+        
+
     async def _logic_loop(self):
+        
         while self.running:
             try:
+                self.qm.update_pool()
                 if not os.path.exists(TRANSCRIPT_FILE):
                     await asyncio.sleep(1)
                     continue
@@ -74,8 +162,10 @@ class TranscriberLogicThread(threading.Thread):
                 if len(lines) > self.last_line_count:
                     # Capture only the new lines
                     new_lines = lines[self.last_line_count:]
-                    new_transcript_text = " ".join([l.strip() for l in new_lines if l.strip()])
+                    new_transcript_text = " ".join([l.strip() for l in lines if l.strip()])
                     
+                    await self._check_q(new_transcript_text, self.qm.get_questions_basic())
+
                     self.last_line_count = len(lines)
 
                     if not new_transcript_text:
@@ -95,38 +185,21 @@ class TranscriberLogicThread(threading.Thread):
                     self.dm.diagnoses = consolidated
 
                     # 3. Check Status & Questions
-                    status = await self.supervisor.check_completion(new_transcript_text, consolidated)
                     ranked_questions = await self.merger_agent.process_question(
                         new_transcript_text, consolidated, self.qm.get_questions_basic()
                     )
                     self.qm.add_questions(ranked_questions)
-                    
-                    next_q_obj = self.qm.get_high_rank_question()
-                    next_q_text = next_q_obj.get("content") if next_q_obj else None
+
 
                     # 4. Push to UI & Save status_update.json
+                    
+
                     await self._push_to_ui({
                         "type": "ai_update",
                         "consolidated": consolidated,
-                        "ranked_questions": self.qm.get_questions(),
-                        "is_finished": status.get("end", False)
+                        "ranked_questions": self.qm.get_questions()
                     })
 
-                    await self._push_to_ui({
-                        "type": "diagnosis",
-                        "diagnosis": self.dm.get_diagnoses()
-                    })
-
-                    await self._push_to_ui({
-                        "type": "questions",
-                        "questions": self.qm.questions
-                    })
-
-                    with open('status_update.json', 'w', encoding='utf-8') as f:
-                        json.dump({
-                            "is_finished": status.get("end", False),
-                            "question": next_q_text
-                        }, f, indent=4)
 
                     print(f"✅ [AI Agent] Analysis Cycle Complete.")
                     

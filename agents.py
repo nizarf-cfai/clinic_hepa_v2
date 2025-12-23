@@ -173,7 +173,9 @@ class DiagnosisHepato(BaseLogicAgent):
             )
             res = json.loads(response.text)
             return res
-        except: return []
+        except Exception as e:
+            print(f"Error in get_hepa_diagnosis: {e}") 
+            return []
 
 class DiagnosisGeneral(BaseLogicAgent):
     def __init__(self):
@@ -234,7 +236,9 @@ class DiagnosisGeneral(BaseLogicAgent):
             )
             res = json.loads(response.text)
             return res
-        except: return []
+        except Exception as e:
+            print(f"Error in get_gen_diagnosis: {e}")
+            return []
 
 class DiagnosisConsolidate(BaseLogicAgent):
     def __init__(self):
@@ -294,8 +298,55 @@ class DiagnosisConsolidate(BaseLogicAgent):
             )
             res = json.loads(response.text)
             return res
-        except: return []
+        except Exception as e:
+            print(f"Error in consolidate_diagnosis: {e}")
+            return []
 
+
+class QuestionCheck(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        self.response_schema = {
+            "type": "ARRAY",
+            "description": "The prioritized list of questions, ranked from most important (index 0) to least important.",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                "answer": {
+                    "type": "STRING",
+                    "description": "Answer of the question."
+                },
+                "qid": {
+                    "type": "STRING",
+                    "description": "The ID of the question."
+                }
+                },
+                "required": [
+                "answer",
+                "qid"
+                ]
+            }
+            }
+        
+        try:
+            with open("system_prompts/question_checker.md", "r", encoding="utf-8") as f: self.system_instruction = f.read()
+        except: self.system_instruction = "Return true if new info."
+
+    async def check_question(self, transcript, question_pool):
+        try:
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite", 
+                contents=f"Question Pool:\n{json.dumps(question_pool)}\nTranscript:\n{json.dumps(transcript)}",
+                config=types.GenerateContentConfig(response_mime_type="application/json", 
+                response_schema=self.response_schema, 
+                system_instruction=self.system_instruction, 
+                temperature=0.0)
+            )
+            res = json.loads(response.text)
+            return res
+        except Exception as e:
+            print(f"Error in check_question: {e}")
+            return []
 
 class QuestionMerger(BaseLogicAgent):
     def __init__(self):
@@ -338,7 +389,9 @@ class QuestionMerger(BaseLogicAgent):
             )
             res = json.loads(response.text)
             return res
-        except: return []
+        except Exception as e:
+            print(f"Error in process_question: {e}")
+            return []
 
 class InterviewSupervisor(BaseLogicAgent):
     def __init__(self):

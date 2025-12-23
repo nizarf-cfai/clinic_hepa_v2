@@ -33,6 +33,10 @@ class QuestionPoolManager:
         # 3. Save to disk
         with open("question_pool.json", "w", encoding="utf-8") as file:
             json.dump(self.questions, file, indent=4)
+    
+    def update_pool(self):
+        with open("question_pool.json", "r") as file:
+            self.questions = json.load(file)
 
     def add_questions(self, text_list: List[Dict[str, str]]) -> None:
         """

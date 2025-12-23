@@ -74,7 +74,7 @@ class SimulationManager:
         Includes a retry mechanism to avoid file-lock race conditions.
         """
         qm = question_manager.QuestionPoolManager([])
-        print("QM QUESTIONS:", qm.questions)
+        print("QM QUESTIONS:", len(qm.questions))
         path = 'status_update.json'
         if not os.path.exists(path):
             return "Continue the medical interview and explore the patient's symptoms.", False
@@ -85,22 +85,21 @@ class SimulationManager:
                     data = json.load(file)
                 
                 is_finished = data.get("is_finished", False)
+                if is_finished:
+                    print("CLINICAL ASSESSMENT MARKED AS FINISHED.")
+                    return "The clinical assessment is complete. Thank the patient and end the session.", True
                 # next_q = data.get("question")
                 next_q_obj = qm.get_high_rank_question()
                 if next_q_obj:
                     qm.update_status(next_q_obj.get("qid"), "asked") 
                     next_q = next_q_obj.get("content") 
                     print(f"NEXT Q FETCHED: {next_q}")
+                    return f"Clinical Goal: Ask about '{next_q}'. Make it sound natural.", False
                 else:
                     print("NO NEXT Q FETCHED")
                     return "The clinical assessment is complete. Thank the patient and end the session.", True
 
-                if is_finished:
-                    return "The clinical assessment is complete. Thank the patient and end the session.", True
-                if next_q:
-                    return f"Clinical Goal: Ask about '{next_q}'. Make it sound natural.", False
                 
-                return "Continue gathering a detailed history of the present illness.", False
 
             except (json.JSONDecodeError, IOError):
                 time.sleep(0.1) # Wait 100ms for transcriber to finish writing
