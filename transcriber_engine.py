@@ -85,16 +85,16 @@ class TranscriberLogicThread(threading.Thread):
             "type": "diagnosis",
             "diagnosis": self.dm.get_diagnoses()
         })
-        with open(f'output/init_diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
-            json.dump(self.dm.get_diagnoses(), f, indent=4)
+        # with open(f'output/init_diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
+        #     json.dump(self.dm.get_diagnoses(), f, indent=4)
 
         await self._push_to_ui({
             "type": "questions",
             "questions": self.qm.questions,
             "source" : "initial_analysis"
         })
-        with open(f'output/init_question_{timestamp}.json', 'w', encoding='utf-8') as f:
-            json.dump(self.qm.questions, f, indent=4)
+        # with open(f'output/init_question_{timestamp}.json', 'w', encoding='utf-8') as f:
+        #     json.dump(self.qm.questions, f, indent=4)
         print(f"🩺 [Logic Thread] Initial Analysis Finished.")
 
 
@@ -133,16 +133,16 @@ class TranscriberLogicThread(threading.Thread):
             "type": "diagnosis",
             "diagnosis": self.dm.get_diagnoses()
         })
-        with open(f'output/diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
-            json.dump(self.dm.get_diagnoses(), f, indent=4)
+        # with open(f'output/diagnosis_{timestamp}.json', 'w', encoding='utf-8') as f:
+        #     json.dump(self.dm.get_diagnoses(), f, indent=4)
 
         await self._push_to_ui({
             "type": "questions",
             "questions": self.qm.questions,
             "source" : "logic_check"
         })
-        with open(f'output/question_{timestamp}.json', 'w', encoding='utf-8') as f:
-            json.dump(self.qm.questions, f, indent=4)
+        # with open(f'output/question_{timestamp}.json', 'w', encoding='utf-8') as f:
+        #     json.dump(self.qm.questions, f, indent=4)
 
         print(f"🩺 [Logic Thread] Checking Questions Finished.")
         
