@@ -182,8 +182,8 @@ class TranscriberLogicThread(threading.Thread):
 
                     self.last_line_count = len(lines)
 
-                    if not new_transcript_text:
-                        continue
+                    # if not new_transcript_text:
+                    #     continue
 
                     print(f"\n🤖 [AI Agent] File Update Detected. Analyzing: {new_transcript_text[:70]}...")
 
@@ -240,6 +240,8 @@ class TranscriberEngine:
         self.main_loop = loop
         self.running = True
         
+
+        self.AUDIO_DELAY_SEC = 4.0 
         self.SIMULATION_RATE = 24000
         self.TRANSCRIBER_RATE = 16000
         self.resample_state = None
@@ -259,12 +261,16 @@ class TranscriberEngine:
             converted, self.resample_state = audioop.ratecv(
                 audio_bytes, 2, 1, self.SIMULATION_RATE, self.TRANSCRIBER_RATE, self.resample_state
             )
-            self.audio_queue.put(converted)
+            
+            # --- NEW: TAG CHUNK WITH RELEASE TIME ---
+            release_time = time.time() + self.AUDIO_DELAY_SEC
+            self.audio_queue.put((release_time, converted))
+            
         except Exception as e:
             logger.error(f"Resampling Error: {e}")
 
     def stt_loop(self):
-        """Google STT Loop that writes finalized text to a TXT file."""
+        """Google STT Loop that only yields audio once its release time has passed."""
         client = speech.SpeechClient()
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
@@ -273,19 +279,28 @@ class TranscriberEngine:
             enable_automatic_punctuation=True,
             model="latest_long",
         )
-        # Enable interim results for live visual feedback in terminal
         streaming_config = speech.StreamingRecognitionConfig(config=config, interim_results=True)
 
         def request_generator():
             while self.running:
                 try:
-                    chunk = self.audio_queue.get(timeout=1.0)
-                    if chunk is None: return
+                    # 1. Get the tagged chunk
+                    item = self.audio_queue.get(timeout=1.0)
+                    if item is None: return
+                    
+                    release_time, chunk = item
+                    
+                    # 2. Wait until the release time is reached
+                    # This creates the "Time-Shift" effect
+                    now = time.time()
+                    if now < release_time:
+                        time.sleep(release_time - now)
+                    
                     yield speech.StreamingRecognizeRequest(audio_content=chunk)
                 except queue.Empty:
                     continue
 
-        print(f"🎙️ [STT Loop] Background thread active.")
+        print(f"🎙️ [STT Loop] Background thread active with {self.AUDIO_DELAY_SEC}s delay.")
 
         while self.running:
             try:
@@ -299,27 +314,44 @@ class TranscriberEngine:
                     transcript = result.alternatives[0].transcript
 
                     if not result.is_final:
-                        # Live print for visual debug
-                        pass
+                        # Interim results will now also be delayed
                         # sys.stdout.write(f"\r🎙️ [STT Live]: {transcript}...")
                         # sys.stdout.flush()
+                        pass
                     else:
                         print(f"\n🎙️ [STT FINAL]: {transcript}")
                         
-                        # --- DUMP TO FILE ---
-                        with open(TRANSCRIPT_FILE, "a", encoding="utf-8") as f:
-                            f.write(transcript + "\n")
-                            f.flush()
-                            os.fsync(f.fileno()) # Force write to disk
+                        # --- NEW: AUDIO SYNC LOGIC ---
+                        # 1. Calculate word count
+                        words = transcript.split()
+                        
+                        # 2. Estimate duration (Average person speaks ~2.5 words/sec)
+                        # We add a base 0.5s buffer for network latency
+                        speaking_duration = (len(words) / 2.5) + 0.5
+                        
+                        # 3. Apply the delay in a separate non-blocking thread 
+                        # so we don't hang the Google STT stream
+                        def delayed_write(text, delay):
+                            time.sleep(delay)
+                            with open(TRANSCRIPT_FILE, "a", encoding="utf-8") as f:
+                                f.write(text + "\n")
+                                f.flush()
+                                os.fsync(f.fileno())
+                            print(f"💾 [STT] Wrote to file after {delay:.2f}s delay.")
+
+                        threading.Thread(
+                            target=delayed_write, 
+                            args=(transcript, speaking_duration), 
+                            daemon=True
+                        ).start()
                         
             except Exception as e:
+                # Handle Google Timeout (common if audio is delayed too much or simulation is silent)
                 if "400" in str(e) or "Timeout" in str(e):
-                    if self.running:
-                        pass # Quietly reconnect on silence
+                    if self.running: pass 
                 else:
                     print(f"\n🎙️ [STT Error]: {e}")
                 time.sleep(0.1)
-
     def stop(self):
         self.running = False
         self.logic_thread.stop()
