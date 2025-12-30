@@ -123,3 +123,22 @@ class QuestionPoolManager:
                 self._save_to_file()
                 return True
         return False
+    
+    def update_enriched_questions(self, enriched_list: List[Dict[str, Any]]) -> None:
+        """
+        Updates existing questions in the pool with enriched metadata (headline, domain, etc.).
+        Matches based on QID.
+        """
+        # Create a lookup map for the current pool for efficiency
+        pool_map = {q["qid"]: q for q in self.questions}
+
+        for enriched_item in enriched_list:
+            qid = enriched_item.get("qid")
+            if qid in pool_map:
+                # .update() merges the new enriched keys into the existing dictionary.
+                # It will preserve keys like 'status' and 'answer' unless they are 
+                # explicitly overwritten in the enriched_item.
+                pool_map[qid].update(enriched_item)
+
+        # Persist the enriched data to question_pool.json
+        self._save_to_file()

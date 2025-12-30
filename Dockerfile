@@ -17,5 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
+RUN mkdir -p output
+
 # Cloud Run expects the app to listen on the $PORT environment variable
 CMD exec uvicorn server:app --host 0.0.0.0 --port ${PORT:-8080}

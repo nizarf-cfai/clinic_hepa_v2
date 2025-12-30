@@ -19,8 +19,10 @@ from simulation import SimulationManager
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("medforce-backend")
-
+import sys
 load_dotenv()
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 app = FastAPI()
 
@@ -63,6 +65,11 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
     with open("question_pool.json", "w") as file:
         # 'indent=4' makes the file human-readable
         json.dump(questions, file, indent=4)
+
+    with open("education_pool.json", "w") as file:
+        # 'indent=4' makes the file human-readable
+        json.dump([], file, indent=4)
+
 
     await websocket.accept()
     

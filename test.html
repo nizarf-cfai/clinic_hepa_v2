@@ -2,195 +2,161 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedForce AI - Clinical Intelligence</title>
+    <title>MedForce - Audio Test Only</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; --accent: #7c3aed; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: grid; grid-template-columns: 380px 1fr; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar Styles */
-        .sidebar { background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        .server-config { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .server-config label { font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; color: #64748b; }
-        select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 10px; }
-        
-        .log-container { flex-grow: 1; overflow-y: auto; background: #0f172a; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 11px; }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
-
-        /* Main Content Styles */
-        .main { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; position: relative; }
-        h2 { margin-top: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); margin-bottom: 15px; display: flex; justify-content: space-between; }
-        
-        /* Data Display */
-        pre { background: #1e293b; color: #f8fafc; padding: 12px; border-radius: 6px; font-size: 11px; max-height: 400px; overflow: auto; white-space: pre-wrap; }
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .dot-online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
-        .dot-offline { background: #ef4444; }
-
-        .btn-start { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: opacity 0.2s; }
-        .btn-start:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .supervisor-box { border-left: 5px solid #f59e0b; background: #fffbeb; padding: 15px; border-radius: 8px; font-weight: bold; }
-        .complete { border-left-color: #22c55e; background: #f0fdf4; color: #166534; }
+        .audio-bar { transition: height 0.1s ease; }
     </style>
 </head>
-<body>
+<body class="bg-gray-950 text-white min-h-screen flex flex-col items-center justify-center p-6">
 
-    <div class="sidebar">
-        <div class="server-config">
-            <label>Connection Target</label>
-            <select id="server-select">
-                <option value="127.0.0.1:8000">Local (127.0.0.1:8000)</option>
-                <option value="clinic-hepa-v2-481780815788.europe-west1.run.app">Production (Cloud Run)</option>
-            </select>
-            <button id="start-btn" class="btn-start">Connect & Start</button>
-        </div>
+    <div class="max-w-md w-full bg-gray-900 rounded-3xl p-8 border border-gray-800 shadow-2xl">
+        <h1 class="text-2xl font-bold text-center mb-2">Audio Stream Test</h1>
+        <p class="text-gray-500 text-center text-sm mb-8">Target: /ws/simulation</p>
 
-        <div style="font-size: 11px; margin-bottom: 10px; display: flex; justify-content: space-around;">
-            <span>SIM: <span id="sim-indicator" class="status-dot dot-offline"></span></span>
-            <span>AI: <span id="trans-indicator" class="status-dot dot-offline"></span></span>
-        </div>
-
-        <div class="log-container" id="log-content">
-            <div style="color: #64748b">Logs initialized...</div>
-        </div>
-    </div>
-
-    <div class="main">
-        <div class="dashboard-header">
-            <h1 style="font-size: 18px; margin: 0;">Clinical Intelligence Dashboard</h1>
-            <div id="sup-box" class="supervisor-box">Supervisor: Analyzing data sufficiency...</div>
-        </div>
-
-        <div class="grid">
-            <!-- Diagnosis Data -->
-            <div class="card">
-                <h2>🩺 Diagnosis Pool (Raw) <span id="diag-ts" style="font-weight: normal; color: #94a3b8;"></span></h2>
-                <pre id="diag-pre">Waiting for diagnosis data...</pre>
+        <!-- Status & Visualizer -->
+        <div class="flex flex-col items-center space-y-6">
+            <div id="status" class="px-4 py-1 rounded-full bg-red-900/30 text-red-500 text-xs font-bold border border-red-500/50">
+                DISCONNECTED
             </div>
 
-            <!-- Question Data -->
-            <div class="card">
-                <h2>❓ Question Pool (Raw) <span id="quest-ts" style="font-weight: normal; color: #94a3b8;"></span></h2>
-                <pre id="quest-pre">Waiting for question data...</pre>
+            <!-- Simple Visualizer -->
+            <div class="flex items-end justify-center space-x-1 h-12">
+                <div id="bar1" class="audio-bar w-2 bg-blue-500 h-2 rounded-full"></div>
+                <div id="bar2" class="audio-bar w-2 bg-blue-400 h-4 rounded-full"></div>
+                <div id="bar3" class="audio-bar w-2 bg-blue-500 h-2 rounded-full"></div>
+                <div id="bar4" class="audio-bar w-2 bg-blue-600 h-6 rounded-full"></div>
             </div>
 
-            <!-- Full AI Update -->
-            <div class="card" style="grid-column: span 2;">
-                <h2>📦 Latest AI Update (Full Object)</h2>
-                <pre id="ai-update-pre">Awaiting processing cycle...</pre>
+            <div class="text-center">
+                <div id="byteCounter" class="text-3xl font-mono font-bold text-blue-400">0</div>
+                <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Bytes Received</div>
             </div>
+
+            <button id="startBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95">
+                Connect & Play
+            </button>
+        </div>
+
+        <!-- Debug Log -->
+        <div id="debugLog" class="mt-8 bg-black/50 rounded-xl p-4 h-32 overflow-y-auto font-mono text-[10px] text-gray-400 border border-gray-800">
+            <div>- System Ready -</div>
         </div>
     </div>
 
     <script>
-        const startBtn = document.getElementById('start-btn');
-        const serverSelect = document.getElementById('server-select');
-        const logContent = document.getElementById('log-content');
-        
-        const diagPre = document.getElementById('diag-pre');
-        const questPre = document.getElementById('quest-pre');
-        const aiPre = document.getElementById('ai-update-pre');
-        
-        const simInd = document.getElementById('sim-indicator');
-        const transInd = document.getElementById('trans-indicator');
-        const supBox = document.getElementById('sup-box');
-
-        let simSocket, transSocket, audioCtx;
+        let socket;
+        let audioCtx;
         let nextStartTime = 0;
+        let bytesTotal = 0;
         const SAMPLE_RATE = 24000;
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
-            }
-            nextStartTime = audioCtx.currentTime;
-        }
-
-        function playAudio(buffer) {
-            if (!audioCtx) return;
-            const int16 = new Int16Array(buffer);
-            const float32 = new Float32Array(int16.length);
-            for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768;
-            const audioBuf = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
-            audioBuf.getChannelData(0).set(float32);
-            const source = audioCtx.createBufferSource();
-            source.buffer = audioBuf;
-            source.connect(audioCtx.destination);
-            const start = Math.max(nextStartTime, audioCtx.currentTime);
-            source.start(start);
-            nextStartTime = start + audioBuf.duration;
-        }
-
-        startBtn.onclick = () => {
-            initAudio();
-            startBtn.disabled = true;
-            const host = serverSelect.value;
-            const protocol = host.includes('127.0.0.1') ? 'ws' : 'wss';
-
-            // 1. Setup Transcriber
-            transSocket = new WebSocket(`${protocol}://${host}/ws/transcriber`);
-            transSocket.binaryType = 'arraybuffer';
-
-            transSocket.onopen = () => {
-                transInd.className = "status-dot dot-online";
-                transSocket.send(JSON.stringify({ type: 'start', patient_id: 'P0001' }));
-                
-                // 2. Setup Simulation after Transcriber is ready
-                simSocket = new WebSocket(`${protocol}://${host}/ws/simulation`);
-                
-                simSocket.onopen = () => {
-                    simInd.className = "status-dot dot-online";
-                    simSocket.send(JSON.stringify({ type: 'start', patient_id: 'P0001', gender: 'Male' }));
-                };
-
-                simSocket.onmessage = async (e) => {
-                    if (e.data instanceof ArrayBuffer || e.data instanceof Blob) {
-                        const buf = e.data instanceof Blob ? await e.data.arrayBuffer() : e.data;
-                        playAudio(buf);
-                        if (transSocket.readyState === 1) transSocket.send(buf);
-                    } else {
-                        const data = JSON.parse(e.data);
-                        if (data.type === 'audio' && data.data) {
-                            const bin = Uint8Array.from(atob(data.data), c => c.charCodeAt(0)).buffer;
-                            playAudio(bin);
-                            if (transSocket.readyState === 1) transSocket.send(bin);
-                        } else {
-                            log(`[SIM] ${data.type}: ${data.message || data.data || ''}`);
-                        }
-                    }
-                };
-            };
-
-            transSocket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                const ts = new Date().toLocaleTimeString();
-
-                if (data.type === 'diagnosis') {
-                    diagPre.innerText = JSON.stringify(data.diagnosis, null, 2);
-                    document.getElementById('diag-ts').innerText = ts;
-                } else if (data.type === 'questions') {
-                    questPre.innerText = JSON.stringify(data.questions, null, 2);
-                    document.getElementById('quest-ts').innerText = ts;
-                } else if (data.type === 'ai_update') {
-                    aiPre.innerText = JSON.stringify(data, null, 2);
-                    if (data.is_finished) {
-                        supBox.innerText = "Supervisor: ✅ INTERVIEW COMPLETE";
-                        supBox.className = "supervisor-box complete";
-                    }
-                }
-            };
-        };
+        const startBtn = document.getElementById('startBtn');
+        const debugLog = document.getElementById('debugLog');
+        const byteCounter = document.getElementById('byteCounter');
+        const status = document.getElementById('status');
 
         function log(msg) {
             const div = document.createElement('div');
-            div.className = 'log-entry';
-            div.innerText = msg;
-            logContent.prepend(div);
+            div.innerText = `> ${msg}`;
+            debugLog.appendChild(div);
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+
+        // --- Decode Base64 to ArrayBuffer ---
+        function base64ToBuffer(base64) {
+            const bin = window.atob(base64);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) {
+                bytes[i] = bin.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        async function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+            }
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+            log("Audio Context: " + audioCtx.state);
+        }
+
+        function playChunk(buffer) {
+            // 1. PCM16 to Float32
+            const int16 = new Int16Array(buffer);
+            const float32 = new Float32Array(int16.length);
+            for (let i = 0; i < int16.length; i++) {
+                float32[i] = int16[i] / 32768.0;
+            }
+
+            // 2. Create and Schedule Buffer
+            const audioBuffer = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
+            audioBuffer.getChannelData(0).set(float32);
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+            if (nextStartTime < now) nextStartTime = now + 0.05;
+            source.start(nextStartTime);
+            nextStartTime += audioBuffer.duration;
+
+            // 3. UI Feedback
+            bytesTotal += buffer.byteLength;
+            byteCounter.innerText = bytesTotal.toLocaleString();
+            animateBars();
+        }
+
+        function animateBars() {
+            for(let i=1; i<=4; i++) {
+                document.getElementById('bar'+i).style.height = Math.random() * 40 + 10 + 'px';
+            }
+            setTimeout(() => {
+                for(let i=1; i<=4; i++) document.getElementById('bar'+i).style.height = '8px';
+            }, 100);
+        }
+
+        startBtn.onclick = async () => {
+            await initAudio();
+            startBtn.disabled = true;
+            startBtn.innerText = "Connecting...";
+
+            socket = new WebSocket('ws://localhost:8000/ws/simulation');
+
+            socket.onopen = () => {
+                status.innerText = "CONNECTED";
+                status.className = "px-4 py-1 rounded-full bg-green-900/30 text-green-500 text-xs font-bold border border-green-500/50";
+                log("WS Connected. Sending Start...");
+                socket.send(JSON.stringify({ "type": "start", "patient_id": "P0001", "gender": "Male" }));
+            };
+
+            socket.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    
+                    if (msg.type === 'audio' && msg.data) {
+                        const buffer = base64ToBuffer(msg.data);
+                        playChunk(buffer);
+                    } else if (msg.type === 'turn') {
+                        log("Turn: " + msg.data);
+                    } else {
+                        log("Msg Type: " + msg.type);
+                    }
+                } catch (e) {
+                    log("Error parsing JSON");
+                }
+            };
+
+            socket.onclose = () => {
+                status.innerText = "DISCONNECTED";
+                status.className = "px-4 py-1 rounded-full bg-red-900/30 text-red-500 text-xs font-bold border border-red-500/50";
+                log("WS Closed");
+                startBtn.disabled = false;
+                startBtn.innerText = "Connect & Play";
+            };
+
+            socket.onerror = (err) => log("WS Error Detected");
         }
     </script>
 </body>

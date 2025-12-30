@@ -8,7 +8,9 @@ import logging
 from google import genai
 from google.genai import types
 from fastapi import WebSocket
+from dotenv import load_dotenv
 
+load_dotenv()
 # Configure logging
 logger = logging.getLogger("medforce-backend")
 
@@ -396,41 +398,39 @@ class QuestionMerger(BaseLogicAgent):
 class InterviewSupervisor(BaseLogicAgent):
     def __init__(self):
         super().__init__()
-        # Define the strict boolean schema
+        
+        # Updated schema to include both completion status and current state
         self.response_schema = {
             "type": "OBJECT",
             "properties": {
                 "end": {
                     "type": "BOOLEAN",
-                    "description": "True if the interview is complete, False if more questions are needed."
+                    "description": "True if the clinical intake is sufficient and the interview should terminate."
+                },
+                "state": {
+                    "type": "STRING",
+                    "enum": ["start", "mid", "end"],
+                    "description": "The current phase of the consultation."
                 }
             },
-            "required": ["end"]
+            "required": ["end", "state"]
         }
         
-        # Load the system instruction
         try:
             with open("system_prompts/supervisor_agent.md", "r", encoding="utf-8") as f:
                 self.system_instruction = f.read()
         except FileNotFoundError:
-            self.system_instruction = "Determine if the medical interview is complete based on the transcript and diagnosis hypotheses. Return true to end, false to continue."
+            self.system_instruction = "Identify the interview state and determine if it is clinically complete."
 
     async def check_completion(self, transcript, diagnosis_hypotheses):
-        """
-        Evaluates if the interview should end.
-        :param transcript: List or String of the chat history.
-        :param diagnosis_hypotheses: Data regarding potential conditions.
-        :return: dict {"end": bool}
-        """
         try:
-            # Prepare the user content
             user_content = (
                 f"Hypothesis Diagnosis Data:\n{json.dumps(diagnosis_hypotheses)}\n\n"
-                f"Ongoing Interview Transcript:\n{json.dumps(transcript)}"
+                f"Ongoing Interview Transcript:\n{transcript}"
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash-lite", # or your preferred version
+                model="gemini-2.5-flash-lite", 
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json", 
@@ -440,10 +440,459 @@ class InterviewSupervisor(BaseLogicAgent):
                 )
             )
             
-            res = json.loads(response.text)
-            return res # Returns {"end": True/False}
+            return json.loads(response.text) # Returns {"end": bool, "state": "..."}
             
         except Exception as e:
             print(f"Error in InterviewSupervisor: {e}")
-            # Safety default: keep the interview going if the agent fails
-            return {"end": False}
+            return {"end": False, "state": "mid"}
+        
+
+
+class TranscribeStructureAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # Schema defined to return a list of {"role": "...", "message": "..."}
+        self.response_schema = {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "role": {
+                        "type": "STRING",
+                        "description": "The identity of the speaker."
+                    },
+                    "message": {
+                        "type": "STRING",
+                        "description": "The cleaned transcript text associated with this role."
+                    }
+                },
+                "required": ["role", "message"]
+            }
+        }
+        
+        try:
+            # Assumes you will create this prompt file
+            with open("system_prompts/transcribe_structure_agent.md", "r", encoding="utf-8") as f: 
+                self.system_instruction = f.read()
+        except Exception: 
+            self.system_instruction = (
+                "You are an expert transcription parser. Your task is to take raw, unformatted "
+                "transcription text and structure it into a clear dialogue format. Identify different "
+                "speakers based on context and separate their statements into roles and messages."
+            )
+
+    async def structure_transcription(self, existing_transcript: list, new_raw_text: str):
+        """
+        existing_transcript: List of dicts [{"role": "...", "message": "..."}]
+        new_raw_text: String of raw text to be parsed
+        """
+        try:
+            # Constructing the prompt to show the history and the new data
+            prompt_content = (
+                f"Existing Structured Transcript:\n{json.dumps(existing_transcript)}\n\n"
+                f"New Raw Text:\n{new_raw_text}"
+            )
+
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite", 
+                contents=prompt_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=self.response_schema, 
+                    system_instruction=self.system_instruction, 
+                    temperature=0.0
+                )
+            )
+            
+            res = json.loads(response.text)
+            return res
+            
+        except Exception as e:
+            print(f"Error in structure_transcription: {e}")
+            return existing_transcript # Return current state if it fails
+
+
+class QuestionEnrichmentAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # Schema focusing on the metadata of the question card
+        self.response_schema = {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "qid": {"type": "STRING"},
+                    "headline": {
+                        "type": "STRING",
+                        "description": "Short, punchy title for the question (e.g., 'Past Surgeries')."
+                    },
+                    "domain": {
+                        "type": "STRING",
+                        "description": "Broad clinical category (e.g., History, Medication, Symptom Check)."
+                    },
+                    "system_affected": {
+                        "type": "STRING",
+                        "description": "The biological system (e.g., Respiratory, Cardiovascular, None)."
+                    },
+                    "clinical_intent": {
+                        "type": "STRING",
+                        "description": "Brief explanation of why this question is clinically relevant."
+                    },
+                    "tags": {
+                        "type": "ARRAY",
+                        "items": {"type": "STRING"}
+                    }
+                },
+                "required": ["qid", "headline", "domain", "system_affected", "clinical_intent", "tags"]
+            }
+        }
+
+        try:
+            with open("system_prompts/question_enrichment_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except:
+            self.system_instruction = "Enrich medical questions with UI and clinical metadata."
+
+    async def enrich_questions(self, questions_list: list):
+        if not questions_list:
+            return []
+
+        try:
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite",
+                contents=f"Questions to process:\n{json.dumps(questions_list)}",
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=self.response_schema,
+                    system_instruction=self.system_instruction,
+                    temperature=0.0
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error in enrichment: {e}")
+            return []
+
+
+class ConsultationAnalyticAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        self.response_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "overall_score": {"type": "NUMBER"},
+                "metrics": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "empathy": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "score": {"type": "INTEGER"},
+                                "reasoning": {"type": "STRING"},
+                                "example_quote": {"type": "STRING"}
+                            }
+                        },
+                        "clarity": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "score": {"type": "INTEGER"},
+                                "reasoning": {"type": "STRING"},
+                                "feedback": {"type": "STRING"}
+                            }
+                        },
+                        "information_gathering": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "score": {"type": "INTEGER"},
+                                "reasoning": {"type": "STRING"}
+                            }
+                        },
+                        "patient_engagement": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "score": {"type": "INTEGER"},
+                                "turn_taking_ratio": {"type": "STRING", "description": "e.g., '60% Nurse / 40% Patient'"}
+                            }
+                        }
+                    }
+                },
+                "key_strengths": {"type": "ARRAY", "items": {"type": "STRING"}},
+                "improvement_areas": {"type": "ARRAY", "items": {"type": "STRING"}},
+                "sentiment_trend": {"type": "STRING", "description": "How the patient's mood shifted (e.g., 'Anxious to Relieved')"}
+            },
+            "required": ["overall_score", "metrics", "key_strengths", "improvement_areas"]
+        }
+
+        try:
+            with open("system_prompts/analytic_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except:
+            self.system_instruction = "Analyze the nurse-patient transcript and provide clinical communication scores."
+
+    async def analyze_consultation(self, structured_transcript: list):
+        """
+        Takes the structured transcript (list of role/message dicts) 
+        and returns a deep dive analysis.
+        """
+        if not structured_transcript:
+            return {}
+
+        try:
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite",
+                contents=f"Transcript for Analysis:\n{json.dumps(structured_transcript)}",
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=self.response_schema,
+                    system_instruction=self.system_instruction,
+                    temperature=0.0
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error in consultation analysis: {e}")
+            return {}
+
+
+
+class PatientEducationAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        self.response_schema = {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "headline": {
+                        "type": "STRING",
+                        "description": "Short title (e.g., 'Hydration Tip')."
+                    },
+                    "content": {
+                        "type": "STRING",
+                        "description": "The advice or reassurance text."
+                    },
+                    "category": {
+                        "type": "STRING", 
+                        "enum": ["Safety", "Medication", "Reassurance", "Next Steps"]
+                    },
+                    "urgency": {
+                        "type": "STRING",
+                        "enum": ["Low", "Normal", "High"]
+                    },
+                    "context_reference": {
+                        "type": "STRING",
+                        "description": "The specific patient mention this relates to."
+                    }
+                },
+                "required": ["headline", "content", "category", "urgency", "context_reference"]
+            }
+        }
+
+        try:
+            with open("system_prompts/patient_education_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except:
+            self.system_instruction = "Generate NEW patient education points. Do not repeat existing ones."
+
+    async def generate_education(self, transcript: list, existing_education: list):
+        """
+        transcript: The current full dialogue.
+        existing_education: List of education points already generated in previous turns.
+        """
+        if not transcript:
+            return []
+
+        try:
+            # We provide both the transcript and the already-sent list to prevent duplicates
+            user_content = (
+                f"ALREADY PROVIDED EDUCATION:\n{json.dumps(existing_education)}\n\n"
+                f"CURRENT TRANSCRIPT:\n{json.dumps(transcript)}"
+            )
+
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite",
+                contents=user_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=self.response_schema,
+                    system_instruction=self.system_instruction,
+                    temperature=0.0
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error in PatientEducationAgent: {e}")
+            return []
+
+
+class ClinicalChecklistAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # Updated Schema: Added "reasoning" key
+        self.response_schema = {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "point": {
+                        "type": "STRING",
+                        "description": "A specific clinical best practice criteria (e.g., 'Introduced self and role')."
+                    },
+                    "checked": {
+                        "type": "BOOLEAN",
+                        "description": "True if the nurse/interviewer successfully demonstrated this behavior."
+                    },
+                    "reasoning": {
+                        "type": "STRING",
+                        "description": "Evidence from the transcript (quote) if True, or explanation of the gap if False."
+                    }
+                },
+                "required": ["point", "checked", "reasoning"]
+            }
+        }
+
+        try:
+            with open("system_prompts/clinical_checklist_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except FileNotFoundError:
+            self.system_instruction = "Generate a clinical checklist with reasoning based on the transcript."
+
+    async def generate_checklist(self, 
+                                 transcript: list, 
+                                 diagnosis: str, 
+                                 question_list: list, 
+                                 analytics: dict, 
+                                 education_list: list):
+        """
+        Evaluates the consultation and returns a checklist with reasoning.
+        """
+        if not transcript:
+            return []
+
+        try:
+            user_content = (
+                f"CONTEXT DATA:\n"
+                f"Preliminary Diagnosis: {diagnosis}\n"
+                f"Consultation Analytics: {json.dumps(analytics)}\n"
+                f"Questions Suggested: {json.dumps(question_list)}\n"
+                f"Patient Education Provided: {json.dumps(education_list)}\n\n"
+                f"TRANSCRIPT TO EVALUATE:\n{json.dumps(transcript)}"
+            )
+
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite", 
+                contents=user_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=self.response_schema,
+                    system_instruction=self.system_instruction,
+                    temperature=0.0
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Error in ClinicalChecklistAgent: {e}")
+            return []
+        
+class ComprehensiveReportAgent(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # 1. Load System Prompt from file
+        try:
+            with open("system_prompts/comprehensive_report_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except FileNotFoundError:
+            self.system_instruction = "Synthesize the provided clinical data and transcript into a structured medical report."
+
+        # 2. Define Response Schema
+        self.response_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "clinical_handover": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "hpi_narrative": {
+                            "type": "STRING",
+                            "description": "A professional 4-6 sentence History of Present Illness summary based on transcript and logs."
+                        },
+                        "key_biomarkers_extracted": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                            "description": "List of lab values or specific signs extracted (e.g. 'AST 450', 'Temp 39C')."
+                        },
+                        "clinical_impression_summary": {
+                            "type": "STRING",
+                            "description": "A brief summary of the primary suspected diagnosis and severity."
+                        },
+                        "suggested_doctor_actions": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                            "description": "Specific questions or exams the doctor should perform next."
+                        }
+                    },
+                    "required": ["hpi_narrative", "key_biomarkers_extracted", "clinical_impression_summary"]
+                },
+                "audit_summary": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "performance_narrative": {
+                            "type": "STRING",
+                            "description": "A qualitative summary of the nurse's soft skills and communication style."
+                        },
+                        "areas_for_improvement_summary": {
+                            "type": "STRING",
+                            "description": "Consolidated advice for the nurse."
+                        }
+                    }
+                }
+            },
+            "required": ["clinical_handover", "audit_summary"]
+        }
+
+    async def generate_report(self, 
+                              transcript: list,
+                              question_list: list, 
+                              diagnosis_list: list, 
+                              education_list: list, 
+                              analytics: dict):
+        """
+        Dumps raw arguments (including transcript) into the prompt and returns a structured AI report.
+        """
+        
+        # NO FILTERING: Just dumping the raw data strings into the prompt context
+        user_content = (
+            f"--- RAW DATA START ---\n"
+            f"1. RAW_TRANSCRIPT:\n{json.dumps(transcript)}\n\n"
+            f"2. QUESTION_LIST_LOGS:\n{json.dumps(question_list)}\n\n"
+            f"3. PRELIMINARY_DIAGNOSIS_LOGS:\n{json.dumps(diagnosis_list)}\n\n"
+            f"4. PATIENT_EDUCATION_LOGS:\n{json.dumps(education_list)}\n\n"
+            f"5. ANALYTICS_METRICS:\n{json.dumps(analytics)}\n"
+            f"--- RAW DATA END ---\n\n"
+            f"Please generate the Clinical Handover Report based on this data."
+        )
+
+        try:
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite",
+                contents=user_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=self.response_schema,
+                    system_instruction=self.system_instruction,
+                    temperature=0.0
+                )
+            )
+            return json.loads(response.text)
+            
+        except Exception as e:
+            print(f"Error in ComprehensiveReportAgent: {e}")
+            return {"error": "Failed to generate report"}
+        
+
+        

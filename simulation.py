@@ -68,6 +68,7 @@ class SimulationManager:
         self.cycle = 0
         self.running = False
         self.last_q = []
+        self.last_question = ""
 
     def fetch_clinical_instruction(self):
         """
@@ -117,6 +118,62 @@ class SimulationManager:
                 continue
         
         return "Continue the interview.", False
+    
+    async def fetch_status_update(self):
+        """
+        Reads direction from status_update.json.
+        Async version: Uses non-blocking sleep.
+        Returns: (question, is_finished, education)
+        """
+        path = 'status_update.json'
+        closing_msg = "The clinical assessment is complete. Thank the patient and end the session."
+        
+        if not os.path.exists(path):
+            return "Continue the medical interview and explore the patient's symptoms.", False, None
+
+        for i in range(5): 
+            try:
+                # Note: Standard open() is blocking, but usually fast enough for small JSON files.
+                # If you need strict non-blocking file I/O, you would need the 'aiofiles' library.
+                with open(path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                
+                is_finished = data.get("is_finished", False)
+                next_q = data.get("question")
+                education = data.get("education")
+
+                # 1. Check finished status
+                if is_finished:
+                    print("CLINICAL ASSESSMENT MARKED AS FINISHED.")
+                    return closing_msg, True, education
+
+                # 2. Check empty question
+                if not next_q:
+                    print("NO QUESTION FOUND - ENDING.")
+                    return closing_msg, True, education
+
+                # 3. Check for Duplicate (Wait 1 sec if same)
+                if next_q == self.last_question:
+                    print(f"DUPLICATE QUESTION ({next_q}). Waiting for update... ({i+1}/5)")
+                    # CRITICAL CHANGE: Use await asyncio.sleep instead of time.sleep
+                    await asyncio.sleep(1) 
+                    continue
+                
+                # 4. Success - New Question
+                self.last_question = next_q
+                print(f"NEXT Q FETCHED: {next_q}")
+                
+                formatted_q = f"Clinical Goal: Ask about '{next_q}'. Make it sound natural."
+                return formatted_q, False, education
+
+            except (json.JSONDecodeError, IOError):
+                # Wait briefly for file write to complete
+                await asyncio.sleep(0.1) 
+                continue
+        
+        # Fallback if timed out
+        print("TIMED OUT WAITING FOR NEW QUESTION.")
+        return "Continue the interview for other questions, improvise with your own question.", False, None
 
     async def run(self):
         self.running = True
@@ -176,9 +233,15 @@ class SimulationManager:
                 await asyncio.sleep(1.5)
 
                 # Fetch the next move from the JSON file
-                next_instruction, interview_completed_clinically = self.fetch_clinical_instruction()
+                next_instruction_message, interview_completed_clinically, education_message = await self.fetch_status_update()
                 
                 # logger.info(f"📁 Supervisor Direction: {next_instruction}")
+                if education_message:
+                    next_instruction = f"Educate patient about this topic in short: {education_message}. Then continue the interview with this question: {next_instruction_message}" 
+                else:
+                    next_instruction = next_instruction_message
+
+
                 await self.websocket.send_json({
                     "type": "system", 
                     "message": f"Clinical Instruction: {next_instruction}"
@@ -205,3 +268,5 @@ class SimulationManager:
     def stop(self):
         """External call to stop the loop."""
         self.running = False
+
+

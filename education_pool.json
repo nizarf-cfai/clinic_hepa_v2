@@ -1,0 +1,50 @@
+[
+    {
+        "headline": "Jaundice and Itching",
+        "content": "Yellowing of the eyes (jaundice) and severe itching can indicate a serious underlying liver issue. You must seek immediate medical evaluation at an emergency department for prompt diagnosis and treatment.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "My sister said, my eyes looked yellow and this itching. It feels like there are ants under my skin. I need a cure for that immediately.",
+        "status": "asked"
+    },
+    {
+        "headline": "Severe Fatigue",
+        "content": "Profound tiredness, described as feeling 'hit by a truck,' can be a significant symptom that requires medical evaluation.",
+        "category": "Safety",
+        "urgency": "Normal",
+        "context_reference": "I've been feeling really tired too. Like I got hit by a truck.",
+        "status": "asked"
+    },
+    {
+        "headline": "Dark Urine and Pale Stool",
+        "content": "Dark, Coca-Cola colored urine and pale, clay-colored stools can indicate a serious liver or bile duct obstruction. You must seek immediate medical evaluation at an emergency department for prompt diagnosis and treatment.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "my pee has been really dark like Coca-Cola this morning. My stool was pale, almost clay colored, that freaked me out.",
+        "status": "asked"
+    },
+    {
+        "headline": "Acetaminophen Overuse",
+        "content": "Taking large quantities of acetaminophen (Tylenol), especially over an extended period, can cause severe liver damage. You must inform your healthcare provider about the exact amount and duration of acetaminophen use.",
+        "category": "Medication",
+        "urgency": "High",
+        "context_reference": "it was mostly the regular Tylenol, not the PM, I was popping them like candy because the tooth",
+        "status": "asked"
+    },
+    {
+        "headline": "Dull Abdominal Ache",
+        "content": "A persistent dull ache under the ribs should be evaluated by a healthcare professional, as it can be associated with liver or gallbladder issues.",
+        "category": "Safety",
+        "urgency": "Normal",
+        "context_reference": "I've had a bit of a dull ache under my ribs, nothing sharp just heavy",
+        "status": "pending"
+    },
+    {
+        "headline": "Acetaminophen Dosage and Duration",
+        "content": "Taking six to eight regular Tylenol pills (500mg acetaminophen each) per day for several weeks can lead to severe liver damage. You must inform your healthcare provider about the exact amount and duration of acetaminophen use.",
+        "category": "Medication",
+        "urgency": "High",
+        "context_reference": "Was just killing me. Maybe six to eight a day for a few weeks. I stopped. Taking them yesterday, though.",
+        "status": "asked"
+    }
+]
