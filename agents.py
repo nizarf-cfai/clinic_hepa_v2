@@ -583,7 +583,7 @@ class ConsultationAnalyticAgent(BaseLogicAgent):
         self.response_schema = {
             "type": "OBJECT",
             "properties": {
-                "overall_score": {"type": "NUMBER"},
+                "overall_score": {"type": "NUMBER", "description": "Weighted average score (1-100)."},
                 "metrics": {
                     "type": "OBJECT",
                     "properties": {
@@ -592,57 +592,64 @@ class ConsultationAnalyticAgent(BaseLogicAgent):
                             "properties": {
                                 "score": {"type": "INTEGER"},
                                 "reasoning": {"type": "STRING"},
-                                "example_quote": {"type": "STRING"}
-                            }
+                                "example_quote": {"type": "STRING"},
+                                "pros": {"type": "STRING", "description": "Detailed explanation of what the nurse did well."},
+                                "cons": {"type": "STRING", "description": "Detailed explanation of what did not go well or was missing."}
+                            },
+                            "required": ["score", "reasoning", "example_quote", "pros", "cons"]
                         },
                         "clarity": {
                             "type": "OBJECT",
                             "properties": {
                                 "score": {"type": "INTEGER"},
                                 "reasoning": {"type": "STRING"},
-                                "feedback": {"type": "STRING"}
-                            }
+                                "feedback": {"type": "STRING"},
+                                "pros": {"type": "STRING", "description": "Explanation of how the nurse achieved clarity."},
+                                "cons": {"type": "STRING", "description": "Explanation of confusion or jargon issues."}
+                            },
+                            "required": ["score", "reasoning", "feedback", "pros", "cons"]
                         },
                         "information_gathering": {
                             "type": "OBJECT",
                             "properties": {
                                 "score": {"type": "INTEGER"},
-                                "reasoning": {"type": "STRING"}
-                            }
+                                "reasoning": {"type": "STRING"},
+                                "pros": {"type": "STRING", "description": "What went well in the inquiry process."},
+                                "cons": {"type": "STRING", "description": "What went wrong or which questions were missed."}
+                            },
+                            "required": ["score", "reasoning", "pros", "cons"]
                         },
                         "patient_engagement": {
                             "type": "OBJECT",
                             "properties": {
                                 "score": {"type": "INTEGER"},
-                                "turn_taking_ratio": {"type": "STRING", "description": "e.g., '60% Nurse / 40% Patient'"}
-                            }
+                                "turn_taking_ratio": {"type": "STRING"},
+                                "pros": {"type": "STRING", "description": "How the nurse successfully engaged the patient."},
+                                "cons": {"type": "STRING", "description": "Where the engagement or listening failed."}
+                            },
+                            "required": ["score", "turn_taking_ratio", "pros", "cons"]
                         }
-                    }
+                    },
+                    "required": ["empathy", "clarity", "information_gathering", "patient_engagement"]
                 },
                 "key_strengths": {"type": "ARRAY", "items": {"type": "STRING"}},
                 "improvement_areas": {"type": "ARRAY", "items": {"type": "STRING"}},
-                "sentiment_trend": {"type": "STRING", "description": "How the patient's mood shifted (e.g., 'Anxious to Relieved')"}
+                "sentiment_trend": {"type": "STRING"}
             },
-            "required": ["overall_score", "metrics", "key_strengths", "improvement_areas"]
+            "required": ["overall_score", "metrics", "key_strengths", "improvement_areas", "sentiment_trend"]
         }
 
         try:
             with open("system_prompts/analytic_agent.md", "r", encoding="utf-8") as f:
                 self.system_instruction = f.read()
-        except:
-            self.system_instruction = "Analyze the nurse-patient transcript and provide clinical communication scores."
+        except FileNotFoundError:
+            self.system_instruction = "Analyze the nurse-patient transcript and provide clinical communication coaching."
 
     async def analyze_consultation(self, structured_transcript: list):
-        """
-        Takes the structured transcript (list of role/message dicts) 
-        and returns a deep dive analysis.
-        """
-        if not structured_transcript:
-            return {}
-
+        if not structured_transcript: return {}
         try:
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash-lite",
+                model="gemini-2.0-flash-lite",
                 contents=f"Transcript for Analysis:\n{json.dumps(structured_transcript)}",
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
@@ -653,9 +660,8 @@ class ConsultationAnalyticAgent(BaseLogicAgent):
             )
             return json.loads(response.text)
         except Exception as e:
-            print(f"Error in consultation analysis: {e}")
+            print(f"Error in ConsultationAnalyticAgent: {e}")
             return {}
-
 
 
 class PatientEducationAgent(BaseLogicAgent):
@@ -669,15 +675,19 @@ class PatientEducationAgent(BaseLogicAgent):
                 "properties": {
                     "headline": {
                         "type": "STRING",
-                        "description": "Short title (e.g., 'Hydration Tip')."
+                        "description": "Short, professional title for the advice."
                     },
                     "content": {
                         "type": "STRING",
-                        "description": "The advice or reassurance text."
+                        "description": "The specific warning, instruction, or reassurance text."
+                    },
+                    "reasoning": {
+                        "type": "STRING",
+                        "description": "Justification: Why is this point necessary to protect the clinic or patient?"
                     },
                     "category": {
                         "type": "STRING", 
-                        "enum": ["Safety", "Medication", "Reassurance", "Next Steps"]
+                        "enum": ["Safety", "Medication Risk", "Legal/Informed Consent", "Monitoring", "Reassurance"]
                     },
                     "urgency": {
                         "type": "STRING",
@@ -685,36 +695,31 @@ class PatientEducationAgent(BaseLogicAgent):
                     },
                     "context_reference": {
                         "type": "STRING",
-                        "description": "The specific patient mention this relates to."
+                        "description": "Specific quote or mention from the transcript this relates to."
                     }
                 },
-                "required": ["headline", "content", "category", "urgency", "context_reference"]
+                "required": ["headline", "content", "reasoning", "category", "urgency", "context_reference"]
             }
         }
 
         try:
             with open("system_prompts/patient_education_agent.md", "r", encoding="utf-8") as f:
                 self.system_instruction = f.read()
-        except:
-            self.system_instruction = "Generate NEW patient education points. Do not repeat existing ones."
+        except FileNotFoundError:
+            self.system_instruction = "Generate defensive patient education and reassurance with legal reasoning."
 
     async def generate_education(self, transcript: list, existing_education: list):
-        """
-        transcript: The current full dialogue.
-        existing_education: List of education points already generated in previous turns.
-        """
         if not transcript:
             return []
 
         try:
-            # We provide both the transcript and the already-sent list to prevent duplicates
             user_content = (
                 f"ALREADY PROVIDED EDUCATION:\n{json.dumps(existing_education)}\n\n"
                 f"CURRENT TRANSCRIPT:\n{json.dumps(transcript)}"
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash-lite",
+                model="gemini-2.0-flash-lite", 
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
@@ -733,7 +738,6 @@ class ClinicalChecklistAgent(BaseLogicAgent):
     def __init__(self):
         super().__init__()
         
-        # New Schema matching your requirement
         self.response_schema = {
             "type": "ARRAY",
             "items": {
@@ -745,28 +749,32 @@ class ClinicalChecklistAgent(BaseLogicAgent):
                     },
                     "title": {
                         "type": "STRING",
-                        "description": "Short name of the clinical best practice criteria."
+                        "description": "The specific clinical/legal standard being checked."
                     },
                     "description": {
                         "type": "STRING",
-                        "description": "Detailed evidence (quote) if completed, or explanation of the gap if not."
+                        "description": "Evidence from the transcript (quote) if completed, or explanation of the clinical gap if not."
+                    },
+                    "reasoning": {
+                        "type": "STRING",
+                        "description": "MUST mention the legal/clinical standard (e.g., 'Duty of Care', 'Informed Consent', 'CPG protocols')."
                     },
                     "category": {
                         "type": "STRING", 
-                        "enum": ["communication", "symptoms", "safety", "education"],
-                        "description": "The logical grouping of the checkpoint."
+                        "enum": ["Legal/Safety", "Diagnostic Accuracy", "Communication", "Informed Consent"],
+                        "description": "The risk category of the checkpoint."
                     },
                     "completed": {
                         "type": "BOOLEAN",
-                        "description": "True if the criteria was met."
+                        "description": "True if the nurse successfully performed this action."
                     },
                     "priority": {
                         "type": "STRING",
                         "enum": ["high", "medium", "low"],
-                        "description": "The clinical importance of this specific point."
+                        "description": "The severity of the liability risk if this is missed."
                     }
                 },
-                "required": ["id", "title", "description", "category", "completed", "priority"]
+                "required": ["id", "title", "description", "reasoning", "category", "completed", "priority"]
             }
         }
 
@@ -774,7 +782,7 @@ class ClinicalChecklistAgent(BaseLogicAgent):
             with open("system_prompts/clinical_checklist_agent.md", "r", encoding="utf-8") as f:
                 self.system_instruction = f.read()
         except FileNotFoundError:
-            self.system_instruction = "Generate a clinical checklist with reasoning based on the transcript."
+            self.system_instruction = "Audit the transcript for clinical-legal compliance and standard of care."
 
     async def generate_checklist(self, transcript, diagnosis, question_list, analytics, education_list):
         if not transcript: return []
@@ -789,7 +797,7 @@ class ClinicalChecklistAgent(BaseLogicAgent):
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.0-flash-lite", # Adjusted to latest naming convention
+                model="gemini-2.0-flash-lite",
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
@@ -802,7 +810,9 @@ class ClinicalChecklistAgent(BaseLogicAgent):
         except Exception as e:
             print(f"Error in ClinicalChecklistAgent: {e}")
             return []
-        
+
+
+
 class ComprehensiveReportAgent(BaseLogicAgent):
     def __init__(self):
         super().__init__()
