@@ -733,26 +733,40 @@ class ClinicalChecklistAgent(BaseLogicAgent):
     def __init__(self):
         super().__init__()
         
-        # Updated Schema: Added "reasoning" key
+        # New Schema matching your requirement
         self.response_schema = {
             "type": "ARRAY",
             "items": {
                 "type": "OBJECT",
                 "properties": {
-                    "point": {
+                    "id": {
                         "type": "STRING",
-                        "description": "A specific clinical best practice criteria (e.g., 'Introduced self and role')."
+                        "description": "Unique identifier (e.g., '1', '2')."
                     },
-                    "checked": {
+                    "title": {
+                        "type": "STRING",
+                        "description": "Short name of the clinical best practice criteria."
+                    },
+                    "description": {
+                        "type": "STRING",
+                        "description": "Detailed evidence (quote) if completed, or explanation of the gap if not."
+                    },
+                    "category": {
+                        "type": "STRING", 
+                        "enum": ["communication", "symptoms", "safety", "education"],
+                        "description": "The logical grouping of the checkpoint."
+                    },
+                    "completed": {
                         "type": "BOOLEAN",
-                        "description": "True if the nurse/interviewer successfully demonstrated this behavior."
+                        "description": "True if the criteria was met."
                     },
-                    "reasoning": {
+                    "priority": {
                         "type": "STRING",
-                        "description": "Evidence from the transcript (quote) if True, or explanation of the gap if False."
+                        "enum": ["high", "medium", "low"],
+                        "description": "The clinical importance of this specific point."
                     }
                 },
-                "required": ["point", "checked", "reasoning"]
+                "required": ["id", "title", "description", "category", "completed", "priority"]
             }
         }
 
@@ -762,18 +776,8 @@ class ClinicalChecklistAgent(BaseLogicAgent):
         except FileNotFoundError:
             self.system_instruction = "Generate a clinical checklist with reasoning based on the transcript."
 
-    async def generate_checklist(self, 
-                                 transcript: list, 
-                                 diagnosis: str, 
-                                 question_list: list, 
-                                 analytics: dict, 
-                                 education_list: list):
-        """
-        Evaluates the consultation and returns a checklist with reasoning.
-        """
-        if not transcript:
-            return []
-
+    async def generate_checklist(self, transcript, diagnosis, question_list, analytics, education_list):
+        if not transcript: return []
         try:
             user_content = (
                 f"CONTEXT DATA:\n"
@@ -785,7 +789,7 @@ class ClinicalChecklistAgent(BaseLogicAgent):
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash-lite", 
+                model="gemini-2.0-flash-lite", # Adjusted to latest naming convention
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
