@@ -4,15 +4,15 @@
         "qid": "00001",
         "rank": 999,
         "status": "asked",
-        "answer": "My sister said, my eyes looked yellow and this itching. It feels like there are ants under my skin. I need a cure for that immediately.",
-        "headline": "Chief Complaint",
+        "answer": "I'm turning yellow. My sister. Saw it first said, I looked like a giant lemon and this itching, it's unreal. Feels like there are ants under my skin. I haven't slept in two nights. I'm worried. It's my liver.",
+        "headline": "Reason for Visit",
         "domain": "Symptom Triage",
         "system_affected": "General",
-        "clinical_intent": "To understand the primary reason for the patient's visit and initiate the clinical encounter.",
+        "clinical_intent": "To understand the chief complaint and primary reason for seeking medical attention.",
         "tags": [
-            "reason for visit",
             "chief complaint",
-            "presenting problem"
+            "reason for visit",
+            "triage"
         ]
     },
     {
@@ -20,16 +20,15 @@
         "qid": "00004",
         "rank": 999,
         "status": "asked",
-        "answer": "I was popping them like candy because the tooth",
+        "answer": "I got some pain under my ribs, not sharp just heavy, and my stomach feels a little off, but I haven't thrown up.",
         "headline": "Current Medications",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To obtain an up-to-date list of all prescribed and over-the-counter medications the patient is currently taking.",
+        "clinical_intent": "To ascertain the patient's current pharmacotherapy regimen.",
         "tags": [
             "medication",
             "current",
-            "list",
-            "review"
+            "pharmacotherapy"
         ]
     },
     {
@@ -37,104 +36,83 @@
         "qid": "00005",
         "rank": 999,
         "status": "asked",
-        "answer": "Like I said, it was mostly the regular Tylenol, not the PM. I was taking like six or eight a day for a few weeks there.",
+        "answer": "Nah never had any liver problems. Didn't think I did. I mean I drink a few beers at night but nothing crazy. Just with the guys this is all new and itching is the worst. It's like there's a party under my skin.",
         "headline": "Drug Allergies",
         "domain": "Medical History",
         "system_affected": "General",
-        "clinical_intent": "To identify potential adverse drug reactions and ensure patient safety when prescribing new medications.",
+        "clinical_intent": "To identify potential adverse reactions to medications and ensure patient safety.",
         "tags": [
             "allergy",
             "drug",
             "medication",
-            "safety"
+            "adverse reaction"
         ]
     },
     {
-        "content": "Past Surgeries",
+        "content": "Have you had any surgeries in the past?",
         "qid": "00006",
-        "rank": 999,
-        "status": "asked",
-        "answer": "It was some big white pills took them for 10 days. I finished them all.",
+        "rank": 6,
+        "status": null,
+        "answer": null,
         "headline": "Past Surgeries",
         "domain": "Surgical History",
         "system_affected": "General",
-        "clinical_intent": "To gather information about previous surgical procedures that may impact current health status or future care.",
+        "clinical_intent": "To gather information on previous surgical interventions that may impact current health status or treatment plans.",
         "tags": [
             "surgery",
-            "past",
-            "procedure",
-            "history"
+            "operative history",
+            "past procedures"
         ]
     },
     {
         "qid": "A1B2C",
-        "content": "Have you experienced any confusion, disorientation, or bleeding from your gums or nose recently?",
+        "content": "Have you experienced any nausea or vomiting since your symptoms began?",
         "status": "asked",
-        "answer": "My sister said, my eyes looked yellow and this itching. It feels like there are ants under my skin. I need a cure for that immediately. I've been feeling really tired too. Like I got hit by a truck.",
+        "answer": "I'm sorry to hear your feeling that way.",
         "rank": 1,
-        "headline": "Jaundice Associated Symptoms",
+        "headline": "Medication Side Effects",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for associated gastrointestinal symptoms and changes in stool/urine color in a patient presenting with jaundice, to help differentiate causes of liver dysfunction.",
+        "clinical_intent": "To assess for potential gastrointestinal adverse effects related to new or current medications.",
         "tags": [
-            "jaundice",
             "nausea",
             "vomiting",
             "abdominal pain",
-            "stool color",
-            "urine color"
+            "medication side effect"
         ]
     },
     {
         "qid": "D3E4F",
-        "content": "When you press on your right upper abdomen, does the dull ache become sharper or does it radiate anywhere, like your shoulder or back?",
+        "content": "Have you recently traveled, eaten raw shellfish, or had any contact with individuals who have had similar symptoms or known hepatitis?",
         "status": "asked",
-        "answer": "I've had a bit of a dull ache under my ribs, nothing sharp just heavy and my pee has been really dark like Coca-Cola this morning. My stool was pale, almost clay colored, that freaked me out.",
-        "rank": 2,
-        "headline": "Urine/Stool Color Change",
+        "answer": "Yeah, this morning. They were really pale, like, clay.",
+        "rank": 3,
+        "headline": "Stool and Urine Color",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for changes in urine or stool color which may indicate liver or biliary dysfunction.",
+        "clinical_intent": "To assess for signs of cholestasis or hepatic dysfunction, indicated by pale stools and dark urine.",
         "tags": [
-            "urine color",
             "stool color",
+            "urine color",
             "jaundice",
-            "hepatobiliary"
+            "hepatitis"
         ]
     },
     {
         "qid": "G5H6I",
-        "content": "Is the jaw pain still present, and if so, can you describe its intensity and location? Have you seen a dentist since the abscess was treated?",
+        "content": "Have you experienced any fever, swelling of your face or jaw, or difficulty opening your mouth since your dental abscess was treated?",
         "status": "asked",
-        "answer": "No, I haven't traveled anywhere recently just been working.",
-        "rank": 3,
-        "headline": "Jaw Pain Characterization",
+        "answer": "I got some pain under my ribs, not sharp just heavy, and my stomach feels a little off, but I haven't thrown up.",
+        "rank": 4,
+        "headline": "Jaw Pain Assessment",
         "domain": "Symptom Triage",
         "system_affected": "Musculoskeletal",
-        "clinical_intent": "To characterize the nature of jaw pain and assess for potential dental causes or complications.",
+        "clinical_intent": "To assess the current severity of jaw pain and evaluate the effectiveness of current pain management.",
         "tags": [
             "jaw pain",
-            "chewing",
-            "dental abscess",
-            "follow-up"
-        ]
-    },
-    {
-        "qid": "X7Y8Z",
-        "content": "Can you estimate how many Tylenol pills you take in a typical day, and for how long you've been taking them frequently?",
-        "status": "asked",
-        "answer": "it was mostly the regular Tylenol, not the PM, I was popping them like candy because the tooth",
-        "rank": 999,
-        "headline": "Tylenol Usage Assessment",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To quantify the frequency and duration of Tylenol (acetaminophen) use to assess potential overuse or dependence.",
-        "tags": [
-            "Tylenol",
-            "acetaminophen",
-            "medication use",
-            "frequency",
-            "duration"
+            "pain assessment",
+            "medication review",
+            "symptom severity"
         ]
     }
 ]

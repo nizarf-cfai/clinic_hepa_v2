@@ -250,60 +250,73 @@ class DiagnosisConsolidate(BaseLogicAgent):
             "items": {
                 "type": "OBJECT",
                 "properties": {
-                "did": {
-                    "type": "STRING",
-                    "description": "A random 5-character alphanumeric ID."
-                },
-                "diagnosis": {
-                    "type": "STRING",
-                    "description": "The specific diagnosis using the syntax: [Pathology] + [Trigger/Cause] + [Acuity/Stage]."
-                },
-                "indicators_point": {
-                    "type": "ARRAY",
-                    "items": {
-                    "type": "STRING"
+                    "did": {
+                        "type": "STRING",
+                        "description": "Unique 5-char ID. Use existing ID from master_pool when merging."
                     },
-                    "description": "List of specific symptoms, history, or patient quotes supporting this diagnosis."
+                    "headline": {
+                        "type": "STRING",
+                        "description": "Simple patient-friendly name."
+                    },
+                    "diagnosis": {
+                        "type": "STRING",
+                        "description": "Clinical syntax: [Pathology] + [Trigger] + [Acuity]"
+                    },
+                    "indicators_point": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "criteria": {"type": "STRING"},
+                                "check": {
+                                    "type": "BOOLEAN", 
+                                    "description": "True ONLY if explicitly present in input. False if it is a standard symptom of this disease but not yet confirmed in this patient."
+                                }
+                            },
+                            "required": ["criteria", "check"]
+                        },
+                        "description": "The full clinical picture: a mix of confirmed (true) and missing (false) standard symptoms."
+                    },
+                    "reasoning": {
+                        "type": "STRING",
+                        "description": "Why this diagnosis is suspected based on the 'true' items."
+                    },
+                    "followup_question": {
+                        "type": "STRING",
+                        "description": "A question to ask the patient about one of the 'false' criteria."
+                    }
                 },
-                "reasoning": {
-                    "type": "STRING",
-                    "description": "Clinical deduction explaining why the indicators lead to this diagnosis."
-                },
-                "followup_question": {
-                    "type": "STRING",
-                    "description": "A targeted question to ask the patient to confirm the diagnosis or rule out differentials."
-                }
-                },
-                "required": [
-                "did",
-                "diagnosis",
-                "indicators_point",
-                "reasoning",
-                "followup_question"
-                ]
+                "required": ["did", "headline", "diagnosis", "indicators_point", "reasoning", "followup_question"]
             }
-            }
-        
+        }
         try:
-            with open("system_prompts/consolidated_agent.md", "r", encoding="utf-8") as f: self.system_instruction = f.read()
-        except: self.system_instruction = "Return true if new info."
+            with open("system_prompts/consolidated_agent.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except:
+            self.system_instruction = "You are a clinical consolidator. Evaluate symptoms against diagnosis criteria."
 
     async def consolidate_diagnosis(self, diagnosis_pool, new_diagnosis_list):
         try:
+            # We format the input clearly so the model sees the 'present' symptoms
+            content = (
+                f"MASTER_POOL (Existing Data):\n{json.dumps(diagnosis_pool)}\n\n"
+                f"NEW_CANDIDATES (Present symptoms to be checked):\n{json.dumps(new_diagnosis_list)}"
+            )
+
             response = await self.client.aio.models.generate_content(
                 model="gemini-2.5-flash-lite", 
-                contents=f"Diagnosis Pool:\n{json.dumps(diagnosis_pool)}\nNew Diagnosis List:\n{json.dumps(new_diagnosis_list)}",
-                config=types.GenerateContentConfig(response_mime_type="application/json", 
-                response_schema=self.response_schema, 
-                system_instruction=self.system_instruction, 
-                temperature=0.0)
+                contents=content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=self.response_schema, 
+                    system_instruction=self.system_instruction, 
+                    temperature=0.0
+                )
             )
-            res = json.loads(response.text)
-            return res
+            return json.loads(response.text)
         except Exception as e:
-            print(f"Error in consolidate_diagnosis: {e}")
+            print(f"Error in DiagnosisConsolidate: {e}")
             return []
-
 
 class QuestionCheck(BaseLogicAgent):
     def __init__(self):
@@ -452,7 +465,7 @@ class TranscribeStructureAgent(BaseLogicAgent):
     def __init__(self):
         super().__init__()
         
-        # Schema defined to return a list of {"role": "...", "message": "..."}
+        # Updated Schema to include 'highlights'
         self.response_schema = {
             "type": "ARRAY",
             "items": {
@@ -460,42 +473,40 @@ class TranscribeStructureAgent(BaseLogicAgent):
                 "properties": {
                     "role": {
                         "type": "STRING",
-                        "description": "The identity of the speaker."
+                        "description": "The identity of the speaker (Nurse or Patient)."
                     },
                     "message": {
                         "type": "STRING",
-                        "description": "The cleaned transcript text associated with this role."
+                        "description": "The verbatim transcript text."
+                    },
+                    "highlights": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING"
+                        },
+                        "description": "List of important words (symptoms, durations, body parts, medications) found exactly in the message."
                     }
                 },
-                "required": ["role", "message"]
+                "required": ["role", "message", "highlights"]
             }
         }
         
         try:
-            # Assumes you will create this prompt file
             with open("system_prompts/transcribe_structure_agent.md", "r", encoding="utf-8") as f: 
                 self.system_instruction = f.read()
         except Exception: 
-            self.system_instruction = (
-                "You are an expert transcription parser. Your task is to take raw, unformatted "
-                "transcription text and structure it into a clear dialogue format. Identify different "
-                "speakers based on context and separate their statements into roles and messages."
-            )
+            self.system_instruction = "Parse medical transcription into Nurse/Patient roles with highlights."
 
     async def structure_transcription(self, existing_transcript: list, new_raw_text: str):
-        """
-        existing_transcript: List of dicts [{"role": "...", "message": "..."}]
-        new_raw_text: String of raw text to be parsed
-        """
         try:
-            # Constructing the prompt to show the history and the new data
+            # We explicitly ask for the highlights in the content prompt as well
             prompt_content = (
                 f"Existing Structured Transcript:\n{json.dumps(existing_transcript)}\n\n"
-                f"New Raw Text:\n{new_raw_text}"
+                f"New Raw Text to Parse:\n{new_raw_text}"
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash-lite", 
+                model="gemini-2.0-flash-lite", 
                 contents=prompt_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json", 
@@ -505,13 +516,11 @@ class TranscribeStructureAgent(BaseLogicAgent):
                 )
             )
             
-            res = json.loads(response.text)
-            return res
+            return json.loads(response.text)
             
         except Exception as e:
             print(f"Error in structure_transcription: {e}")
-            return existing_transcript # Return current state if it fails
-
+            return existing_transcript
 
 class QuestionEnrichmentAgent(BaseLogicAgent):
     def __init__(self):
