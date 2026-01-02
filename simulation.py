@@ -241,6 +241,8 @@ class SimulationManager:
                 else:
                     next_instruction = next_instruction_message
 
+                logger.info("SIMULATION : Next Instruction: " + next_instruction)
+
 
                 await self.websocket.send_json({
                     "type": "system", 

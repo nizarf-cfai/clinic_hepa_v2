@@ -1,38 +1,11 @@
 [
     {
-        "headline": "Jaundice Emergency Warning",
-        "content": "Yellowing of the skin (jaundice) can indicate a serious liver problem. You must inform the doctor immediately if your skin or eyes turn yellow.",
-        "reasoning": "Failure to address jaundice could lead to a delay in diagnosis of a life-threatening condition, resulting in a malpractice claim.",
+        "headline": "Jaundice Warning",
+        "content": "Yellowing of the skin or eyes (jaundice) can indicate a serious liver problem. You must inform your doctor immediately if your jaundice worsens or if you experience abdominal pain, fever, or changes in mental status.",
+        "reasoning": "Failure to warn about the significance of jaundice and associated symptoms could lead to a delay in diagnosis and treatment, increasing the risk of a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient states they are 'turning yellow'.",
+        "context_reference": "Patient states, 'I'm yellow. My eyes are yellow.'",
         "status": "asked"
-    },
-    {
-        "headline": "Severe Itching Warning",
-        "content": "Severe itching can be a sign of liver problems. You must inform the doctor immediately if the itching is unbearable or interferes with your daily activities.",
-        "reasoning": "Unaddressed severe itching could indicate a serious underlying condition, leading to a claim of negligent care if not addressed.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient states they have 'itching'.",
-        "status": "asked"
-    },
-    {
-        "headline": "Nausea, Vomiting, and Pain Warning",
-        "content": "If you experience nausea, vomiting, or pain in your upper right side, you must inform the doctor immediately. These symptoms can indicate a serious liver problem.",
-        "reasoning": "Failure to address these symptoms could lead to a delay in diagnosis of a life-threatening condition, resulting in a malpractice claim.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Nurse asks about nausea, vomiting, or pain in the upper right side.",
-        "status": "pending"
-    },
-    {
-        "headline": "Pale Stool Warning",
-        "content": "Pale or clay-colored stools can indicate a liver or gallbladder issue. You must inform the doctor immediately if you observe this.",
-        "reasoning": "Failure to address pale stools could lead to a delay in diagnosis of a life-threatening condition, resulting in a malpractice claim.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient reports 'pale, like, clay' bowel movements.",
-        "status": "pending"
     }
 ]
