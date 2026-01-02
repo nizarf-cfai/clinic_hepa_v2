@@ -167,6 +167,9 @@ class TranscriberLogicThread(threading.Thread):
                 "education": next_ed.get("content", "") if next_ed else ""
             }, f, indent=4)
 
+        logger.info(f"🤖 [AI Agent] Status updated.")
+        
+
         self.status = status_res.get("end", False)
         if not self.qm.get_high_rank_question():
             self.status = True
@@ -216,6 +219,7 @@ class TranscriberLogicThread(threading.Thread):
                 if self.status:
                     logger.info("✅ [Logic Thread] Consultation marked as complete. Exiting logic loop.")
                     await self._final_wrap()
+                    self.running = False
                     break
                 else:
                     await asyncio.sleep(1)
@@ -237,7 +241,7 @@ class TranscriberEngine:
         self.running = True
         
         # Audio Config
-        self.AUDIO_DELAY_SEC = 2.0 
+        self.AUDIO_DELAY_SEC = 3.0 
         self.SIMULATION_RATE = 24000
         self.TRANSCRIBER_RATE = 16000
         self.resample_state = None
