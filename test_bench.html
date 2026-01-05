@@ -3,98 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedForce AI - Synced Integration</title>
+    <title>MedForce AI - Multi-Box Bench</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .audio-bar { transition: height 0.1s ease; height: 8px; }
-        .log-container { height: 450px; overflow-y: auto; scroll-behavior: smooth; }
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; transition: background 0.3s; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        .chat-bubble { max-width: 85%; transition: all 0.3s ease; }
+        .json-box { height: 250px; overflow-y: auto; background: #000; border: 1px solid #1f2937; border-radius: 0.75rem; }
+        pre { font-size: 10px; line-height: 1.2; padding: 10px; color: #10b981; tab-size: 2; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; }
+        .header-tag { font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
+        .q-card { transition: transform 0.2s ease; border-left-width: 4px; }
+        .q-card:hover { transform: translateY(-2px); }
     </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen p-4 md:p-8 font-sans">
+<body class="bg-gray-950 text-gray-100 p-4 font-sans min-h-screen">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-gray-800 pb-6 gap-4">
-            <div>
-                <h1 class="text-4xl font-black text-blue-500 tracking-tighter">MedForce <span class="text-white">AI</span></h1>
-                <p id="systemState" class="text-gray-500 font-medium mt-1">Ready to initialize...</p>
-            </div>
-            <div class="flex gap-3">
-                <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 px-10 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20 active:scale-95">
-                    Start Session
-                </button>
-                <button id="stopBtn" class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl font-bold transition shadow-lg active:scale-95">
-                    Reset
-                </button>
-            </div>
-        </header>
-
-        <!-- Status Dashboard -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Transcriber Status -->
-            <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                <div class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">1. Analysis Pipeline</div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span id="transDot" class="status-dot bg-gray-700 mr-2"></span>
-                        <span id="transStatus" class="text-sm font-mono text-gray-500">OFFLINE</span>
-                    </div>
-                    <div id="analysisLabel" class="text-[10px] font-bold text-blue-500 hidden">FILE REVIEW...</div>
-                </div>
-            </div>
-
-            <!-- Simulation Status -->
-            <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
-                <div class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">2. Voice Simulation</div>
-                <div class="flex items-center">
-                    <span id="simDot" class="status-dot bg-gray-700 mr-2"></span>
-                    <span id="simStatus" class="text-sm font-mono text-gray-500">WAITING</span>
-                </div>
-            </div>
-
-            <!-- Audio Monitor -->
-            <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 flex flex-col justify-center items-center">
-                <div class="flex items-end space-x-1.5 mb-2 h-8">
-                    <div id="bar1" class="audio-bar w-1.5 bg-blue-500 rounded-full"></div>
-                    <div id="bar2" class="audio-bar w-1.5 bg-blue-400 rounded-full"></div>
-                    <div id="bar3" class="audio-bar w-1.5 bg-blue-300 rounded-full"></div>
-                    <div id="bar4" class="audio-bar w-1.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <div class="text-[10px] font-mono text-emerald-500" id="byteCounter">0 bytes relayed</div>
+    <!-- Top Navigation -->
+    <header class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+        <div>
+            <h1 class="text-2xl font-black text-blue-500">MedForce <span class="text-white">PROTOTYPE</span></h1>
+            <div class="flex items-center gap-3 mt-1">
+                <p id="systemState" class="text-gray-500 text-xs">Staggered Handshake Mode</p>
+                <span id="byteCounter" class="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">0 bytes relayed</span>
             </div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left: Transcript -->
-            <section class="lg:col-span-7 bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden flex flex-col shadow-2xl">
-                <div class="p-5 border-b border-gray-800 bg-gray-900/50 flex justify-between items-center">
-                    <h2 class="text-xs font-black uppercase tracking-widest text-purple-400">Consultation Transcript</h2>
-                    <span class="text-[10px] text-gray-500 font-mono">Sync Mode: Real-time Relay</span>
-                </div>
-                <div id="transcriptView" class="log-container p-6 space-y-6">
-                    <div class="h-full flex items-center justify-center text-gray-700 italic text-sm">
-                        Conversation will be structured here...
-                    </div>
-                </div>
-            </section>
-
-            <!-- Right: Logic Dashboard -->
-            <section class="lg:col-span-5 space-y-6">
-                <div class="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-2xl">
-                    <h2 class="text-xs font-black uppercase text-blue-400 mb-6 tracking-widest">Clinical Logic Dashboard</h2>
-                    <div id="logicView" class="space-y-4">
-                        <div class="p-8 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-xs italic">
-                            Waiting for diagnostic analysis...
-                        </div>
-                    </div>
-                </div>
-            </section>
+        
+        <div class="flex gap-4 items-center">
+            <div class="flex flex-col items-end mr-4">
+                <span class="text-[9px] text-gray-500 uppercase font-bold mb-1">Target Environment</span>
+                <select id="serverSelect" class="bg-gray-900 text-xs text-blue-400 border border-gray-700 rounded px-2 py-1 outline-none focus:border-blue-500">
+                    <option value="ws://localhost:8000">Local (localhost:8000)</option>
+                    <option value="wss://clinic-hepa-v2-481780815788.europe-west1.run.app">Deployed (Google Cloud Run)</option>
+                </select>
+            </div>
+            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold text-sm transition-all active:scale-95 shadow-lg shadow-blue-900/20">Start Session</button>
+            <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold text-sm transition">Reset</button>
         </div>
-    </div>
+    </header>
+
+    <!-- Unasked Questions Section -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-yellow-500 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                </span>
+                Priority Clinical Questions (Unasked)
+            </h2>
+            <span id="qCount" class="text-[10px] font-mono text-gray-500">0 Pending</span>
+        </div>
+        <div id="priorityQuestions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[100px]">
+            <div class="col-span-full py-10 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-sm italic">
+                Awaiting initial analysis...
+            </div>
+        </div>
+    </section>
+
+    <!-- Asked Questions Section -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-emerald-500 flex items-center gap-2">
+                <span class="inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                Completed Questions (Answered)
+            </h2>
+            <span id="askedCount" class="text-[10px] font-mono text-gray-500">0 Collected</span>
+        </div>
+        <div id="askedQuestions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[50px]">
+            <div class="col-span-full py-4 border border-gray-800 rounded-2xl text-center text-gray-600 text-xs italic">
+                No questions answered yet.
+            </div>
+        </div>
+    </section>
+
+    <!-- Diagnosis Section -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-blue-500 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Active Differential Diagnoses
+            </h2>
+            <span id="diagCount" class="text-[10px] font-mono text-gray-500">0 Identified</span>
+        </div>
+        <div id="priorityDiagnosis" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[100px]">
+            <div class="col-span-full py-10 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-sm italic">
+                Awaiting clinical data...
+            </div>
+        </div>
+    </section>
+
+    <!-- Raw Data Grid -->
+    <div class="header-tag text-gray-500 mb-4 border-t border-gray-800 pt-4 uppercase italic">● Raw System Streams</div>
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section><div class="header-tag text-purple-500 mb-1 uppercase">● Chat Transcript</div><div class="json-box" id="box-chat"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-blue-500 mb-1 uppercase">● Diagnosis Pool</div><div class="json-box" id="box-diagnosis"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-yellow-500 mb-1 uppercase">● Question Pool</div><div class="json-box" id="box-questions"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-pink-500 mb-1 uppercase">● Analytics</div><div class="json-box" id="box-analytics"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-emerald-500 mb-1 uppercase">● Education</div><div class="json-box" id="box-education"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-gray-400 mb-1 uppercase">● Status</div><div class="json-box" id="box-status"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-orange-500 mb-1 uppercase">● Checklist</div><div class="json-box" id="box-checklist"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-red-500 mb-1 uppercase">● Report</div><div class="json-box" id="box-report"><pre>Waiting...</pre></div></section>
+    </main>
 
     <script>
         let simSocket, transSocket;
@@ -103,11 +114,17 @@
         let bytesTotal = 0;
         const SAMPLE_RATE = 24000;
         const startPayload = { "type": "start", "patient_id": "P0001", "gender": "Male" };
+        const relevantTypes = ["chat", "diagnosis", "questions", "analytics", "status", "education", "checklist", "report"];
 
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
+        function getServerUrl() { return document.getElementById('serverSelect').value; }
 
-        // --- UTILS: AUDIO DECODING ---
+        async function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+            }
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+        }
+
         function base64ToBuffer(base64) {
             const bin = window.atob(base64);
             const bytes = new Uint8Array(bin.length);
@@ -115,152 +132,153 @@
             return bytes.buffer;
         }
 
-        async function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
-            if (audioCtx.state === 'suspended') await audioCtx.resume();
-        }
-
-        // --- THE SYNCED RELAY BRIDGE ---
-        function playAndSyncedRelay(buffer) {
-            // 1. Prepare Playback
+        async function playAndSyncedRelay(buffer) {
+            await initAudio();
             const int16 = new Int16Array(buffer);
             const float32 = new Float32Array(int16.length);
             for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768.0;
 
             const audioBuffer = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
             audioBuffer.getChannelData(0).set(float32);
-
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(audioCtx.destination);
 
-            // 2. Precise Scheduling
             const now = audioCtx.currentTime;
-            if (nextStartTime < now) nextStartTime = now + 0.1; // 100ms safety buffer
+            if (nextStartTime < now) nextStartTime = now + 0.1;
             
             const scheduledPlayTime = nextStartTime;
             source.start(scheduledPlayTime);
             nextStartTime += audioBuffer.duration;
 
-            // 3. SYNCED RELAY: Calculate when the sound will actually start
-            const delayMs = (scheduledPlayTime - now) * 1000;
-
+            const delayMs = Math.max(0, (scheduledPlayTime - now) * 1000);
             setTimeout(() => {
                 if (transSocket && transSocket.readyState === WebSocket.OPEN) {
-                    // Send bytes to transcriber ONLY when sound starts playing
                     transSocket.send(buffer);
-                    
-                    // UI Feedback
                     bytesTotal += buffer.byteLength;
                     document.getElementById('byteCounter').innerText = `${bytesTotal.toLocaleString()} bytes relayed`;
-                    animateBars();
                 }
             }, delayMs);
         }
 
-        function animateBars() {
-            for(let i=1; i<=4; i++) document.getElementById('bar'+i).style.height = Math.random() * 25 + 5 + 'px';
-            setTimeout(() => { for(let i=1; i<=4; i++) document.getElementById('bar'+i).style.height = '8px'; }, 150);
+        function renderQuestions(questions) {
+            const unaskedContainer = document.getElementById('priorityQuestions');
+            const askedContainer = document.getElementById('askedQuestions');
+
+            // 1. Filter Unasked
+            const unasked = (questions || []).filter(q => q.status === null).sort((a, b) => a.rank - b.rank);
+            document.getElementById('qCount').innerText = `${unasked.length} Pending`;
+            
+            if (unasked.length > 0) {
+                unaskedContainer.innerHTML = unasked.map(q => `
+                    <div class="q-card bg-gray-900 border-gray-800 ${q.rank <= 3 ? 'border-l-red-500' : 'border-l-yellow-500'} p-4 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[9px] bg-black/50 text-gray-400 px-2 py-0.5 rounded font-mono">RANK ${q.rank}</span>
+                            <span class="text-[9px] text-yellow-600 font-bold uppercase">${q.domain}</span>
+                        </div>
+                        <h3 class="text-xs font-bold text-gray-100 mb-1">${q.headline || 'Query'}</h3>
+                        <p class="text-[11px] text-gray-400 italic">"${q.content}"</p>
+                    </div>
+                `).join('');
+            }
+
+            // 2. Filter Asked
+            const asked = (questions || []).filter(q => q.status === "asked");
+            document.getElementById('askedCount').innerText = `${asked.length} Collected`;
+
+            if (asked.length > 0) {
+                askedContainer.innerHTML = asked.map(q => `
+                    <div class="bg-gray-900 border border-gray-800 border-l-emerald-500 border-l-4 p-3 rounded-xl opacity-80">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-[8px] text-emerald-500 font-bold uppercase tracking-widest">${q.domain}</span>
+                            <span class="text-[8px] text-gray-600 font-mono">ID: ${q.qid}</span>
+                        </div>
+                        <h3 class="text-[10px] font-bold text-gray-300 mb-1">${q.content}</h3>
+                        <div class="bg-black/40 p-2 rounded border border-gray-800">
+                            <p class="text-[10px] text-emerald-400 font-medium">Ans: ${q.answer || 'Confirmed'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
 
-        // --- CONNECTION HANDSHAKE (STAGGERED) ---
-        startBtn.onclick = async () => {
+        function renderDiagnosis(diagnoses) {
+            const container = document.getElementById('priorityDiagnosis');
+            const severityOrder = { "High": 0, "Moderate": 1, "Low": 2, "Very Low": 3 };
+            const sorted = (diagnoses || []).sort((a, b) => (severityOrder[a.severity] ?? 99) - (severityOrder[b.severity] ?? 99));
+            document.getElementById('diagCount').innerText = `${sorted.length} Identified`;
+            if (sorted.length === 0) return;
+
+            container.innerHTML = sorted.map(d => {
+                let color = "border-l-gray-500";
+                let text = "text-gray-400";
+                if (d.severity === "High") { color = "border-l-red-600"; text = "text-red-500"; }
+                else if (d.severity === "Moderate") { color = "border-l-orange-500"; text = "text-orange-500"; }
+                else if (d.severity === "Low") { color = "border-l-yellow-500"; text = "text-yellow-500"; }
+
+                return `
+                <div class="q-card bg-gray-900 border-gray-800 ${color} p-4 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[9px] font-black uppercase ${text}">${d.severity}</span>
+                        <span class="text-[10px] text-gray-500 font-mono">${Math.round((d.certainty || 0) * 100)}% Match</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-100 mb-1">${d.headline || d.condition || d.name}</h3>
+                    <p class="text-[11px] text-gray-400 line-clamp-3">${d.diagnosis || d.rationale || ''}</p>
+                </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('startBtn').onclick = async () => {
             await initAudio();
-            startBtn.disabled = true;
-            startBtn.innerText = "Processing...";
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').innerText = "Connecting...";
             connectTranscriber();
         };
 
-        // STEP 1: ANALYSIS PHASE
         function connectTranscriber() {
-            document.getElementById('systemState').innerText = "Running Initial File Review...";
-            document.getElementById('analysisLabel').classList.remove('hidden');
-            
-            transSocket = new WebSocket('ws://localhost:8000/ws/transcriber');
-            transSocket.binaryType = "arraybuffer"; // Essential for raw audio relay
-
+            const baseUrl = getServerUrl();
+            transSocket = new WebSocket(`${baseUrl}/ws/transcriber`);
+            transSocket.binaryType = "arraybuffer";
             transSocket.onopen = () => {
-                updateStatus('trans', 'ANALYZING', 'bg-blue-500', 'text-blue-500');
                 transSocket.send(JSON.stringify(startPayload));
+                document.getElementById('startBtn').innerText = "Session Live";
             };
 
             transSocket.onmessage = (event) => {
                 try {
                     const msg = JSON.parse(event.data);
                     
-                    // Trigger Step 2 if initial analysis is confirmed
+                    if (relevantTypes.includes(msg.type)) {
+                        const box = document.getElementById(`box-${msg.type}`);
+                        if (box) {
+                            box.querySelector('pre').innerText = JSON.stringify(msg.diagnosis || msg.questions || msg.data || msg, null, 2);
+                            if (msg.type === 'chat') box.scrollTop = box.scrollHeight;
+                        }
+                        if (msg.type === 'questions') renderQuestions(msg.questions);
+                        if (msg.type === 'diagnosis') renderDiagnosis(msg.diagnosis || msg.data);
+                    }
+
                     if (msg.source === 'initial_analysis' && !simSocket) {
                         connectSimulation();
                     }
-                    handleTranscriberUpdate(msg);
-                } catch (e) { /* Likely binary data back from AI, ignore */ }
+                } catch (e) { console.error("Socket Error:", e); }
             };
-
-            transSocket.onclose = () => updateStatus('trans', 'OFFLINE', 'bg-gray-700', 'text-gray-500');
         }
 
-        // STEP 2: VOICE PHASE
         function connectSimulation() {
-            document.getElementById('systemState').innerText = "Connecting Voice Agents...";
-            document.getElementById('analysisLabel').innerText = "READY";
-            document.getElementById('analysisLabel').className = "text-[10px] font-bold text-green-500";
-
-            simSocket = new WebSocket('ws://localhost:8000/ws/simulation');
-            
+            const baseUrl = getServerUrl();
+            simSocket = new WebSocket(`${baseUrl}/ws/simulation`);
             simSocket.onopen = () => {
-                updateStatus('sim', 'STREAMING', 'bg-green-500', 'text-green-500');
-                updateStatus('trans', 'ACTIVE', 'bg-green-500', 'text-green-500');
-                document.getElementById('systemState').innerText = "Consultation Active";
                 simSocket.send(JSON.stringify(startPayload));
             };
-
             simSocket.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.type === 'audio' && msg.data) {
-                    const buffer = base64ToBuffer(msg.data);
-                    playAndSyncedRelay(buffer);
+                    playAndSyncedRelay(base64ToBuffer(msg.data));
                 }
             };
-
-            simSocket.onclose = () => updateStatus('sim', 'OFFLINE', 'bg-gray-700', 'text-gray-500');
         }
-
-        // --- UI RENDERING ---
-        function handleTranscriberUpdate(msg) {
-            if (msg.type === 'chat') renderChat(msg.data);
-            if (msg.type === 'diagnosis') renderDiagnosis(msg.diagnosis);
-        }
-
-        function renderChat(data) {
-            const view = document.getElementById('transcriptView');
-            view.innerHTML = data.map(c => `
-                <div class="flex flex-col ${c.role === 'Nurse' ? 'items-end' : 'items-start'}">
-                    <div class="chat-bubble p-4 rounded-2xl text-sm shadow-xl ${c.role === 'Nurse' ? 'bg-blue-900/40 border border-blue-800 text-blue-100' : 'bg-gray-800 border border-gray-700 text-gray-200'}">
-                        <div class="text-[9px] uppercase font-black tracking-tighter opacity-40 mb-1">${c.role}</div>
-                        <div class="leading-relaxed">${c.message}</div>
-                    </div>
-                </div>
-            `).join('');
-            view.scrollTop = view.scrollHeight;
-        }
-
-        function renderDiagnosis(data) {
-            const view = document.getElementById('logicView');
-            view.innerHTML = data.map(d => `
-                <div class="bg-gray-800/40 p-5 rounded-2xl border border-gray-800 border-l-4 border-l-blue-500 shadow-xl">
-                    <div class="text-sm font-bold text-gray-100">${d.diagnosis}</div>
-                    <div class="text-[11px] text-gray-500 mt-2 leading-relaxed">${d.reasoning}</div>
-                </div>
-            `).join('');
-        }
-
-        function updateStatus(id, text, dotColor, textColor) {
-            document.getElementById(id + 'Status').innerText = text;
-            document.getElementById(id + 'Status').className = `text-sm font-mono font-bold ${textColor}`;
-            document.getElementById(id + 'Dot').className = `status-dot ${dotColor} mr-2`;
-        }
-
-        stopBtn.onclick = () => location.reload();
     </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 {
-    "is_finished": false,
-    "question": "Have you noticed any unusual bruising or bleeding, such as nosebleeds or bleeding gums, or have you had any recent cuts that took a long time to stop bleeding?",
-    "education": "Yellowing of the skin or eyes (jaundice) can indicate a serious liver problem. You must inform your doctor immediately if your jaundice worsens or if you experience abdominal pain, fever, or changes in mental status."
+    "is_finished": true,
+    "question": null,
+    "education": "You must inform your doctor about the itching. It could be a sign of an underlying condition."
 }

@@ -8,10 +8,11 @@
     <style>
         .json-box { height: 250px; overflow-y: auto; background: #000; border: 1px solid #1f2937; border-radius: 0.75rem; }
         pre { font-size: 10px; line-height: 1.2; padding: 10px; color: #10b981; tab-size: 2; }
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #374151; }
         .header-tag { font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
+        .q-card { transition: transform 0.2s ease; border-left-width: 4px; }
+        .q-card:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body class="bg-gray-950 text-gray-100 p-4 font-sans min-h-screen">
@@ -20,83 +21,74 @@
     <header class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
         <div>
             <h1 class="text-2xl font-black text-blue-500">MedForce <span class="text-white">PROTOTYPE</span></h1>
-            <p id="systemState" class="text-gray-500 text-xs mt-1">Staggered Handshake Mode</p>
-        </div>
-        <div class="flex gap-4 items-center">
-            <div class="text-right">
-                <div class="text-[10px] text-gray-600 uppercase font-bold">Relay Meter</div>
-                <div id="byteCounter" class="text-xs font-mono text-emerald-500">0 bytes</div>
+            <div class="flex items-center gap-3 mt-1">
+                <p id="systemState" class="text-gray-500 text-xs">Staggered Handshake Mode</p>
+                <span id="byteCounter" class="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">0 bytes relayed</span>
             </div>
-            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold text-sm transition-all active:scale-95">Start Session</button>
+        </div>
+        
+        <div class="flex gap-4 items-center">
+            <div class="flex flex-col items-end mr-4">
+                <span class="text-[9px] text-gray-500 uppercase font-bold mb-1">Target Environment</span>
+                <select id="serverSelect" class="bg-gray-900 text-xs text-blue-400 border border-gray-700 rounded px-2 py-1 outline-none focus:border-blue-500">
+                    <option value="ws://localhost:8000">Local (localhost:8000)</option>
+                    <option value="wss://clinic-hepa-v2-481780815788.europe-west1.run.app">Deployed (Google Cloud Run)</option>
+                </select>
+            </div>
+            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold text-sm transition-all active:scale-95 shadow-lg shadow-blue-900/20">Start Session</button>
             <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold text-sm transition">Reset</button>
         </div>
     </header>
 
-    <!-- Connection Status -->
-    <div class="flex gap-6 mb-6">
-        <div class="flex items-center bg-gray-900 px-4 py-2 rounded-full border border-gray-800">
-            <span id="transDot" class="status-dot bg-gray-700 mr-2"></span>
-            <span class="text-[10px] uppercase font-bold text-gray-400">Transcriber: </span>
-            <span id="transStatus" class="text-[10px] font-mono ml-2 text-gray-500">OFFLINE</span>
+    <!-- Priority Questions Section -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-yellow-500 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                </span>
+                Priority Clinical Questions (Unasked)
+            </h2>
+            <span id="qCount" class="text-[10px] font-mono text-gray-500">0 Pending</span>
         </div>
-        <div class="flex items-center bg-gray-900 px-4 py-2 rounded-full border border-gray-800">
-            <span id="simDot" class="status-dot bg-gray-700 mr-2"></span>
-            <span class="text-[10px] uppercase font-bold text-gray-400">Simulation: </span>
-            <span id="simStatus" class="text-[10px] font-mono ml-2 text-gray-500">WAITING</span>
+        <div id="priorityQuestions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[100px]">
+            <div class="col-span-full py-10 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-sm italic">
+                Awaiting initial analysis...
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Data Grid -->
+    <!-- Diagnosis Section -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-blue-500 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Active Differential Diagnoses
+            </h2>
+            <span id="diagCount" class="text-[10px] font-mono text-gray-500">0 Identified</span>
+        </div>
+        <div id="priorityDiagnosis" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[100px]">
+            <div class="col-span-full py-10 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-sm italic">
+                Awaiting clinical data...
+            </div>
+        </div>
+    </section>
+
+    <!-- Raw Data Grid -->
+    <div class="header-tag text-gray-500 mb-4 border-t border-gray-800 pt-4 uppercase italic">● Raw System Streams</div>
     <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <!-- Box: Chat -->
-        <section>
-            <div class="header-tag text-purple-500 mb-1 uppercase">● Chat Transcript</div>
-            <div class="json-box" id="box-chat"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Diagnosis -->
-        <section>
-            <div class="header-tag text-blue-500 mb-1 uppercase">● Diagnosis Pool</div>
-            <div class="json-box" id="box-diagnosis"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Questions -->
-        <section>
-            <div class="header-tag text-yellow-500 mb-1 uppercase">● Question Pool</div>
-            <div class="json-box" id="box-questions"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Analytics -->
-        <section>
-            <div class="header-tag text-pink-500 mb-1 uppercase">● Consultation Analytics</div>
-            <div class="json-box" id="box-analytics"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Education -->
-        <section>
-            <div class="header-tag text-emerald-500 mb-1 uppercase">● Patient Education</div>
-            <div class="json-box" id="box-education"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Status -->
-        <section>
-            <div class="header-tag text-gray-400 mb-1 uppercase">● Supervisor Status</div>
-            <div class="json-box" id="box-status"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Checklist -->
-        <section>
-            <div class="header-tag text-orange-500 mb-1 uppercase">● Final Checklist (Wrap-up)</div>
-            <div class="json-box" id="box-checklist"><pre>Waiting...</pre></div>
-        </section>
-
-        <!-- Box: Report -->
-        <section>
-            <div class="header-tag text-red-500 mb-1 uppercase">● Comprehensive Report</div>
-            <div class="json-box" id="box-report"><pre>Waiting...</pre></div>
-        </section>
-
+        <section><div class="header-tag text-purple-500 mb-1 uppercase">● Chat Transcript</div><div class="json-box" id="box-chat"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-blue-500 mb-1 uppercase">● Diagnosis Pool</div><div class="json-box" id="box-diagnosis"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-yellow-500 mb-1 uppercase">● Question Pool</div><div class="json-box" id="box-questions"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-pink-500 mb-1 uppercase">● Analytics</div><div class="json-box" id="box-analytics"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-emerald-500 mb-1 uppercase">● Education</div><div class="json-box" id="box-education"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-gray-400 mb-1 uppercase">● Status</div><div class="json-box" id="box-status"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-orange-500 mb-1 uppercase">● Checklist</div><div class="json-box" id="box-checklist"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-red-500 mb-1 uppercase">● Report</div><div class="json-box" id="box-report"><pre>Waiting...</pre></div></section>
     </main>
 
     <script>
@@ -106,10 +98,18 @@
         let bytesTotal = 0;
         const SAMPLE_RATE = 24000;
         const startPayload = { "type": "start", "patient_id": "P0001", "gender": "Male" };
-
         const relevantTypes = ["chat", "diagnosis", "questions", "analytics", "status", "education", "checklist", "report"];
 
-        // --- AUDIO CORE ---
+        function getServerUrl() { return document.getElementById('serverSelect').value; }
+
+        async function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+                console.log("🔊 AudioContext Created");
+            }
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+        }
+
         function base64ToBuffer(base64) {
             const bin = window.atob(base64);
             const bytes = new Uint8Array(bin.length);
@@ -117,12 +117,8 @@
             return bytes.buffer;
         }
 
-        async function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
-            if (audioCtx.state === 'suspended') await audioCtx.resume();
-        }
-
-        function playAndSyncedRelay(buffer) {
+        async function playAndSyncedRelay(buffer) {
+            await initAudio(); // Ensure context is live
             const int16 = new Int16Array(buffer);
             const float32 = new Float32Array(int16.length);
             for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768.0;
@@ -135,88 +131,120 @@
 
             const now = audioCtx.currentTime;
             if (nextStartTime < now) nextStartTime = now + 0.1;
+            
             const scheduledPlayTime = nextStartTime;
             source.start(scheduledPlayTime);
             nextStartTime += audioBuffer.duration;
 
-            // Delayed Relay
-            const delayMs = (scheduledPlayTime - now) * 1000;
+            // Relay to Transcriber when sound starts
+            const delayMs = Math.max(0, (scheduledPlayTime - now) * 1000);
             setTimeout(() => {
                 if (transSocket && transSocket.readyState === WebSocket.OPEN) {
                     transSocket.send(buffer);
                     bytesTotal += buffer.byteLength;
-                    document.getElementById('byteCounter').innerText = `${bytesTotal.toLocaleString()} bytes`;
+                    document.getElementById('byteCounter').innerText = `${bytesTotal.toLocaleString()} bytes relayed`;
                 }
             }, delayMs);
         }
 
-        // --- HANDSHAKE & NETWORK ---
+        function renderClinicalQuestions(questions) {
+            const container = document.getElementById('priorityQuestions');
+            const filtered = (questions || []).filter(q => q.status === null).sort((a, b) => a.rank - b.rank);
+            document.getElementById('qCount').innerText = `${filtered.length} Pending`;
+            if (filtered.length === 0) return;
+
+            container.innerHTML = filtered.map(q => `
+                <div class="q-card bg-gray-900 border-gray-800 ${q.rank <= 3 ? 'border-l-red-500' : 'border-l-yellow-500'} p-4 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[9px] bg-black/50 text-gray-400 px-2 py-0.5 rounded font-mono">RANK ${q.rank}</span>
+                        <span class="text-[9px] text-yellow-600 font-bold uppercase">${q.domain}</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-gray-100 mb-1">${q.headline || 'Query'}</h3>
+                    <p class="text-[11px] text-gray-400 italic">"${q.content}"</p>
+                </div>
+            `).join('');
+        }
+
+        function renderDiagnosis(diagnoses) {
+            const container = document.getElementById('priorityDiagnosis');
+            const severityOrder = { "High": 0, "Moderate": 1, "Low": 2, "Very Low": 3 };
+            const sorted = (diagnoses || []).sort((a, b) => (severityOrder[a.severity] ?? 99) - (severityOrder[b.severity] ?? 99));
+            document.getElementById('diagCount').innerText = `${sorted.length} Identified`;
+            if (sorted.length === 0) return;
+
+            container.innerHTML = sorted.map(d => {
+                let color = "border-l-gray-500";
+                let text = "text-gray-400";
+                if (d.severity === "High") { color = "border-l-red-600"; text = "text-red-500"; }
+                else if (d.severity === "Moderate") { color = "border-l-orange-500"; text = "text-orange-500"; }
+                else if (d.severity === "Low") { color = "border-l-yellow-500"; text = "text-yellow-500"; }
+
+                return `
+                <div class="q-card bg-gray-900 border-gray-800 ${color} p-4 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[9px] font-black uppercase ${text}">${d.severity}</span>
+                        <span class="text-[10px] text-gray-500 font-mono">${Math.round((d.certainty || 0) * 100)}% Match</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-gray-100 mb-1">${d.headline || d.condition}</h3>
+                    <p class="text-[11px] text-gray-400 line-clamp-3">${d.diagnosis || ''}</p>
+                </div>
+                `;
+            }).join('');
+        }
+
         document.getElementById('startBtn').onclick = async () => {
             await initAudio();
             document.getElementById('startBtn').disabled = true;
-            document.getElementById('startBtn').innerText = "Running Session...";
+            document.getElementById('startBtn').innerText = "Connecting...";
             connectTranscriber();
         };
 
         function connectTranscriber() {
-            document.getElementById('systemState').innerText = "Transcriber: Initial Analysis Phase...";
-            transSocket = new WebSocket('ws://localhost:8000/ws/transcriber');
+            const baseUrl = getServerUrl();
+            transSocket = new WebSocket(`${baseUrl}/ws/transcriber`);
             transSocket.binaryType = "arraybuffer";
-
             transSocket.onopen = () => {
-                updateStatus('trans', 'CONNECTED - ANALYZING', 'bg-blue-500', 'text-blue-500');
                 transSocket.send(JSON.stringify(startPayload));
+                document.getElementById('startBtn').innerText = "Session Live";
             };
 
             transSocket.onmessage = (event) => {
                 try {
                     const msg = JSON.parse(event.data);
                     
-                    // ROUTE DATA TO CORRECT BOX
                     if (relevantTypes.includes(msg.type)) {
                         const box = document.getElementById(`box-${msg.type}`);
-                        const pre = box.querySelector('pre');
-                        
-                        // For chat, we might want to see the stream, others we see current state
-                        if (msg.type === 'chat') {
-                            pre.innerText = JSON.stringify(msg.data, null, 2);
-                            box.scrollTop = box.scrollHeight; // Auto-scroll chat
-                        } else {
-                            pre.innerText = JSON.stringify(msg, null, 2);
+                        if (box) {
+                            box.querySelector('pre').innerText = JSON.stringify(msg.diagnosis || msg.questions || msg.data || msg, null, 2);
+                            if (msg.type === 'chat') box.scrollTop = box.scrollHeight;
                         }
+                        if (msg.type === 'questions') renderClinicalQuestions(msg.questions);
+                        if (msg.type === 'diagnosis') renderDiagnosis(msg.diagnosis || msg.data);
                     }
 
                     // TRIGGER SIMULATION
                     if (msg.source === 'initial_analysis' && !simSocket) {
+                        console.log("🚀 Initial Analysis done. Starting Simulation Socket...");
                         connectSimulation();
                     }
-                } catch (e) { /* Audio bytes ignore */ }
+                } catch (e) { console.error("Socket Error:", e); }
             };
         }
 
         function connectSimulation() {
-            document.getElementById('systemState').innerText = "Simulation: Connecting Voice...";
-            simSocket = new WebSocket('ws://localhost:8000/ws/simulation');
-            
+            const baseUrl = getServerUrl();
+            simSocket = new WebSocket(`${baseUrl}/ws/simulation`);
             simSocket.onopen = () => {
-                updateStatus('sim', 'STREAMING', 'bg-green-500', 'text-green-500');
-                updateStatus('trans', 'ACTIVE', 'bg-green-500', 'text-green-500');
-                document.getElementById('systemState').innerText = "Session Fully Active";
+                console.log("✅ Simulation Socket Connected");
                 simSocket.send(JSON.stringify(startPayload));
             };
-
             simSocket.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.type === 'audio' && msg.data) {
+                    console.log("🎵 Received Audio Chunk");
                     playAndSyncedRelay(base64ToBuffer(msg.data));
                 }
             };
-        }
-
-        function updateStatus(id, text, dotColor, textColor) {
-            document.getElementById(id + 'Status').innerText = text;
-            document.getElementById(id + 'Status').className = `text-[10px] font-mono font-bold ${textColor}`;
-            document.getElementById(id + 'Dot').className = `status-dot ${dotColor} mr-2`;
         }
     </script>
 </body>

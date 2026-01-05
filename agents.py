@@ -74,7 +74,7 @@ class TextBridgeAgent:
                         "speaker": self.name,
                         "data": b64_audio
                     })
-                    await asyncio.sleep(0.005) 
+                    await asyncio.sleep(0.2) 
 
                 if response.server_content and response.server_content.output_transcription:
                     if text_chunk := response.server_content.output_transcription.text:

@@ -8,7 +8,7 @@ import os
 import time
 from google.cloud import speech
 from datetime import datetime
-
+import traceback
 # Local Imports
 import agents
 import diagnosis_manager
@@ -19,17 +19,18 @@ logger = logging.getLogger("medforce-backend")
 TRANSCRIPT_FILE = "simulation_transcript.txt"
 
 class TranscriberLogicThread(threading.Thread):
-    def __init__(self, patient_info, dm, qm, main_loop, websocket):
+    def __init__(self, patient_info, dm, qm, main_loop, websocket, transcript_memory,run_status):
         super().__init__()
         self.patient_info = patient_info
         self.dm = dm
         self.qm = qm
         self.main_loop = main_loop 
         self.websocket = websocket
-        self.running = True
+        self.running = run_status
         self.daemon = True 
-        self.status = None
-        
+        self.status = False
+        self.transcript_memory = transcript_memory
+
         # Logic Components
         self.qc = agents.QuestionCheck()
         self.em = education_manager.EducationPoolManager()
@@ -39,6 +40,7 @@ class TranscriberLogicThread(threading.Thread):
         # Chat State
         self.transcript_structure = []
         self.analytics_pool = {}
+
 
     def run(self):
         loop = asyncio.new_event_loop()
@@ -113,68 +115,94 @@ class TranscriberLogicThread(threading.Thread):
 
     async def _check_logic(self, new_text):
         """Main AI Reasoning Branch: Questions, Education, Analytics, and Diagnosis."""
+        total_start = time.perf_counter()
         
-        # Parallel Tasks
+        # 1. Parallel Tasks Execution
+        parallel_start = time.perf_counter()
+        
         edu_task = self.education_agent.generate_education(self.transcript_structure, self.em.pool)
         analytics_task = self.analytics_agent.analyze_consultation(self.transcript_structure)
         structure_task = self.transcript_parser.structure_transcription(self.transcript_structure, new_text)
         h_task = self.hepa_agent.get_hepa_diagnosis(new_text, self.patient_info)
         g_task = self.gen_agent.get_gen_diagnosis(new_text, self.patient_info)
-        q_check_task = self.qc.check_question(new_text, self.qm.get_questions_basic())
+        q_check_task = self.qc.check_question(new_text, self.qm.get_unanswered_questions())
         status_task = self.supervisor.check_completion(new_text, self.dm.diagnoses)
 
         (edu_res, analytics_res, structured_chat, h_res, g_res, answered_qs, status_res) = await asyncio.gather(
             edu_task, analytics_task, structure_task, h_task, g_task, q_check_task, status_task
         )
+        
+        parallel_duration = time.perf_counter() - parallel_start
+        logger.info(f"⏱️ [Parallel Tasks] Completed in {parallel_duration:.2f}s")
 
-        # 1. Update Chat
+        # 2. Sequential Processing Start
+        processing_start = time.perf_counter()
+
+        # Update Chat
         self.transcript_structure = structured_chat
         await self._push_to_ui({"type": "chat", "data": self.transcript_structure})
 
-        # 2. Update Questions State
+        # Update Questions State
         for aq in answered_qs:
             self.qm.update_status(aq['qid'], "asked")
             self.qm.update_answer(aq['qid'], aq['answer'])
         
-        # 3. Consolidate Diagnosis
+        # Consolidate Diagnosis
         consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, h_res + g_res)
         self.dm.diagnoses = consolidated
         
-        # 4. Rerank and Enrich Questions
+        # Rerank and Enrich Questions
         ranked_questions = await self.merger_agent.process_question(new_text, consolidated, self.qm.get_questions_basic())
+        print(f"RANKED QUESTIONS: {ranked_questions}")
+
         self.qm.add_questions(ranked_questions)
         enriched_q = await self.q_enrich.enrich_questions(self.qm.get_questions_basic())
         self.qm.update_enriched_questions(enriched_q)
 
-        # 5. Handle Education
+        # Handle Education
         self.em.add_new_points(edu_res)
         next_ed = self.em.pick_and_mark_asked()
 
         self.analytics_pool = analytics_res
 
-        # 6. Final UI Push
+        # Final UI Push
         await self._push_to_ui({"type": "diagnosis", "diagnosis": self.dm.get_diagnoses()})
         await self._push_to_ui({"type": "questions", "questions": self.qm.questions})
         await self._push_to_ui({"type": "analytics", "data": analytics_res})
         await self._push_to_ui({"type": "status", "data": status_res})
         await self._push_to_ui({"type": "education", "data": self.em.pool})
 
-        # Update status_update.json for external listeners if needed
-        with open('status_update.json', 'w', encoding='utf-8') as f:
-            json.dump({
-                "is_finished": status_res.get("end", False),
-                "question": self.qm.get_high_rank_question().get("content") if self.qm.get_high_rank_question() else None,
-                "education": next_ed.get("content", "") if next_ed else ""
-            }, f, indent=4)
-
-        logger.info(f"🤖 [AI Agent] Status updated.")
+        # Update status_update.json
+        hr_q = self.qm.get_high_rank_question()
+        # self.qm.update_status(hr_q['qid'], "asked")
         
 
         self.status = status_res.get("end", False)
+        if self.status:
+            self.running = False
+        logger.info(f"🤖 [AI Agent] Consultation status - running: {self.running}, complete: {self.status}")
         if not self.qm.get_high_rank_question():
             self.status = True
 
+        update_object = {
+                "is_finished": self.status,
+                "question": hr_q.get("content") if hr_q else None,
+                "education": next_ed.get("content", "") if next_ed else ""
+            }
+        logger.info(f"✅ [AI Agent] status_update.json: {update_object}")
+        
+
+        with open('status_update.json', 'w', encoding='utf-8') as f:
+            json.dump(update_object, f, indent=4)
+
+        processing_duration = time.perf_counter() - processing_start
+        total_duration = time.perf_counter() - total_start
+
+        logger.info(f"⏱️ [Processing] UI & Logic updates took {processing_duration:.2f}s")
+        logger.info(f"✅ [AI Agent] Logic cycle complete. Total time: {total_duration:.2f}s")
+
     async def _final_wrap(self):
+        logger.info("🛑 [Finalization] Consultation complete. Generating final outputs...")
         check_result = await self.checklist_agent.generate_checklist(
             transcript = self.transcript_structure, 
             diagnosis = self.dm.get_diagnoses(),
@@ -195,19 +223,31 @@ class TranscriberLogicThread(threading.Thread):
         )
 
         await self._push_to_ui({"type": "report", "data": report_result})
+        logger.info("🛑 [Finalization] Finished")
+
 
 
     async def _logic_loop(self):
+        last_processed_text = ""
         while self.running:
             try:
-                if not os.path.exists(TRANSCRIPT_FILE):
-                    await asyncio.sleep(1)
-                    continue
+                # if not os.path.exists(TRANSCRIPT_FILE):
+                #     await asyncio.sleep(1)
+                #     continue
 
-                with open(TRANSCRIPT_FILE, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
+                # with open(TRANSCRIPT_FILE, "r", encoding="utf-8") as f:
+                #     lines = f.readlines()
+                lines = self.transcript_memory
+                full_text = " ".join(lines).strip()
 
-                if len(lines) > self.last_line_count:
+                # Trigger if the text has grown by a certain amount (e.g., 20 characters)
+                # or if a new sentence was finalized
+                text_has_grown = len(full_text) > len(last_processed_text) + 20
+                sentence_was_finalized = self.last_line_count < len(lines)
+                
+                logger.info(f"🤖 LOGIC LOOP] transcript lines: {len(full_text)},  last_line_count: {last_processed_text}")
+
+                if text_has_grown:
                     full_text = " ".join([l.strip() for l in lines if l.strip()])
                     logger.info(f"🤖 [AI Agent] Analyzing updated transcript...")
                     
@@ -215,14 +255,17 @@ class TranscriberLogicThread(threading.Thread):
                     
                     self.last_line_count = len(lines)
                     await asyncio.sleep(5) # Cooldown
-
-                if self.status:
-                    logger.info("✅ [Logic Thread] Consultation marked as complete. Exiting logic loop.")
-                    await self._final_wrap()
-                    self.running = False
-                    break
                 else:
                     await asyncio.sleep(1)
+                    print("Waiting for new transcript lines...")
+
+                if self.status:
+                    await self._final_wrap()
+                    self.running = False
+                    logger.info(f"✅ [Logic Thread] Consultation marked as complete. Exiting logic loop. status : {self.status}, running: {self.running}")
+
+                    break
+                
             except Exception as e:
                 logger.error(f"❌ [Logic Thread] Error: {e}")
                 await asyncio.sleep(2)
@@ -241,18 +284,20 @@ class TranscriberEngine:
         self.running = True
         
         # Audio Config
-        self.AUDIO_DELAY_SEC = 3.0 
+        self.AUDIO_DELAY_SEC = 0.2
         self.SIMULATION_RATE = 24000
         self.TRANSCRIBER_RATE = 16000
         self.resample_state = None
         self.audio_queue = queue.Queue()       
+        self.transcript_memory = []
+        self.is_sentence_final = True
 
         # Initialize Logic Thread
         self.logic_thread = TranscriberLogicThread(
             self.patient_info, 
             diagnosis_manager.DiagnosisManager(), 
             question_manager.QuestionPoolManager([]), 
-            self.main_loop, self.websocket
+            self.main_loop, self.websocket, self.transcript_memory, self.running
         )
         self.logic_thread.start()
 
@@ -314,24 +359,40 @@ class TranscriberEngine:
                     result = response.results[0]
                     transcript = result.alternatives[0].transcript
 
-                    if result.is_final:
-                        logger.info(f"🎙️ [STT FINAL]: {transcript}")
+                    if not result.is_final:
+                        # --- INTERIM CHUNK HANDLING ---
+                        if self.is_sentence_final:
+                            # Start a new sentence entry
+                            self.transcript_memory.append(transcript)
+                            self.is_sentence_final = False
+                        else:
+                            # Update the existing current sentence
+                            if self.transcript_memory:
+                                self.transcript_memory[-1] = transcript
                         
-                        # Apply duration-based sync delay before writing to file
-                        words = transcript.split()
-                        speaking_duration = (len(words) / 2.5) + 0.5
-                        
-                        def delayed_write(text, delay):
-                            time.sleep(delay)
-                            with open(TRANSCRIPT_FILE, "a", encoding="utf-8") as f:
-                                f.write(text + "\n")
-                                f.flush()
+                        # (Optional) still print for your own terminal view
+                        # print(f"🎙️ [LIVE CHUNK]: {transcript}          ")
+                        with open("output/chunk_transcript_data.json", "w", encoding="utf-8") as f:
+                            json.dump(self.transcript_memory, f)
 
-                        threading.Thread(target=delayed_write, args=(transcript, speaking_duration), daemon=True).start()
+                    else:
+                        # --- FINAL TRANSCRIPT HANDLING ---
+                        if self.is_sentence_final:
+                            # This handles rare cases where is_final comes without an interim first
+                            self.transcript_memory.append(transcript)
+                        else:
+                            # Update the final version of the current sentence
+                            self.transcript_memory[-1] = transcript
+                        
+                        self.is_sentence_final = True # Mark as done so the next word starts a new index
+                        print(f"\n✅ [FINAL SENTENCE]: {transcript}")
+                        with open("output/final_transcript_data.json", "w", encoding="utf-8") as f:
+                            json.dump(self.transcript_memory, f)
+
                         
             except Exception as e:
                 if self.running:
-                    logger.warning(f"🎙️ [STT Restarting]: {e}")
+                    logger.warning(f"🎙️ [STT Restarting], status {self.running}: {e}")
                 time.sleep(0.1)
 
     def stop(self):

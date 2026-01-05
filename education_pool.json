@@ -1,11 +1,56 @@
 [
     {
+        "headline": "Introduction",
+        "content": "The nurse must introduce themselves.",
+        "reasoning": "Failure to introduce the nurse can lead to confusion and potential claims of misidentification.",
+        "category": "Legal/Informed Consent",
+        "urgency": "Low",
+        "context_reference": "Nurse introduced herself.",
+        "status": "asked"
+    },
+    {
         "headline": "Jaundice Warning",
-        "content": "Yellowing of the skin or eyes (jaundice) can indicate a serious liver problem. You must inform your doctor immediately if your jaundice worsens or if you experience abdominal pain, fever, or changes in mental status.",
-        "reasoning": "Failure to warn about the significance of jaundice and associated symptoms could lead to a delay in diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "content": "You must inform your doctor immediately if your eyes or skin turn yellow. This could indicate a serious liver issue.",
+        "reasoning": "Failure to warn about jaundice symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient states, 'I'm yellow. My eyes are yellow.'",
+        "context_reference": "Patient states 'eyes are yellow'.",
+        "status": "asked"
+    },
+    {
+        "headline": "Itching Assessment",
+        "content": "You must inform your doctor about the itching. It could be a sign of an underlying condition.",
+        "reasoning": "Failure to address the itching could lead to a delay in diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "category": "Safety",
+        "urgency": "Normal",
+        "context_reference": "Patient states 'itching'.",
+        "status": "asked"
+    },
+    {
+        "headline": "Dark Urine Warning",
+        "content": "You must inform your doctor immediately if your urine is dark, like coffee. This could indicate a serious liver issue.",
+        "reasoning": "Failure to warn about dark urine symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient states 'dark urine'.",
+        "status": "asked"
+    },
+    {
+        "headline": "Fatigue Warning",
+        "content": "You must inform your doctor immediately if you are feeling fatigued. This could indicate a serious liver issue.",
+        "reasoning": "Failure to warn about fatigue symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient states 'fatigue'.",
+        "status": "asked"
+    },
+    {
+        "headline": "Pale Stool Warning",
+        "content": "You must inform your doctor immediately if your stool is pale. This could indicate a serious liver issue.",
+        "reasoning": "Failure to warn about pale stool symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient states 'My poop was pale this morning.'",
         "status": "asked"
     }
 ]

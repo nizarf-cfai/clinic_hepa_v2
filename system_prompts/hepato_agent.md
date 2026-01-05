@@ -24,7 +24,7 @@ Return a strict JSON array containing objects with the following fields:
 *   `diagnosis`: The specific diagnosis string following the syntax rule above.
 *   `indicators_point`: An array of direct quotes or paraphrased facts from the patient.
 *   `reasoning`: A clinical deduction explaining *why* the indicators lead to this specific diagnosis.
-*   `followup_question`: A single, targeted question to ask the patient next. This should focus on distinguishing differentials (e.g., stone vs. cancer) or checking for "Red Flags" (e.g., fever, confusion, bleeding).
+*   `followup_question`: A single, targeted question to ask the patient next. This should focus on distinguishing differentials (e.g., stone vs. cancer) or checking for "Red Flags" (e.g., fever, confusion, bleeding). Do not generate existing question from the transcript.
 
 **JSON OUTPUT EXAMPLE:**
 [

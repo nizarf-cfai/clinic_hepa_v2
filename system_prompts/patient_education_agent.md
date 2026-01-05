@@ -21,6 +21,7 @@ For every item, the `reasoning` must state the clinical or legal risk of withhol
 - **DEFEANSIVE TONE**: Use authoritative language (Must, Required, Warning).
 - **NO QUESTIONS**: State facts and instructions only.
 - **NO DUPLICATES**: Check "ALREADY PROVIDED EDUCATION" carefully.
+- **NEVER give ressult to introduce the nurse**
 
 # Example Expected Output
 {

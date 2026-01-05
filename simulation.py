@@ -154,7 +154,7 @@ class SimulationManager:
 
                 # 3. Check for Duplicate (Wait 1 sec if same)
                 if next_q == self.last_question:
-                    print(f"DUPLICATE QUESTION ({next_q}). Waiting for update... ({i+1}/5)")
+                    # print(f"DUPLICATE QUESTION ({next_q}). Waiting for update... ({i+1}/5)")
                     # CRITICAL CHANGE: Use await asyncio.sleep instead of time.sleep
                     await asyncio.sleep(1) 
                     continue
@@ -189,6 +189,7 @@ class SimulationManager:
             self.patient.set_session(patient_session)
             
             await self.websocket.send_json({"type": "system", "message": "Voice sessions connected."})
+            await asyncio.sleep(2)
 
             # Initial State
             next_instruction = "Introduce yourself and ask the patient about their primary concern today."

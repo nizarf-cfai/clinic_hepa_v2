@@ -58,3 +58,4 @@ Return a strict JSON array containing objects with the following fields:
 - Do not hallucinate details not present in the text.
 - If the cause is unknown, use "Etiology Unknown" (e.g., "Acute Abdominal Pain of Unknown Etiology").
 - The `followup_question` must be specific to the diagnosis in that specific object.
+- Do not generate existing question from the transcript.

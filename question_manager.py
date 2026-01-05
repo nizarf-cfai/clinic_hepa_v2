@@ -106,6 +106,15 @@ class QuestionPoolManager:
     def get_questions(self) -> List[Dict]:
         return self.questions
 
+    def get_unanswered_questions(self) -> List[Dict[str, Any]]:
+        """
+        Returns all question objects where the answer is None or an empty string.
+        """
+        return [
+            q for q in self.questions 
+            if q.get("answer") is None or (isinstance(q.get("answer"), str) and q.get("answer").strip() == "")
+        ]
+
     def update_status(self, qid: str, new_status: str) -> bool:
         for q in self.questions:
             if q["qid"] == qid:
