@@ -1,0 +1,21 @@
+{
+    "ranked": [
+        {
+            "question": "Have you experienced any unintentional weight loss or changes in appetite recently?",
+            "qid": "7920eb8e-73f2-480d-ba72-f81e3023a5ea"
+        },
+        {
+            "question": "Have you taken any other pain medications or supplements in addition to the Tylenol recently?",
+            "qid": "14c94632-e8ca-4dda-9ccb-04274440fb0d"
+        },
+        {
+            "question": "Can you recall the exact dosage and frequency of the Tylenol PM you were taking in addition to the Extra Strength Tylenol?",
+            "qid": "958b7714-0386-4dc5-bef4-dc297990665d"
+        },
+        {
+            "question": "Have you experienced any recent changes in your diet, particularly increased consumption of fatty foods?",
+            "qid": "e2486368-7bb3-42a8-977e-e06cbb0a5b54"
+        }
+    ],
+    "next_question": "Have you experienced any unintentional weight loss or changes in appetite recently?"
+}

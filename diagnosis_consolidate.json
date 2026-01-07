@@ -1,0 +1,170 @@
+[
+    {
+        "did": "A1B2C",
+        "headline": "Cholestatic Jaundice",
+        "diagnosis": "Cholestatic Jaundice secondary to Biliary Obstruction, Acute",
+        "indicators_point": [
+            {
+                "criteria": "Jaundice",
+                "check": true
+            },
+            {
+                "criteria": "Pruritus",
+                "check": true
+            },
+            {
+                "criteria": "Abdominal pain (RUQ)",
+                "check": true
+            },
+            {
+                "criteria": "Change in stool color (acholic)",
+                "check": true
+            },
+            {
+                "criteria": "Change in urine color (dark)",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Alk Phos",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Total Bilirubin",
+                "check": true
+            },
+            {
+                "criteria": "Unintentional weight loss",
+                "check": false
+            }
+        ],
+        "reasoning": "The patient presents with jaundice, pruritus, pale stools, and dark urine, consistent with cholestatic jaundice. Elevated Alk Phos and Total Bilirubin further support liver involvement. The reported heavy feeling under the ribs is suggestive of biliary obstruction.",
+        "followup_question": "Have you experienced any unintentional weight loss in the past few months?"
+    },
+    {
+        "did": "D3E4F",
+        "headline": "Drug-Induced Liver Injury",
+        "diagnosis": "Rule Out Drug-Induced Liver Injury secondary to Acetaminophen Overuse, Acute",
+        "indicators_point": [
+            {
+                "criteria": "Jaundice",
+                "check": true
+            },
+            {
+                "criteria": "Pruritus",
+                "check": true
+            },
+            {
+                "criteria": "Fatigue",
+                "check": true
+            },
+            {
+                "criteria": "Nausea",
+                "check": true
+            },
+            {
+                "criteria": "Elevated AST",
+                "check": true
+            },
+            {
+                "criteria": "Elevated ALT",
+                "check": true
+            },
+            {
+                "criteria": "Change in urine color (dark)",
+                "check": true
+            },
+            {
+                "criteria": "Change in stool color (acholic)",
+                "check": true
+            }
+        ],
+        "reasoning": "The patient exhibits jaundice, pruritus, fatigue, nausea, and significantly elevated AST and ALT. The recent high-dose acetaminophen use is a strong indicator for drug-induced liver injury (DILI), which can manifest as acute hepatitis. The pale stools and dark urine suggest a mixed pattern of hepatocellular injury and cholestasis.",
+        "followup_question": "Can you recall the exact dosage and frequency of the Tylenol PM you were taking in addition to the Extra Strength Tylenol?"
+    },
+    {
+        "did": "a1b2c",
+        "headline": "Acetaminophen-Induced Hepatotoxicity",
+        "diagnosis": "Hepatocellular Injury secondary to Acetaminophen Overdose, Acute",
+        "indicators_point": [
+            {
+                "criteria": "Patient reports taking 'six or eight' Extra Strength Tylenol in a 24-hour period.",
+                "check": true
+            },
+            {
+                "criteria": "Elevated AST (450 U/L) and ALT (620 U/L).",
+                "check": true
+            },
+            {
+                "criteria": "Overt jaundice (yellowing of eyes and skin).",
+                "check": true
+            },
+            {
+                "criteria": "Dark urine ('like Coke').",
+                "check": true
+            },
+            {
+                "criteria": "Pale stool.",
+                "check": true
+            },
+            {
+                "criteria": "Fatigue ('feel like I've been hit by a truck').",
+                "check": true
+            },
+            {
+                "criteria": "Nausea.",
+                "check": true
+            },
+            {
+                "criteria": "Dull, heavy feeling under ribs.",
+                "check": true
+            },
+            {
+                "criteria": "Itching ('ants under my skin').",
+                "check": true
+            }
+        ],
+        "reasoning": "The patient presents with overt jaundice, significantly elevated liver enzymes (AST and ALT), dark urine, pale stools, nausea, fatigue, and itching. The history of frequent use of Extra Strength Tylenol (acetaminophen), with the patient admitting to taking 'six or eight' pills in a 24-hour period, strongly suggests acetaminophen overdose as the likely cause of the hepatocellular injury. The profound fatigue also aligns with acute liver damage.",
+        "followup_question": "Have you taken any other pain medications or supplements in addition to the Tylenol recently?"
+    },
+    {
+        "did": "d3e4f",
+        "headline": "Cholestasis",
+        "diagnosis": "Cholestasis secondary to Biliary Obstruction of Unknown Etiology",
+        "indicators_point": [
+            {
+                "criteria": "Jaundice",
+                "check": true
+            },
+            {
+                "criteria": "Pruritus",
+                "check": true
+            },
+            {
+                "criteria": "Change in stool color (acholic)",
+                "check": true
+            },
+            {
+                "criteria": "Change in urine color (dark)",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Alk Phos",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Total Bilirubin",
+                "check": true
+            },
+            {
+                "criteria": "Abdominal pain (RUQ)",
+                "check": true
+            },
+            {
+                "criteria": "Nausea",
+                "check": true
+            }
+        ],
+        "reasoning": "The patient's jaundice, pruritus, pale stools, and elevated alkaline phosphatase suggest a cholestatic process, which is a blockage in bile flow. While the elevated AST/ALT point towards hepatocellular injury, the combination of these symptoms with pale stools and elevated Alk Phos raises suspicion for a concurrent or primary biliary obstruction. The absence of sharp, post-prandial pain makes gallstones less likely as the sole cause, but other forms of biliary obstruction (e.g., stricture, mass) remain possibilities.",
+        "followup_question": "Have you experienced any unintentional weight loss or changes in appetite recently?"
+    }
+]

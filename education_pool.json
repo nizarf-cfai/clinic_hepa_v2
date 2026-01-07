@@ -1,56 +1,92 @@
 [
     {
-        "headline": "Introduction",
-        "content": "The nurse must introduce themselves.",
-        "reasoning": "Failure to introduce the nurse can lead to confusion and potential claims of misidentification.",
-        "category": "Legal/Informed Consent",
-        "urgency": "Low",
-        "context_reference": "Nurse introduced herself.",
-        "status": "asked"
-    },
-    {
-        "headline": "Jaundice Warning",
-        "content": "You must inform your doctor immediately if your eyes or skin turn yellow. This could indicate a serious liver issue.",
-        "reasoning": "Failure to warn about jaundice symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "headline": "Jaundice Emergency Warning",
+        "content": "You must go to the Emergency Room immediately if your skin or eyes turn yellow. This could indicate a serious liver problem.",
+        "reasoning": "Failure to warn about jaundice symptoms could lead to delayed diagnosis of a life-threatening condition, resulting in a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient states 'eyes are yellow'.",
+        "context_reference": "Patient reports yellowing of skin and eyes.",
         "status": "asked"
     },
     {
-        "headline": "Itching Assessment",
-        "content": "You must inform your doctor about the itching. It could be a sign of an underlying condition.",
-        "reasoning": "Failure to address the itching could lead to a delay in diagnosis and treatment, increasing the risk of a malpractice claim.",
-        "category": "Safety",
+        "headline": "Itching Symptom Clarification",
+        "content": "Itching can be a symptom of many conditions. We will investigate the cause. Do not scratch excessively, as this can lead to skin damage and infection.",
+        "reasoning": "Providing context for the itching symptom prevents the patient from assuming the worst and potentially seeking unnecessary emergency care. It also sets expectations for the diagnostic process.",
+        "category": "Reassurance",
         "urgency": "Normal",
-        "context_reference": "Patient states 'itching'.",
+        "context_reference": "Patient reports itching all over.",
         "status": "asked"
     },
     {
-        "headline": "Dark Urine Warning",
-        "content": "You must inform your doctor immediately if your urine is dark, like coffee. This could indicate a serious liver issue.",
-        "reasoning": "Failure to warn about dark urine symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "headline": "Abdominal Pain Warning",
+        "content": "You must seek immediate medical attention if your abdominal pain worsens or becomes severe.",
+        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosing a serious condition, increasing the risk of a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient states 'dark urine'.",
-        "status": "asked"
-    },
-    {
-        "headline": "Fatigue Warning",
-        "content": "You must inform your doctor immediately if you are feeling fatigued. This could indicate a serious liver issue.",
-        "reasoning": "Failure to warn about fatigue symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient states 'fatigue'.",
+        "context_reference": "Patient reports a heavy feeling under their ribs.",
         "status": "asked"
     },
     {
         "headline": "Pale Stool Warning",
-        "content": "You must inform your doctor immediately if your stool is pale. This could indicate a serious liver issue.",
-        "reasoning": "Failure to warn about pale stool symptoms could lead to delayed diagnosis and treatment, increasing the risk of a malpractice claim.",
+        "content": "You must inform your doctor immediately if your stool continues to be pale.",
+        "reasoning": "Pale stool can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient states 'My poop was pale this morning.'",
+        "context_reference": "Patient reports pale stool.",
+        "status": "asked"
+    },
+    {
+        "headline": "Dark Urine Warning",
+        "content": "You must inform your doctor immediately if your urine remains dark. This can indicate a serious liver issue.",
+        "reasoning": "Dark urine can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient reports dark urine.",
+        "status": "asked"
+    },
+    {
+        "headline": "Dark Urine Follow-Up",
+        "content": "You must inform your doctor immediately if your urine remains dark. This can indicate a serious liver issue.",
+        "reasoning": "Dark urine can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient reports dark urine.",
+        "status": "asked"
+    },
+    {
+        "headline": "Pale Stool Follow-Up",
+        "content": "You must inform your doctor immediately if your stool continues to be pale.",
+        "reasoning": "Pale stool can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient reports pale stool.",
+        "status": "asked"
+    },
+    {
+        "headline": "Alcohol Consumption Clarification",
+        "content": "You must inform your doctor about your alcohol consumption.",
+        "reasoning": "Failure to document alcohol consumption could lead to misdiagnosis or improper treatment, increasing liability.",
+        "category": "Legal/Informed Consent",
+        "urgency": "Normal",
+        "context_reference": "Patient reports a few beers with the guys.",
+        "status": "asked"
+    },
+    {
+        "headline": "Abdominal Pain Emergency Warning",
+        "content": "You must seek immediate medical attention if your abdominal pain worsens or becomes severe.",
+        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosing a serious condition, increasing the risk of a malpractice claim.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Patient reports a heavy feeling under their ribs.",
+        "status": "asked"
+    },
+    {
+        "headline": "Tylenol Dosage Warning",
+        "content": "You must not exceed the recommended daily dose of Tylenol. Overuse can cause liver damage.",
+        "reasoning": "Failure to warn about Tylenol overdose risks could lead to liver damage and a potential malpractice claim.",
+        "category": "Medication Risk",
+        "urgency": "High",
+        "context_reference": "Patient reports taking six to eight extra strength Tylenol.",
         "status": "asked"
     }
 ]

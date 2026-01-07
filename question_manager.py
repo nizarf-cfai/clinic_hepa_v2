@@ -38,6 +38,48 @@ class QuestionPoolManager:
         with open("question_pool.json", "r") as file:
             self.questions = json.load(file)
 
+    def add_from_strings(self, questions: List[str]) -> None:
+        """
+        Adds a list of question strings to the pool.
+        Generates a random QID, sets status/answer to None.
+        Does NOT assign a rank.
+        PREVENTS DUPLICATES: Checks if question content already exists.
+        """
+        # Create a set of existing question contents (normalized) for fast lookup
+        existing_contents = {
+            q.get("content", "").strip().lower() 
+            for q in self.questions 
+            if q.get("content")
+        }
+
+        for q_text in questions:
+            # Validate input
+            if not q_text or not isinstance(q_text, str) or not q_text.strip():
+                continue
+
+            clean_text = q_text.strip()
+            normalized_text = clean_text.lower()
+
+            # Check if this question already exists
+            if normalized_text in existing_contents:
+                continue
+
+            new_q = {
+                "qid": str(uuid.uuid4()),
+                "content": clean_text,
+                "status": None,
+                "answer": None
+            }
+            
+            self.questions.append(new_q)
+            
+            # Add to the checking set immediately 
+            # (prevents duplicates within the input list itself)
+            existing_contents.add(normalized_text)
+        
+        self._save_to_file()
+
+
     def add_questions(self, text_list: List[Dict[str, str]]) -> None:
         """
         Reranks all 'None' status questions and adds new ones.

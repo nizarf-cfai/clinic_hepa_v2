@@ -992,7 +992,7 @@
         "content": "Have you experienced any recent changes in your diet, particularly increased consumption of fatty foods?",
         "status": null,
         "answer": null,
-        "rank": 4,
+        "rank": 3,
         "headline": "Dietary Changes",
         "domain": "Lifestyle",
         "system_affected": "Gastrointestinal",
@@ -1007,9 +1007,9 @@
     {
         "qid": "223d449b-68f9-4c97-ad93-19509d691fd1",
         "content": "Have you taken any other medications, including over-the-counter drugs or herbal supplements, in addition to Tylenol and Augmentin in the past month?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
+        "status": null,
+        "answer": null,
+        "rank": 2,
         "headline": "Medication Review",
         "domain": "Medication Review",
         "system_affected": "General",
@@ -1024,9 +1024,9 @@
     {
         "qid": "e4aacc98-0009-4e6f-af14-eec5a76d5693",
         "content": "Have you taken any other over-the-counter or prescription medications in the past month besides Tylenol and Augmentin?",
-        "status": "asked",
-        "answer": "Nah, been steady here. Doing construction and new partners. Nope",
-        "rank": 999,
+        "status": null,
+        "answer": null,
+        "rank": 1,
         "headline": "Medication Review",
         "domain": "Medication Review",
         "system_affected": "General",
@@ -1037,26 +1037,5 @@
             "prescription",
             "drug interactions"
         ]
-    },
-    {
-        "qid": "958b7714-0386-4dc5-bef4-dc297990665d",
-        "content": "Can you recall the exact dosage and frequency of the Tylenol PM you were taking in addition to the Extra Strength Tylenol?",
-        "status": null,
-        "answer": null,
-        "rank": 3
-    },
-    {
-        "qid": "14c94632-e8ca-4dda-9ccb-04274440fb0d",
-        "content": "Have you taken any other pain medications or supplements in addition to the Tylenol recently?",
-        "status": null,
-        "answer": null,
-        "rank": 2
-    },
-    {
-        "qid": "7920eb8e-73f2-480d-ba72-f81e3023a5ea",
-        "content": "Have you experienced any unintentional weight loss or changes in appetite recently?",
-        "status": null,
-        "answer": null,
-        "rank": 1
     }
 ]

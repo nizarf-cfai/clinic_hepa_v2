@@ -1,5 +1,5 @@
 {
-    "is_finished": true,
-    "question": null,
-    "education": "You must inform your doctor about the itching. It could be a sign of an underlying condition."
+    "is_finished": false,
+    "question": "Have you taken any other over-the-counter or prescription medications in the past month besides Tylenol and Augmentin?",
+    "education": ""
 }

@@ -3,7 +3,7 @@
         "content": "What brings you in today?",
         "qid": "00001",
         "rank": 1,
-        "status": null,
+        "status": "asked",
         "answer": null
 
     },

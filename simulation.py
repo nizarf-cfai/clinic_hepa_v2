@@ -69,6 +69,7 @@ class SimulationManager:
         self.running = False
         self.last_q = []
         self.last_question = ""
+        self.timeout_status = 0
 
     def fetch_clinical_instruction(self):
         """
@@ -173,6 +174,9 @@ class SimulationManager:
         
         # Fallback if timed out
         print("TIMED OUT WAITING FOR NEW QUESTION.")
+        self.timeout_status += 1
+        if self.timeout_status >=5:
+            return closing_msg, True, None
         return "Continue the interview for other questions, improvise with your own question.", False, None
 
     async def run(self):
@@ -195,7 +199,6 @@ class SimulationManager:
             next_instruction = "Introduce yourself and ask the patient about their primary concern today."
             patient_last_words = "None (Beginning of interview)"
             interview_completed_clinically = False
-            
             while self.running:
                 # logger.info(f"--- Simulation Cycle {self.cycle} ---")
 

@@ -820,7 +820,81 @@ class ClinicalChecklistAgent(BaseLogicAgent):
             print(f"Error in ClinicalChecklistAgent: {e}")
             return []
 
+class QuestionRanker(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # Define the strict output schema
+        self.response_schema = {
+            "type": "OBJECT",
+            "properties": {
+                "ranked": {
+                    "type": "ARRAY",
+                    "description": "The list of question objects sorted by clinical priority.",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "question": {
+                                "type": "STRING",
+                                "description": "The text of the question."
+                            },
+                            "qid": {
+                                "type": "STRING",
+                                "description": "The unique ID of the question."
+                            }
+                        },
+                        "required": ["question", "qid"]
+                    }
+                },
+                "next_question": {
+                    "type": "STRING",
+                    "description": "The content string of the highest ranked question."
+                }
+            },
+            "required": ["ranked", "next_question"]
+        }
+        
+        # Load the prompt
+        try:
+            with open("system_prompts/question_ranker.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except FileNotFoundError:
+            # Fallback prompt if file is missing
+            self.system_instruction = "Rank the questions based on the transcript context."
 
+    async def rank_questions(self, transcript: str, question_pool: list):
+        """
+        :param transcript: Raw string or JSON string of the interview text.
+        :param question_pool: List of dicts [{'qid': '...', 'question': '...'}]
+        """
+        try:
+            # Prepare the context for the model
+            input_content = (
+                f"**Available Question Pool:**\n{json.dumps(question_pool, indent=2)}\n\n"
+                f"**Current Transcript:**\n{transcript}"
+            )
+
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite", 
+                contents=input_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=self.response_schema, 
+                    system_instruction=self.system_instruction, 
+                    temperature=0.1  # Low temp for deterministic sorting
+                )
+            )
+            
+            res = json.loads(response.text)
+            return res
+            
+        except Exception as e:
+            print(f"Error in rank_questions: {e}")
+            # Fallback: Return original order if AI fails
+            return {
+                "ranked": question_pool,
+                "next_question": question_pool[0]['question'] if question_pool else ""
+            }
 
 class ComprehensiveReportAgent(BaseLogicAgent):
     def __init__(self):

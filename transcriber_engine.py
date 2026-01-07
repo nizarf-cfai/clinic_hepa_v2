@@ -56,6 +56,7 @@ class TranscriberLogicThread(threading.Thread):
         self.q_enrich = agents.QuestionEnrichmentAgent()
         self.analytics_agent = agents.ConsultationAnalyticAgent()
         self.education_agent = agents.PatientEducationAgent()
+        self.ranker = agents.QuestionRanker()
 
         self.checklist_agent = agents.ClinicalChecklistAgent()
         self.report_agent = agents.ComprehensiveReportAgent()
@@ -66,6 +67,8 @@ class TranscriberLogicThread(threading.Thread):
 
         logger.info(f"🩺 [Logic Thread] Monitoring {TRANSCRIPT_FILE}...")
         loop.run_until_complete(self.start_logic())
+
+    
 
     async def start_logic(self):
         """Pre-analysis before allowing STT to process audio."""
@@ -135,6 +138,13 @@ class TranscriberLogicThread(threading.Thread):
         parallel_duration = time.perf_counter() - parallel_start
         logger.info(f"⏱️ [Parallel Tasks] Completed in {parallel_duration:.2f}s")
 
+
+        with open('diagnosis_result.json', 'w', encoding='utf-8') as f:
+            json.dump({
+                "general_diagnosis": g_res,
+                "hepato_diagnosis": h_res
+            }, f, indent=4)
+
         # 2. Sequential Processing Start
         processing_start = time.perf_counter()
 
@@ -149,13 +159,21 @@ class TranscriberLogicThread(threading.Thread):
         
         # Consolidate Diagnosis
         consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, h_res + g_res)
+        with open('diagnosis_consolidate.json', 'w', encoding='utf-8') as f:
+            json.dump(consolidated, f, indent=4)
         self.dm.diagnoses = consolidated
         
+        generated_questions = [i.get('followup_question') for i in h_res] + [i.get('followup_question') for i in g_res]
+        self.qm.add_from_strings(generated_questions)
+
+        ranked_questions = await self.ranker.rank_questions(new_text, self.qm.get_questions_basic())
+        with open('ranked_questions.json', 'w', encoding='utf-8') as f:
+            json.dump(ranked_questions, f, indent=4)
         # Rerank and Enrich Questions
-        ranked_questions = await self.merger_agent.process_question(new_text, consolidated, self.qm.get_questions_basic())
+        # ranked_questions = await self.merger_agent.process_question(new_text,  h_res + g_res, self.qm.get_questions_basic())
         print(f"RANKED QUESTIONS: {ranked_questions}")
 
-        self.qm.add_questions(ranked_questions)
+        self.qm.add_questions(ranked_questions.get('ranked',[]))
         enriched_q = await self.q_enrich.enrich_questions(self.qm.get_questions_basic())
         self.qm.update_enriched_questions(enriched_q)
 
@@ -172,6 +190,9 @@ class TranscriberLogicThread(threading.Thread):
         await self._push_to_ui({"type": "status", "data": status_res})
         await self._push_to_ui({"type": "education", "data": self.em.pool})
 
+
+        with open('master_question.json', 'w', encoding='utf-8') as f:
+            json.dump(self.qm.questions, f, indent=4)
         # Update status_update.json
         hr_q = self.qm.get_high_rank_question()
         # self.qm.update_status(hr_q['qid'], "asked")
@@ -268,6 +289,7 @@ class TranscriberLogicThread(threading.Thread):
                 
             except Exception as e:
                 logger.error(f"❌ [Logic Thread] Error: {e}")
+                traceback.print_exc()
                 await asyncio.sleep(2)
 
         
@@ -347,7 +369,7 @@ class TranscriberEngine:
                     continue
 
         logger.info(f"🎙️ [STT Loop] Google Stream started with {self.AUDIO_DELAY_SEC}s delay.")
-
+        retries_count = 0
         while self.running:
             try:
                 responses = client.streaming_recognize(streaming_config, request_generator())
@@ -392,7 +414,12 @@ class TranscriberEngine:
                         
             except Exception as e:
                 if self.running:
-                    logger.warning(f"🎙️ [STT Restarting], status {self.running}: {e}")
+                    logger.warning(f"🎙️ [STT Restarting], status {self.running}: {e}, retries: {retries_count}")
+                    retries_count += 1
+                    if retries_count >= 10:
+                        logger.error("❌ [STT] Maximum retries reached. Stopping STT loop.")
+                        self.running = False
+                        break
                 time.sleep(0.1)
 
     def stop(self):
