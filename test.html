@@ -1,163 +1,289 @@
+<!-- START OF FILE mic_bench.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MedForce - Audio Test Only</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedForce AI - Live Mic (Robust)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .audio-bar { transition: height 0.1s ease; }
+        .json-box { height: 250px; overflow-y: auto; background: #000; border: 1px solid #1f2937; border-radius: 0.75rem; }
+        pre { font-size: 10px; line-height: 1.2; padding: 10px; color: #10b981; tab-size: 2; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; }
+        .header-tag { font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
+        .recording-pulse { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
     </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex flex-col items-center justify-center p-6">
+<body class="bg-gray-950 text-gray-100 p-4 font-sans min-h-screen">
 
-    <div class="max-w-md w-full bg-gray-900 rounded-3xl p-8 border border-gray-800 shadow-2xl">
-        <h1 class="text-2xl font-bold text-center mb-2">Audio Stream Test</h1>
-        <p class="text-gray-500 text-center text-sm mb-8">Target: /ws/simulation</p>
-
-        <!-- Status & Visualizer -->
-        <div class="flex flex-col items-center space-y-6">
-            <div id="status" class="px-4 py-1 rounded-full bg-red-900/30 text-red-500 text-xs font-bold border border-red-500/50">
-                DISCONNECTED
+    <!-- Top Navigation -->
+    <header class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+        <div>
+            <h1 class="text-2xl font-black text-red-500">MedForce <span class="text-white">LIVE MIC</span></h1>
+            <div class="flex items-center gap-3 mt-1">
+                <p id="systemState" class="text-gray-500 text-xs">Emulating 24kHz Simulation Stream</p>
+                <div id="micStatus" class="flex items-center gap-2 hidden">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <span class="text-[10px] font-mono text-red-500 font-bold">LIVE INPUT</span>
+                </div>
             </div>
-
-            <!-- Simple Visualizer -->
-            <div class="flex items-end justify-center space-x-1 h-12">
-                <div id="bar1" class="audio-bar w-2 bg-blue-500 h-2 rounded-full"></div>
-                <div id="bar2" class="audio-bar w-2 bg-blue-400 h-4 rounded-full"></div>
-                <div id="bar3" class="audio-bar w-2 bg-blue-500 h-2 rounded-full"></div>
-                <div id="bar4" class="audio-bar w-2 bg-blue-600 h-6 rounded-full"></div>
+        </div>
+        
+        <div class="flex gap-4 items-center">
+            <div class="flex flex-col items-end mr-4">
+                <span class="text-[9px] text-gray-500 uppercase font-bold mb-1">Target Environment</span>
+                <select id="serverSelect" class="bg-gray-900 text-xs text-blue-400 border border-gray-700 rounded px-2 py-1 outline-none focus:border-blue-500">
+                    <option value="ws://localhost:8000">Local (localhost:8000)</option>
+                    <option value="wss://clinic-hepa-v2-481780815788.europe-west1.run.app">Deployed (Google Cloud Run)</option>
+                </select>
             </div>
-
-            <div class="text-center">
-                <div id="byteCounter" class="text-3xl font-mono font-bold text-blue-400">0</div>
-                <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Bytes Received</div>
-            </div>
-
-            <button id="startBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95">
-                Connect & Play
+            
+            <button id="toggleMicBtn" class="bg-gray-800 border border-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                Start Mic
             </button>
+            
+            <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold text-sm transition">Reset</button>
         </div>
+    </header>
 
-        <!-- Debug Log -->
-        <div id="debugLog" class="mt-8 bg-black/50 rounded-xl p-4 h-32 overflow-y-auto font-mono text-[10px] text-gray-400 border border-gray-800">
-            <div>- System Ready -</div>
-        </div>
-    </div>
+    <!-- Visualizer Section -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section><div class="header-tag text-purple-500 mb-1 uppercase">● Chat Transcript</div><div class="json-box" id="box-chat"><pre>Waiting for speech...</pre></div></section>
+        <section><div class="header-tag text-blue-500 mb-1 uppercase">● Diagnosis Pool</div><div class="json-box" id="box-diagnosis"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-yellow-500 mb-1 uppercase">● Question Pool</div><div class="json-box" id="box-questions"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-pink-500 mb-1 uppercase">● Analytics</div><div class="json-box" id="box-analytics"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-emerald-500 mb-1 uppercase">● Education</div><div class="json-box" id="box-education"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-gray-400 mb-1 uppercase">● Status</div><div class="json-box" id="box-status"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-orange-500 mb-1 uppercase">● Checklist</div><div class="json-box" id="box-checklist"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-red-500 mb-1 uppercase">● Report</div><div class="json-box" id="box-report"><pre>Waiting...</pre></div></section>
+    </main>
 
     <script>
-        let socket;
-        let audioCtx;
-        let nextStartTime = 0;
-        let bytesTotal = 0;
-        const SAMPLE_RATE = 24000;
+        // --- Configuration ---
+        // CRITICAL: The server expects 24,000 Hz because that is what the simulation sent.
+        // We must downsample the Mic (44.1k/48k) to 24k before sending.
+        const TARGET_SAMPLE_RATE = 24000; 
+        const startPayload = { "type": "start", "patient_id": "P0001", "gender": "Male" };
+        const relevantTypes = ["chat", "diagnosis", "questions", "analytics", "status", "education", "checklist", "report"];
 
-        const startBtn = document.getElementById('startBtn');
-        const debugLog = document.getElementById('debugLog');
-        const byteCounter = document.getElementById('byteCounter');
-        const status = document.getElementById('status');
+        // --- State ---
+        let transSocket;
+        let audioContext;
+        let mediaStream;
+        let scriptProcessor;
+        let isRecording = false;
 
-        function log(msg) {
-            const div = document.createElement('div');
-            div.innerText = `> ${msg}`;
-            debugLog.appendChild(div);
-            debugLog.scrollTop = debugLog.scrollHeight;
-        }
+        function getServerUrl() { return document.getElementById('serverSelect').value; }
 
-        // --- Decode Base64 to ArrayBuffer ---
-        function base64ToBuffer(base64) {
-            const bin = window.atob(base64);
-            const bytes = new Uint8Array(bin.length);
-            for (let i = 0; i < bin.length; i++) {
-                bytes[i] = bin.charCodeAt(i);
+        // --- UI Interactions ---
+        const toggleBtn = document.getElementById('toggleMicBtn');
+        const micStatus = document.getElementById('micStatus');
+
+        toggleBtn.onclick = async () => {
+            if (!isRecording) {
+                await startSession();
+            } else {
+                stopSession();
             }
-            return bytes.buffer;
-        }
+        };
 
-        async function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
-            }
-            if (audioCtx.state === 'suspended') await audioCtx.resume();
-            log("Audio Context: " + audioCtx.state);
-        }
+        async function startSession() {
+            try {
+                toggleBtn.innerText = "Connecting...";
+                toggleBtn.disabled = true;
 
-        function playChunk(buffer) {
-            // 1. PCM16 to Float32
-            const int16 = new Int16Array(buffer);
-            const float32 = new Float32Array(int16.length);
-            for (let i = 0; i < int16.length; i++) {
-                float32[i] = int16[i] / 32768.0;
-            }
-
-            // 2. Create and Schedule Buffer
-            const audioBuffer = audioCtx.createBuffer(1, float32.length, SAMPLE_RATE);
-            audioBuffer.getChannelData(0).set(float32);
-
-            const source = audioCtx.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-            if (nextStartTime < now) nextStartTime = now + 0.05;
-            source.start(nextStartTime);
-            nextStartTime += audioBuffer.duration;
-
-            // 3. UI Feedback
-            bytesTotal += buffer.byteLength;
-            byteCounter.innerText = bytesTotal.toLocaleString();
-            animateBars();
-        }
-
-        function animateBars() {
-            for(let i=1; i<=4; i++) {
-                document.getElementById('bar'+i).style.height = Math.random() * 40 + 10 + 'px';
-            }
-            setTimeout(() => {
-                for(let i=1; i<=4; i++) document.getElementById('bar'+i).style.height = '8px';
-            }, 100);
-        }
-
-        startBtn.onclick = async () => {
-            await initAudio();
-            startBtn.disabled = true;
-            startBtn.innerText = "Connecting...";
-
-            socket = new WebSocket('ws://localhost:8000/ws/simulation');
-
-            socket.onopen = () => {
-                status.innerText = "CONNECTED";
-                status.className = "px-4 py-1 rounded-full bg-green-900/30 text-green-500 text-xs font-bold border border-green-500/50";
-                log("WS Connected. Sending Start...");
-                socket.send(JSON.stringify({ "type": "start", "patient_id": "P0001", "gender": "Male" }));
-            };
-
-            socket.onmessage = (event) => {
-                try {
-                    const msg = JSON.parse(event.data);
-                    
-                    if (msg.type === 'audio' && msg.data) {
-                        const buffer = base64ToBuffer(msg.data);
-                        playChunk(buffer);
-                    } else if (msg.type === 'turn') {
-                        log("Turn: " + msg.data);
-                    } else {
-                        log("Msg Type: " + msg.type);
-                    }
-                } catch (e) {
-                    log("Error parsing JSON");
+                // 1. Browser Capability Check
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error("Browser API not supported. Are you using HTTPS or Localhost?");
                 }
-            };
 
-            socket.onclose = () => {
-                status.innerText = "DISCONNECTED";
-                status.className = "px-4 py-1 rounded-full bg-red-900/30 text-red-500 text-xs font-bold border border-red-500/50";
-                log("WS Closed");
-                startBtn.disabled = false;
-                startBtn.innerText = "Connect & Play";
-            };
+                // 2. Connect WebSocket
+                await connectTranscriber();
 
-            socket.onerror = (err) => log("WS Error Detected");
+                // 3. Initialize Audio
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        channelCount: 1
+                    } 
+                });
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Fix for suspended audio contexts (common in Chrome)
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
+                const source = audioContext.createMediaStreamSource(mediaStream);
+                
+                // Use a ScriptProcessor to access raw PCM data
+                // bufferSize 4096 is standard.
+                scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+                source.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination); // Destination is needed for Chrome to fire events
+
+                scriptProcessor.onaudioprocess = (audioProcessingEvent) => {
+                    if (!transSocket || transSocket.readyState !== WebSocket.OPEN) return;
+
+                    const inputBuffer = audioProcessingEvent.inputBuffer;
+                    const inputData = inputBuffer.getChannelData(0); // Float32 Array
+                    const currentRate = inputBuffer.sampleRate; // e.g., 48000
+
+                    // 4. Process & Send
+                    // We must convert Float32@48k -> Int16@24k
+                    const resampledInt16 = downsampleAndConvert(inputData, currentRate, TARGET_SAMPLE_RATE);
+                    
+                    transSocket.send(resampledInt16);
+                };
+
+                // UI Updates
+                isRecording = true;
+                toggleBtn.innerText = "Stop Mic";
+                toggleBtn.disabled = false;
+                toggleBtn.classList.remove('bg-gray-800');
+                toggleBtn.classList.add('bg-red-600', 'hover:bg-red-500', 'text-white', 'recording-pulse');
+                micStatus.classList.remove('hidden');
+
+            } catch (err) {
+                console.error("Full Setup Error:", err);
+                // Try to extract a meaningful message
+                let msg = err.message || err.name || "Unknown Error (Check Console)";
+                
+                if (err.name === 'NotAllowedError') msg = "Microphone Permission Denied.";
+                if (err.name === 'NotFoundError') msg = "No Microphone Found.";
+
+                alert("Failed to start session:\n" + msg);
+                
+                toggleBtn.innerText = "Start Mic";
+                toggleBtn.disabled = false;
+                // Cleanup partial connections
+                if (transSocket) transSocket.close();
+            }
         }
+
+        function stopSession() {
+            isRecording = false;
+            
+            // UI Updates
+            toggleBtn.innerText = "Start Mic";
+            toggleBtn.classList.add('bg-gray-800');
+            toggleBtn.classList.remove('bg-red-600', 'hover:bg-red-500', 'text-white', 'recording-pulse');
+            micStatus.classList.add('hidden');
+
+            // Cleanup Audio
+            if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+            if (scriptProcessor) scriptProcessor.disconnect();
+            if (audioContext) audioContext.close();
+
+            // Cleanup Socket
+            if (transSocket) transSocket.close();
+        }
+
+        function connectTranscriber() {
+            return new Promise((resolve, reject) => {
+                const baseUrl = getServerUrl();
+                // Ensure correct protocol (ws:// vs wss://)
+                let socketUrl = baseUrl + "/ws/transcriber";
+                
+                console.log("Connecting to:", socketUrl);
+                transSocket = new WebSocket(socketUrl);
+                transSocket.binaryType = "arraybuffer"; // Important!
+
+                transSocket.onopen = () => {
+                    console.log("WS Connected");
+                    // Send the handshake JSON just like test_bench.html does
+                    transSocket.send(JSON.stringify(startPayload));
+                    resolve();
+                };
+
+                transSocket.onerror = (e) => {
+                    console.error("WebSocket Connection Failed", e);
+                    reject(new Error("WebSocket Connection Failed. Is the server running?"));
+                };
+
+                transSocket.onmessage = (event) => {
+                    try {
+                        const msg = JSON.parse(event.data);
+                        handleServerMessage(msg);
+                    } catch (e) { 
+                        // Ignored (sometimes server might send non-json acknowledgments)
+                    }
+                };
+            });
+        }
+
+        function handleServerMessage(msg) {
+            if (relevantTypes.includes(msg.type)) {
+                const box = document.getElementById(`box-${msg.type}`);
+                if (box) {
+                    box.querySelector('pre').innerText = JSON.stringify(msg.diagnosis || msg.questions || msg.data || msg, null, 2);
+                    if (msg.type === 'chat') box.scrollTop = box.scrollHeight;
+                }
+            }
+        }
+
+        /**
+         * Converts High Sample Rate Float32 (Microphone) -> Low Sample Rate Int16 (Server)
+         */
+        function downsampleAndConvert(buffer, inputRate, outputRate) {
+            if (outputRate === inputRate) {
+                return convertFloatToInt16(buffer);
+            }
+
+            const sampleRateRatio = inputRate / outputRate;
+            const newLength = Math.round(buffer.length / sampleRateRatio);
+            const result = new Int16Array(newLength);
+            
+            let offsetResult = 0;
+            let offsetBuffer = 0;
+
+            while (offsetResult < result.length) {
+                const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+                
+                let accum = 0, count = 0;
+                for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+                    accum += buffer[i];
+                    count++;
+                }
+
+                let resultSample = count > 0 ? accum / count : 0;
+                resultSample = Math.max(-1, Math.min(1, resultSample));
+                
+                // Convert to Int16
+                result[offsetResult] = resultSample < 0 ? resultSample * 0x8000 : resultSample * 0x7FFF;
+                
+                offsetResult++;
+                offsetBuffer = nextOffsetBuffer;
+            }
+            return result.buffer;
+        }
+
+        function convertFloatToInt16(buffer) {
+            const l = buffer.length;
+            const buf = new Int16Array(l);
+            for (let i = 0; i < l; i++) {
+                let s = Math.max(-1, Math.min(1, buffer[i]));
+                buf[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            return buf.buffer;
+        }
+
     </script>
 </body>
 </html>

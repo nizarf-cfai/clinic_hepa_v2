@@ -4,23 +4,23 @@
         "qid": "00001",
         "rank": 999,
         "status": "asked",
-        "answer": "I'm yellow, my eyes turned yellow. My skin, my sister noticed it and I'm itching all over. It. Feels like there are ants under my skin. I don't know what gives"
+        "answer": "I'm turning yellow. My sister said, my eyes are yellow. I feel like I've been hit by a truck."
     },
     {
         "content": "What medications are you currently taking?",
         "qid": "00004",
         "rank": 999,
         "status": "asked",
-        "answer": "I have a few beers with the guys. Nothing crazy",
+        "answer": "just the lisinopril for my blood pressure and those antibiotics for my tooth finished them about three weeks ago. That's it. And the Tylenol up until yesterday.",
         "headline": "Current Medications",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To ascertain current pharmacotherapy and identify potential drug interactions or adherence issues.",
+        "clinical_intent": "To obtain a comprehensive list of all current pharmacologic treatments.",
         "tags": [
             "medication",
-            "current",
-            "pharmacotherapy",
-            "adherence"
+            "prescription",
+            "OTC",
+            "current"
         ]
     },
     {
@@ -28,15 +28,16 @@
         "qid": "00005",
         "rank": 999,
         "status": "asked",
-        "answer": "Not that I know of I have never had a bad reaction to anything.",
+        "answer": "just the lisinopril for my blood pressure and those antibiotics for my tooth finished them about three weeks ago. That's it. And the Tylenol up until yesterday.",
         "headline": "Drug Allergies",
         "domain": "Medical History",
         "system_affected": "General",
-        "clinical_intent": "To identify potential adverse drug reactions and contraindications for future treatments.",
+        "clinical_intent": "To identify potential adverse drug reactions and ensure patient safety.",
         "tags": [
             "allergy",
             "medication",
-            "adverse reaction"
+            "adverse reaction",
+            "safety"
         ]
     },
     {
@@ -44,14 +45,15 @@
         "qid": "00006",
         "rank": 999,
         "status": "asked",
-        "answer": "Yeah, a few things back in the day. Nothing major though.",
-        "headline": "Past Surgeries",
+        "answer": "No gallstones. Never had any surgery on my belly.",
+        "headline": "Past Surgical History",
         "domain": "Surgical History",
         "system_affected": "General",
-        "clinical_intent": "To gather information on previous surgical interventions that may impact current health status or treatment options.",
+        "clinical_intent": "To gather information on previous operative procedures that may impact current health status.",
         "tags": [
             "surgery",
-            "operative history",
+            "operation",
+            "past procedures",
             "medical history"
         ]
     },
@@ -59,927 +61,401 @@
         "qid": "D3E4F",
         "content": "Have you experienced any abdominal pain, particularly in the upper right quadrant, or any changes in your stool color?",
         "status": "asked",
-        "answer": "Yeah, a little bit of a heavy feeling under my ribs, there, and my stool, it was kind of pale this morning.",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning.",
         "rank": 999,
         "headline": "Abdominal Pain & Stool Changes",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for symptoms suggestive of hepatobiliary or gastrointestinal pathology, such as cholecystitis or biliary obstruction.",
+        "clinical_intent": "To assess for symptoms suggestive of hepatobiliary or gastrointestinal pathology.",
         "tags": [
             "abdominal pain",
             "stool color",
-            "gastrointestinal symptoms"
+            "gastrointestinal",
+            "hepatobiliary"
         ]
     },
     {
         "qid": "A1B2C",
         "content": "Have you consumed any alcohol in the past month, and if so, how much?",
         "status": "asked",
-        "answer": "I have a few beers with the guys. Nothing crazy",
+        "answer": "I mean, I have a few beers with the guys. Nothing crazy.",
         "rank": 999,
         "headline": "Alcohol Consumption",
         "domain": "Social History",
         "system_affected": "General",
-        "clinical_intent": "To assess alcohol intake as a potential contributing factor to health conditions, medication interactions, or lifestyle risks.",
+        "clinical_intent": "To assess recent alcohol intake, which can affect health status and treatment options.",
         "tags": [
             "alcohol",
             "substance use",
             "social history",
-            "intake"
+            "consumption"
         ]
     },
     {
-        "qid": "2cfd7ddc-ff84-4821-9996-e546bb7bca31",
-        "content": "Have you experienced any nausea, vomiting, or abdominal pain, particularly in the upper right quadrant?",
+        "qid": "9c7737e1-e6b6-4096-af23-a605b664352e",
+        "content": "Have you experienced any nausea, vomiting, or abdominal pain, particularly in the upper right side?",
         "status": "asked",
-        "answer": "I don't know what gives",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning.",
         "rank": 999,
-        "headline": "Upper Abdominal Symptoms",
+        "headline": "Upper Right Abdominal Symptoms",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To screen for symptoms indicative of upper gastrointestinal distress or hepatobiliary issues, such as gastritis, peptic ulcer disease, or cholecystitis.",
+        "clinical_intent": "To investigate symptoms potentially related to hepatobiliary or upper gastrointestinal issues.",
         "tags": [
             "nausea",
             "vomiting",
             "abdominal pain",
-            "gastrointestinal"
+            "gastrointestinal",
+            "hepatobiliary"
         ]
     },
     {
-        "qid": "dff189d2-5e06-4448-b8d3-778e3cc34ddb",
-        "content": "Have you had any recent fevers, fatigue, or flu-like symptoms?",
+        "qid": "acef1bb5-9f59-4c86-a080-fc3be11e4a83",
+        "content": "Have you traveled recently or had any new sexual partners in the last few months?",
         "status": "asked",
-        "answer": "Tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday. No fever, though. Just beat feeling so tired.",
-        "rank": 999,
-        "headline": "Flu-like Symptoms",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for common systemic symptoms indicative of infection or inflammatory processes.",
-        "tags": [
-            "fever",
-            "fatigue",
-            "flu-like symptoms",
-            "infection"
-        ]
-    },
-    {
-        "qid": "f889fdb4-529c-4a66-a8c6-502b620ca69b",
-        "content": "Have you traveled recently, or have you had any new sexual partners or exposure to anyone with hepatitis?",
-        "status": "asked",
-        "answer": "No fever, though. Just beat feeling so tired.",
-        "rank": 999,
-        "headline": "Hepatitis Risk Factors",
-        "domain": "Medical History",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To screen for potential exposures to hepatitis through travel, sexual history, or contact with infected individuals.",
-        "tags": [
-            "hepatitis",
-            "travel",
-            "sexual history",
-            "exposure",
-            "risk assessment"
-        ]
-    },
-    {
-        "qid": "dfb4fece-0be6-48ee-a371-c1d6bb80adc5",
-        "content": "Have you consumed any alcohol in the past month?",
-        "status": "asked",
-        "answer": "Yeah, a little nauseous nothing. I've actually thrown up though",
-        "rank": 999,
-        "headline": "Alcohol Consumption",
-        "domain": "Social History",
-        "system_affected": "General",
-        "clinical_intent": "To determine if the patient has consumed alcohol in the past month, as part of a broader health and lifestyle assessment.",
-        "tags": [
-            "alcohol",
-            "consumption",
-            "social history",
-            "health assessment"
-        ]
-    },
-    {
-        "qid": "51277ad5-4fb4-4d1f-ac62-ba389a8ad86e",
-        "content": "Have you experienced any nausea or vomiting, or noticed any changes in the color of your urine?",
-        "status": "asked",
-        "answer": "Yeah, a little nauseous nothing. I've actually thrown up though and the pain under my ribs. It's just dull, you know, not",
-        "rank": 999,
-        "headline": "GI Symptoms and Urine Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal distress and potential indicators of liver or kidney dysfunction.",
-        "tags": [
-            "nausea",
-            "vomiting",
-            "urine color",
-            "GI symptoms"
-        ]
-    },
-    {
-        "qid": "ba2bdc06-0a8c-45ba-88b0-5fb6d55eda94",
-        "content": "Can you tell me how many extra strength Tylenol or Tylenol PM you typically take in a 24-hour period?",
-        "status": "asked",
-        "answer": "No, no vomiting but my pee, it's been really dark",
-        "rank": 999,
-        "headline": "Tylenol PM Use",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To quantify the daily intake of Tylenol PM, assessing potential overuse or dependence on over-the-counter medications.",
-        "tags": [
-            "tylenol pm",
-            "over-the-counter",
-            "medication use",
-            "assessment"
-        ]
-    },
-    {
-        "qid": "73dc3e55-55ee-47cc-9441-df19142b1787",
-        "content": "Have you experienced any unintentional weight loss recently?",
-        "status": "asked",
-        "answer": "Yeah, a little bit of a heavy feeling under my ribs, there, and my stool, it was kind of pale this morning.",
-        "rank": 999,
-        "headline": "Unintentional Weight Loss",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To identify recent unexplained weight loss, which can be an indicator of underlying medical conditions.",
-        "tags": [
-            "weight loss",
-            "unintentional",
-            "symptom",
-            "screening"
-        ]
-    },
-    {
-        "qid": "3b5adb74-be99-4dc7-828f-dd97e32f545f",
-        "content": "How many Extra Strength Tylenol (acetaminophen) pills do you estimate you take per day?",
-        "status": "asked",
-        "answer": "tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday.",
-        "rank": 999,
-        "headline": "Extra Strength Tylenol Use",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To quantify the daily intake of Extra Strength Tylenol, assessing potential overuse or dependence on over-the-counter medications.",
-        "tags": [
-            "acetaminophen",
-            "tylenol",
-            "over-the-counter",
-            "medication use",
-            "assessment"
-        ]
-    },
-    {
-        "qid": "19e3ec4b-4d5c-4216-8770-3dc41a525774",
-        "content": "Have you traveled outside of the country or had any new sexual partners in the last 3-6 months?",
-        "status": "asked",
-        "answer": "No, no vomiting but my pee, it's been really dark",
+        "answer": "No gallstones. Never had any surgery on my belly.",
         "rank": 999,
         "headline": "Recent Travel/Sexual History",
-        "domain": "Medical History",
+        "domain": "Social History",
         "system_affected": "General",
-        "clinical_intent": "To assess recent travel and sexual history for potential exposure to infectious diseases or other health risks.",
+        "clinical_intent": "To assess for potential exposure to infectious diseases or sexually transmitted infections based on recent activities.",
         "tags": [
             "travel",
-            "sexual history",
-            "exposure",
-            "risk assessment",
-            "infectious disease"
-        ]
-    },
-    {
-        "qid": "81082fd9-ffe2-4be2-88fd-7145fbe912f7",
-        "content": "Have you traveled recently or consumed any unusual foods or raw shellfish?",
-        "status": "asked",
-        "answer": "Yeah, a little bit of a heavy feeling under my ribs, there, and my stool, it was kind of pale this morning.",
-        "rank": 999,
-        "headline": "Recent Exposure Risks",
-        "domain": "Medical History",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To screen for potential exposures to hepatitis or other gastrointestinal illnesses through travel, diet, or contact.",
-        "tags": [
-            "hepatitis",
-            "travel",
-            "foodborne illness",
-            "exposure",
-            "risk assessment"
-        ]
-    },
-    {
-        "qid": "89189b17-6ce2-4a03-95c3-3d8bfe10eec6",
-        "content": "Have you traveled outside of Michigan in the last 3 months?",
-        "status": "asked",
-        "answer": "No",
-        "rank": 999,
-        "headline": "Recent Travel History",
-        "domain": "Medical History",
-        "system_affected": "General",
-        "clinical_intent": "To identify potential exposure to infectious diseases or environmental factors related to travel.",
-        "tags": [
-            "travel",
-            "exposure",
+            "sexual health",
             "infectious disease",
-            "geography"
-        ]
-    },
-    {
-        "qid": "92b4fe53-8885-4e69-8acb-e36190c458fe",
-        "content": "Have you traveled recently or consumed any raw seafood or shellfish?",
-        "status": "asked",
-        "answer": "Tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday.",
-        "rank": 999,
-        "headline": "Travel and Seafood Exposure",
-        "domain": "Medical History",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess potential exposure to foodborne illnesses or infectious agents through recent travel or consumption of raw seafood/shellfish.",
-        "tags": [
-            "travel",
-            "seafood",
-            "shellfish",
-            "foodborne illness",
             "exposure"
         ]
     },
     {
-        "qid": "adeb4322-a084-4c7e-a825-7bee48ccef23",
-        "content": "Have you experienced any fevers or chills since your symptoms began?",
+        "qid": "f6f6b5d5-5bc3-4f7f-838d-24f01c25fe4c",
+        "content": "Have you experienced any itching or skin rashes recently?",
         "status": "asked",
-        "answer": "No fever, though. Just beat feeling so tired.",
+        "answer": "Yeah, a little",
         "rank": 999,
-        "headline": "Fever and Chills",
+        "headline": "Recent Skin Symptoms",
         "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To assess for signs of infection or systemic inflammatory response.",
+        "system_affected": "Integumentary",
+        "clinical_intent": "To identify recent onset of dermatological symptoms such as itching or rash.",
         "tags": [
-            "fever",
-            "chills",
-            "infection",
-            "symptom"
+            "skin",
+            "rash",
+            "itching",
+            "dermatology"
         ]
     },
     {
-        "qid": "ad23c903-efe7-4e14-9bb6-7e033a1d4ea6",
-        "content": "Have you had any recent exposure to anyone diagnosed with hepatitis or engaged in any high-risk behaviors?",
+        "qid": "dce50610-cd2c-40f7-8252-5c6160d72450",
+        "content": "How many Tylenol or Tylenol PM pills would you say you take in a typical day?",
         "status": "asked",
-        "answer": "Nah, been steady here. Doing construction and new partners. Nope",
+        "answer": "lately, maybe six or eight?",
         "rank": 999,
-        "headline": "Hepatitis Exposure/Risk",
-        "domain": "Medical History",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To screen for potential exposure to infectious agents like hepatitis or identify risk factors for transmission.",
-        "tags": [
-            "hepatitis",
-            "exposure",
-            "risk behavior",
-            "infectious disease"
-        ]
-    },
-    {
-        "qid": "1f62e3dd-113d-420b-8a98-51eaadeb99ef",
-        "content": "Have you experienced any fevers or chills recently?",
-        "status": "asked",
-        "answer": "tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday. No fever, though. Just beat feeling so tired.",
-        "rank": 999,
-        "headline": "Fever and Chills",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for signs of infection or inflammatory processes that may indicate an acute illness.",
-        "tags": [
-            "fever",
-            "chills",
-            "infection",
-            "symptom"
-        ]
-    },
-    {
-        "qid": "865a987c-5217-46b9-a991-96a2011f994e",
-        "content": "Have you had any recent exposure to anyone with jaundice or hepatitis?",
-        "status": "asked",
-        "answer": "No",
-        "rank": 999,
-        "headline": "Jaundice/Hepatitis Exposure",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess potential exposure to viral hepatitis or other causes of jaundice, which could indicate liver dysfunction or infectious risk.",
-        "tags": [
-            "jaundice",
-            "hepatitis",
-            "exposure",
-            "liver",
-            "infectious disease"
-        ]
-    },
-    {
-        "qid": "d5369860-44ca-4f40-aa09-e6cb04e15e56",
-        "content": "Have you had any recent exposure to new or unusual foods or contaminated water sources?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
-        "headline": "Food/Water Exposure",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To identify potential sources of foodborne or waterborne illness, such as novel foods or contaminated water, that could cause gastrointestinal symptoms.",
-        "tags": [
-            "foodborne illness",
-            "waterborne illness",
-            "exposure",
-            "gastrointestinal",
-            "contamination"
-        ]
-    },
-    {
-        "qid": "8b2c9b0c-1bb1-4af4-a605-ec5f9717590b",
-        "content": "Have you had any recent exposure to individuals with similar symptoms or known viral hepatitis?",
-        "status": "asked",
-        "answer": "Not that I know of and high-risk stuff not really just working.",
-        "rank": 999,
-        "headline": "Hepatitis Exposure",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess potential exposure to infectious agents, specifically viral hepatitis, to guide diagnostic workup.",
-        "tags": [
-            "hepatitis",
-            "exposure",
-            "viral",
-            "infectious disease"
-        ]
-    },
-    {
-        "qid": "7b415286-484e-4c44-bdaf-9c76102e88f4",
-        "content": "Have you experienced any unintended weight loss recently?",
-        "status": "asked",
-        "answer": "tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday. No fever, though. Just beat feeling so tired.",
-        "rank": 999,
-        "headline": "Unintended Weight Loss",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for significant unintentional weight loss, which can be an indicator of underlying pathology.",
-        "tags": [
-            "weight loss",
-            "unintended",
-            "symptom",
-            "screening"
-        ]
-    },
-    {
-        "qid": "9d392cd1-de73-467d-9d3b-e58c70198ff6",
-        "content": "Have you noticed any changes in your appetite?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
-        "headline": "Appetite Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for changes in appetite, which can be a symptom of various medical conditions.",
-        "tags": [
-            "appetite",
-            "change",
-            "symptom",
-            "gastrointestinal"
-        ]
-    },
-    {
-        "qid": "07d1d836-b091-4a3d-a6b8-5ae5c37e4139",
-        "content": "Have you had any recent exposure to individuals with similar symptoms or known viral illnesses?",
-        "status": "asked",
-        "answer": "No one.",
-        "rank": 999,
-        "headline": "Recent Viral Exposure",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To assess the likelihood of communicable disease transmission and identify potential sources of infection.",
-        "tags": [
-            "exposure",
-            "viral illness",
-            "contagion",
-            "symptoms"
-        ]
-    },
-    {
-        "qid": "cc968414-227e-40bc-af75-b6b49c20b1e9",
-        "content": "Have you taken any other new medications or supplements in the past month, including over-the-counter drugs or herbal remedies?",
-        "status": "asked",
-        "answer": "allergies? Not that I know of I have never had a bad reaction to anything.",
-        "rank": 999,
-        "headline": "New Medication Review",
+        "headline": "Acetaminophen Use",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To identify potential drug interactions or new side effects from recently started medications or supplements.",
-        "tags": [
-            "medication",
-            "supplements",
-            "OTC",
-            "herbal",
-            "interactions"
-        ]
-    },
-    {
-        "qid": "f06d373a-8bf6-481b-933e-0f4c2d2de75a",
-        "content": "Did you experience any vomiting or diarrhea following the start of the Augmentin?",
-        "status": "asked",
-        "answer": "No, no vomiting.",
-        "rank": 999,
-        "headline": "GI Symptoms Post-Antibiotic",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal side effects of antibiotic therapy, such as C. difficile infection.",
-        "tags": [
-            "vomiting",
-            "diarrhea",
-            "antibiotic",
-            "side effect",
-            "GI"
-        ]
-    },
-    {
-        "qid": "d8028663-86e0-4a76-9209-e300416c266e",
-        "content": "Have you taken any other new medications or supplements in the past month, including over-the-counter remedies or herbal supplements?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
-        "headline": "New Medication Review",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To identify potential drug interactions or new side effects from recently started medications or supplements.",
-        "tags": [
-            "medication",
-            "supplements",
-            "OTC",
-            "herbal",
-            "interactions"
-        ]
-    },
-    {
-        "qid": "78775133-94c4-418a-911e-9000e3e095db",
-        "content": "Have you experienced any episodes of severe, sharp pain in your upper right abdomen, particularly after eating fatty meals?",
-        "status": "asked",
-        "answer": "Yeah, a little bit of a heavy feeling under my ribs, there, and my stool, it was kind of pale this morning.",
-        "rank": 999,
-        "headline": "Right Upper Quadrant Pain",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for symptoms suggestive of biliary colic or cholecystitis.",
-        "tags": [
-            "pain",
-            "abdomen",
-            "gallbladder",
-            "biliary",
-            "GI"
-        ]
-    },
-    {
-        "qid": "f00104a0-03b2-46ef-a20a-26ce56ad3336",
-        "content": "Have you experienced any fevers or chills accompanying the abdominal discomfort or jaundice?",
-        "status": "asked",
-        "answer": "Yellow skin. No, not that. I recall in hepatitis. No one.",
-        "rank": 999,
-        "headline": "Fever/Chills with Jaundice",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for signs of infection or inflammation in the biliary system, such as cholangitis, which can accompany jaundice.",
-        "tags": [
-            "fever",
-            "chills",
-            "jaundice",
-            "infection",
-            "biliary"
-        ]
-    },
-    {
-        "qid": "23684a7d-57ec-49dc-b722-d57276f00998",
-        "content": "Can you quantify how many Extra Strength Tylenol or Tylenol PM you typically take in a day?",
-        "status": "asked",
-        "answer": "Ah maybe six or eight, something like that.",
-        "rank": 999,
-        "headline": "Acetaminophen Dosage",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To assess the daily dosage and frequency of over-the-counter pain reliever use, which can indicate pain levels or potential overuse.",
+        "clinical_intent": "To quantify the daily use of over-the-counter acetaminophen, assessing potential for overuse or dependence.",
         "tags": [
             "acetaminophen",
             "tylenol",
-            "dosage",
-            "pain relief"
-        ]
-    },
-    {
-        "qid": "7ee167a9-2e54-4668-b4e2-4ef1cfc63346",
-        "content": "Have you experienced any recent weight loss or changes in appetite?",
-        "status": "asked",
-        "answer": "tired? You better believe it. I feel like I've been hit by a truck had to leave work yesterday.",
-        "rank": 999,
-        "headline": "Weight/Appetite Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for potential underlying medical conditions that may manifest as unintended weight loss or altered appetite, such as malignancy, malabsorption, or metabolic disorders.",
-        "tags": [
-            "weight loss",
-            "appetite",
-            "screening",
-            "malnutrition",
-            "metabolic"
-        ]
-    },
-    {
-        "qid": "2c477655-cfa4-4e33-872e-46733987e9f5",
-        "content": "Have you noticed any changes in the consistency or frequency of your bowel movements?",
-        "status": "asked",
-        "answer": "no, not sharp pain, like that just this dull heavy feeling under my ribs, and it's not really worse after anything. I eat.",
-        "rank": 999,
-        "headline": "Bowel Movement Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for changes in bowel habits that may indicate gastrointestinal distress, obstruction, infection, or inflammatory conditions.",
-        "tags": [
-            "bowel movements",
-            "constipation",
-            "diarrhea",
-            "GI symptoms",
-            "GI health"
-        ]
-    },
-    {
-        "qid": "9c89ff22-1716-4b32-8fa3-cf5ec2e51254",
-        "content": "Have you had any recent exposure to individuals with known viral hepatitis?",
-        "status": "asked",
-        "answer": "No one.",
-        "rank": 999,
-        "headline": "Hepatitis Exposure",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To identify potential risk factors for viral hepatitis transmission, such as recent exposure to infected individuals.",
-        "tags": [
-            "hepatitis",
-            "viral",
-            "exposure",
-            "risk assessment",
-            "infectious disease"
-        ]
-    },
-    {
-        "qid": "43b56644-134b-4bcc-9f5d-b90e81ef08b7",
-        "content": "Can you estimate the total number of Extra Strength Tylenol pills you have taken in the last week?",
-        "status": "asked",
-        "answer": "Ah maybe six or eight, something like that.",
-        "rank": 999,
-        "headline": "OTC Pain Reliever Use",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To quantify over-the-counter analgesic consumption for potential toxicity or masking of symptoms.",
-        "tags": [
-            "analgesic",
-            "acetaminophen",
-            "over-the-counter",
+            "OTC",
             "medication use"
         ]
     },
     {
-        "qid": "ef9b4c9a-e3d9-405c-aa02-f241742b0f18",
-        "content": "How many extra-strength Tylenol pills do you typically take in a 24-hour period?",
+        "qid": "4c4cd154-655e-4039-a111-02033a378bd5",
+        "content": "Have you consumed any alcohol in the past month?",
         "status": "asked",
-        "answer": "Ah maybe six or eight, something like that.",
+        "answer": "No, no fever.",
         "rank": 999,
-        "headline": "Daily Tylenol Intake",
-        "domain": "Medication Review",
+        "headline": "Alcohol Consumption",
+        "domain": "Social History",
         "system_affected": "General",
-        "clinical_intent": "To determine the typical daily quantity of extra-strength Tylenol consumed, aiding in the assessment of pain management strategies and potential for exceeding recommended limits.",
+        "clinical_intent": "To determine the frequency and quantity of alcohol intake, a factor influencing various health conditions and treatment plans.",
         "tags": [
-            "tylenol",
-            "daily intake",
-            "pain medication",
-            "over-the-counter"
+            "alcohol",
+            "consumption",
+            "social history",
+            "substance use"
         ]
     },
     {
-        "qid": "f22c8bb8-3d03-478e-874e-b617dd287db3",
-        "content": "Have you experienced any recent fevers or chills, or any sharp, severe pain in your upper right abdomen, particularly after eating fatty meals?",
+        "qid": "aa74ef20-e65c-4730-9f26-f61fc4a876c0",
+        "content": "Have you experienced any fevers or chills recently?",
         "status": "asked",
-        "answer": "No fever, no chills. Just this weird yellow skin and the itching. And I feel like I could sleep for a decade.",
-        "rank": 999,
-        "headline": "RUQ Pain & Fever",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To screen for symptoms suggestive of cholecystitis or other hepatobiliary pathology, characterized by fever, chills, and postprandial right upper quadrant pain.",
-        "tags": [
-            "fever",
-            "chills",
-            "abdominal pain",
-            "cholecystitis"
-        ]
-    },
-    {
-        "qid": "14ca449c-f9b6-4583-956f-22e3a629c6fd",
-        "content": "Have you had any recent nausea or vomiting, and if so, have you noticed any changes in the color of your urine?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
-        "headline": "Nausea/Vomiting & Urine",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal distress and potential signs of dehydration or biliary obstruction, indicated by changes in urine color.",
-        "tags": [
-            "nausea",
-            "vomiting",
-            "urine color",
-            "dehydration"
-        ]
-    },
-    {
-        "qid": "0ca9a720-203b-402f-a8ef-1985639b90dd",
-        "content": "Have you noticed any changes in the consistency or frequency of your bowel movements beyond the color?",
-        "status": "asked",
-        "answer": "No, not sharp pain, like that just this dull heavy feeling under my ribs and it's not really worse after anything. I eat.",
-        "rank": 999,
-        "headline": "Bowel Movement Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To evaluate for alterations in bowel habits (frequency, consistency) that may indicate gastrointestinal dysfunction or disease.",
-        "tags": [
-            "bowel movements",
-            "constipation",
-            "diarrhea",
-            "GI symptoms"
-        ]
-    },
-    {
-        "qid": "1b6af5fa-2e5d-4d56-9196-954639dddd95",
-        "content": "Have you experienced any abdominal pain specifically in the upper right quadrant that is sharp or severe, especially after consuming fatty meals?",
-        "status": "asked",
-        "answer": "No fever, no chills and no sharp pain after eating, just this dull business under my ribs.",
-        "rank": 999,
-        "headline": "RUQ Abdominal Pain",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for specific characteristics of right upper quadrant abdominal pain suggestive of biliary pathology (e.g., cholecystitis, choledocholithiasis).",
-        "tags": [
-            "abdominal pain",
-            "RUQ pain",
-            "biliary colic",
-            "cholecystitis"
-        ]
-    },
-    {
-        "qid": "56bac7a0-9b6a-4bd6-b09e-ac710c4edea6",
-        "content": "Have you experienced any abdominal pain that is worse after eating fatty meals?",
-        "status": "asked",
-        "answer": "Yeah, a little nauseous nothing. I've actually thrown up though and the pain under my ribs, it's just dull, you know, not sharp, but it's there.",
-        "rank": 999,
-        "headline": "Postprandial Abdominal Pain",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To evaluate abdominal pain related to food intake, particularly fatty meals, which can indicate gallbladder or pancreatic issues.",
-        "tags": [
-            "abdominal pain",
-            "postprandial pain",
-            "fatty meal",
-            "dyspepsia"
-        ]
-    },
-    {
-        "qid": "6518932c-0ea4-4bed-ac26-8d39dd141d19",
-        "content": "Have you noticed any changes in your appetite or experienced any unintentional weight loss?",
-        "status": "asked",
-        "answer": "Nah, I think I'm about the same. Maybe a little less if anything but I'm not really keeping track.",
-        "rank": 999,
-        "headline": "Appetite and Weight Change",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for constitutional symptoms such as changes in appetite or unintentional weight loss, which can indicate underlying systemic illness.",
-        "tags": [
-            "appetite change",
-            "weight loss",
-            "constitutional symptoms",
-            "screening"
-        ]
-    },
-    {
-        "qid": "24309b4e-a4f9-4fd4-9e87-887070addab3",
-        "content": "Have you experienced any fevers or chills, particularly after eating?",
-        "status": "asked",
-        "answer": "No fever, no chills. Just this weird yellow skin and the itching.",
+        "answer": "just tired, really? Tired had to leave work early yesterday. Other than that, not really",
         "rank": 999,
         "headline": "Fever and Chills",
         "domain": "Symptom Triage",
         "system_affected": "General",
-        "clinical_intent": "To assess for signs of infection or inflammatory processes, particularly postprandial fevers which can indicate biliary issues.",
+        "clinical_intent": "To inquire about recent onset of fever or chills, which are common indicators of infection or inflammatory processes.",
         "tags": [
             "fever",
             "chills",
-            "infection",
-            "postprandial"
+            "symptom",
+            "infection"
         ]
     },
     {
-        "qid": "2400fa7d-47a6-4195-9481-4abef7282cf5",
-        "content": "Can you describe the typical color of your urine before it turned dark?",
+        "qid": "7e49cbf0-8524-4dbd-8f4a-653dde1f7472",
+        "content": "Have you traveled recently or had any new exposures to medications or supplements?",
         "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
+        "answer": "No, no fever.",
         "rank": 999,
-        "headline": "Urine Color Baseline",
+        "headline": "Travel and Exposures",
+        "domain": "Medical History",
+        "system_affected": "General",
+        "clinical_intent": "To identify potential environmental or iatrogenic exposures (travel, new medications/supplements) that could be related to current health issues.",
+        "tags": [
+            "travel",
+            "exposure",
+            "medication",
+            "supplement"
+        ]
+    },
+    {
+        "qid": "6e734628-a24b-4b6f-81ee-092a007c6bb1",
+        "content": "Have you traveled recently or consumed any raw seafood or shellfish in the past few months?",
+        "status": "asked",
+        "answer": "No, no fever.",
+        "rank": 999,
+        "headline": "Travel and Seafood Exposure",
+        "domain": "Medical History",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To assess for potential exposure to foodborne pathogens or toxins through recent travel or consumption of raw seafood/shellfish, relevant for gastrointestinal symptoms.",
+        "tags": [
+            "travel",
+            "seafood",
+            "shellfish",
+            "foodborne illness"
+        ]
+    },
+    {
+        "qid": "90a17451-b5fc-4ae0-8bcb-29975d91d0d3",
+        "content": "Have you experienced any fevers or chills, particularly after eating fatty meals?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there",
+        "rank": 999,
+        "headline": "Fever, Chills, and Meals",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To investigate the occurrence of fever and chills, particularly in relation to fatty meals, to assess for potential gallbladder or biliary issues.",
+        "tags": [
+            "fever",
+            "chills",
+            "fatty meals",
+            "gallbladder"
+        ]
+    },
+    {
+        "qid": "0c664268-a420-41b8-99d2-c6f4f313c33a",
+        "content": "Have you experienced any recent travel or exposure to individuals with similar symptoms?",
+        "status": "asked",
+        "answer": "No, no fever.",
+        "rank": 999,
+        "headline": "Travel and Symptom Exposure",
+        "domain": "Medical History",
+        "system_affected": "General",
+        "clinical_intent": "To investigate potential infectious or environmental exposures through recent travel or contact with symptomatic individuals, relevant for communicable diseases.",
+        "tags": [
+            "travel",
+            "exposure",
+            "symptoms",
+            "infectious disease"
+        ]
+    },
+    {
+        "qid": "87e60704-418b-4e57-a0d4-97f0363b5964",
+        "content": "Have you had any prior episodes of gallstones or abdominal surgeries?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning, it was weird.",
+        "rank": 999,
+        "headline": "Gallstones and Abdominal Surgery",
+        "domain": "Medical History",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To ascertain a history of gallstones or prior abdominal surgeries, which are significant risk factors and potential causes for current abdominal complaints.",
+        "tags": [
+            "gallstones",
+            "abdominal surgery",
+            "gastrointestinal history",
+            "risk factor"
+        ]
+    },
+    {
+        "qid": "86daf3da-aaa5-4d85-92ff-80972046a1eb",
+        "content": "Have you experienced any unintentional weight loss recently?",
+        "status": "asked",
+        "answer": "Just tired, really? Tired had to leave work early yesterday.",
+        "rank": 999,
+        "headline": "Unintentional Weight Loss",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To screen for unintentional weight loss, a potential indicator of underlying malignancy, metabolic disorders, or other significant health issues.",
+        "tags": [
+            "weight loss",
+            "unintentional",
+            "screening",
+            "constitutional symptom"
+        ]
+    },
+    {
+        "qid": "f0b6db5a-8863-468a-8e7d-f54b7f0eab57",
+        "content": "Have you experienced any fevers or chills, particularly after eating?",
+        "status": "asked",
+        "answer": "No, no fever, or chills",
+        "rank": 999,
+        "headline": "Fever and Chills",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To identify symptoms of infection or inflammatory processes, particularly when associated with potential foodborne illness.",
+        "tags": [
+            "fever",
+            "chills",
+            "infection symptoms"
+        ]
+    },
+    {
+        "qid": "01b756e9-de77-479e-b14f-9c491aaaaee0",
+        "content": "Have you traveled recently or had any new exposures to individuals who were ill?",
+        "status": "asked",
+        "answer": "No, no fever. Just this tiredness and the itching is driving me nuts.",
+        "rank": 999,
+        "headline": "Recent Travel/Illness Exposure",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To assess potential exposure to communicable diseases through recent travel or contact with sick individuals.",
+        "tags": [
+            "travel",
+            "exposure",
+            "illness",
+            "infectious disease"
+        ]
+    },
+    {
+        "qid": "7562a6a9-b760-4aaf-9056-82535d997471",
+        "content": "Have you experienced any pain after eating fatty meals?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning, it was weird.",
+        "rank": 999,
+        "headline": "Postprandial Pain",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To evaluate for symptoms suggestive of gastrointestinal distress, particularly related to fatty meal intake.",
+        "tags": [
+            "pain",
+            "digestion",
+            "fatty meal",
+            "gastrointestinal"
+        ]
+    },
+    {
+        "qid": "c40cec0d-f43f-4157-9f40-ff89d0a2a6aa",
+        "content": "Did you experience any rash or fever during or immediately after taking the Augmentin?",
+        "status": "asked",
+        "answer": "No, no fever.",
+        "rank": 999,
+        "headline": "Augmentin Side Effects",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To assess for potential adverse reactions or side effects related to a specific medication (Augmentin).",
+        "tags": [
+            "medication side effect",
+            "rash",
+            "fever",
+            "Augmentin"
+        ]
+    },
+    {
+        "qid": "b3af8152-fb0d-4556-91f9-864b17d64693",
+        "content": "Have you traveled recently or had any new exposures to people who were ill?",
+        "status": "asked",
+        "answer": "No gallstones. Never had any surgery on my belly.",
+        "rank": 999,
+        "headline": "Recent Travel and Exposures",
+        "domain": "Social History",
+        "system_affected": "General",
+        "clinical_intent": "To identify potential exposure to infectious agents through travel or contact with ill individuals.",
+        "tags": [
+            "travel history",
+            "exposure",
+            "infectious disease"
+        ]
+    },
+    {
+        "qid": "dccd0a84-f4b6-44f2-8a82-4a2b2d7326cb",
+        "content": "Have you noticed any changes in the color of your urine, such as it becoming darker?",
+        "status": "asked",
+        "answer": "No, not really. I haven't really had much of an appetite lately.",
+        "rank": 999,
+        "headline": "Urine Color Change",
         "domain": "Symptom Triage",
         "system_affected": "Genitourinary",
-        "clinical_intent": "To establish a baseline for urine color to better assess changes, such as darkening, which can indicate dehydration or liver issues.",
+        "clinical_intent": "To screen for potential urinary tract issues, dehydration, or liver problems indicated by changes in urine color.",
         "tags": [
             "urine color",
-            "baseline",
+            "urinary symptom",
             "dehydration",
             "liver function"
         ]
     },
     {
-        "qid": "9eced949-ee33-42b9-9935-41081dccde74",
-        "content": "Have you experienced any abdominal pain, particularly in the upper right quadrant, that is sharp or severe, especially after consuming fatty meals?",
+        "qid": "52f57fa4-543d-4ef0-aa3e-4eedd4257d0e",
+        "content": "Have you experienced any pain that radiates to your back or shoulder blade?",
         "status": "asked",
-        "answer": "no, not sharp pain, like that, just this dull heavy feeling under my ribs, and it's not the worst though.",
+        "answer": "No gallstones. Never had any surgery on my belly.",
         "rank": 999,
-        "headline": "RUQ Abdominal Pain",
+        "headline": "Radiating Pain Assessment",
         "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To evaluate for symptoms suggestive of biliary colic or cholecystitis, characterized by right upper quadrant pain, especially after fatty meals.",
+        "system_affected": "Musculoskeletal",
+        "clinical_intent": "To evaluate the nature and potential source of pain, particularly for conditions like cardiac ischemia or musculoskeletal issues.",
         "tags": [
-            "abdominal pain",
-            "RUQ pain",
-            "biliary colic",
-            "cholecystitis",
-            "fatty meal"
+            "pain",
+            "radiation",
+            "cardiac",
+            "musculoskeletal"
         ]
     },
     {
-        "qid": "fc12be37-c15c-47f8-94f2-354bf20f7134",
-        "content": "Have you had any recent viral illnesses, such as a cold or flu, in the weeks leading up to these symptoms?",
+        "qid": "a51544e9-92af-4cb9-a75b-0d4b21ef7a3f",
+        "content": "Have you consumed any alcohol in the past 4 weeks, and if so, how much?",
         "status": "asked",
-        "answer": "No fever, though. Just beat feeling so tired.",
+        "answer": "I have a few beers with the guys. Nothing crazy, maybe three or four night during the week. A little more on Saturday",
         "rank": 999,
-        "headline": "Recent Viral Illness",
-        "domain": "Medical History",
+        "headline": "Alcohol Consumption",
+        "domain": "Social History",
         "system_affected": "General",
-        "clinical_intent": "To determine if recent viral infections may be a contributing factor or trigger for current symptoms.",
+        "clinical_intent": "To assess alcohol intake for potential impact on health conditions or medication interactions.",
         "tags": [
-            "viral illness",
-            "cold",
-            "flu",
-            "symptom trigger"
+            "alcohol",
+            "substance use",
+            "intake assessment"
         ]
     },
     {
-        "qid": "9c9003b5-14ba-4f1f-86ba-8decb97aeabe",
-        "content": "Have you experienced any unintentional weight loss or changes in your appetite recently?",
+        "qid": "6118f984-ec63-4a8b-9d60-49315a5a4e98",
+        "content": "Can you recall the exact dates you started and finished the Augmentin prescription?",
         "status": "asked",
-        "answer": "Nah, I think I'm about the same. Maybe a little less if anything but I'm not really keeping track.",
-        "rank": 999,
-        "headline": "Weight and Appetite Changes",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for potential underlying conditions such as hyperthyroidism, malignancy, or malabsorption syndromes that can manifest as unintentional weight loss or appetite changes.",
-        "tags": [
-            "weight loss",
-            "appetite",
-            "screening",
-            "constitutional symptoms"
-        ]
-    },
-    {
-        "qid": "ce8f30d4-9ba8-482f-aad6-30d4cb1ab854",
-        "content": "Can you recall the exact dates you started and finished the Augmentin prescription for your dental abscess?",
-        "status": "asked",
-        "answer": "Nah, I think I'm about the same. Maybe a little less if anything but I'm not really keeping track.",
+        "answer": "No, no fever, no finish them. Maybe three weeks ago, the tooth still hurt though.",
         "rank": 999,
         "headline": "Augmentin Course Dates",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To confirm completion and adherence to antibiotic therapy for a specific infection.",
+        "clinical_intent": "To determine the duration and adherence of a specific antibiotic treatment.",
         "tags": [
-            "antibiotics",
             "medication adherence",
-            "dental abscess",
-            "Augmentin"
+            "antibiotic",
+            "Augmentin",
+            "treatment duration"
         ]
     },
     {
-        "qid": "0da854f4-e894-45f6-8b29-f581a80f0712",
-        "content": "Have you experienced any vomiting or diarrhea since your symptoms began?",
-        "status": "asked",
-        "answer": "No fever, no chills. Just this weird yellow skin and the itching. And I feel like I could sleep for a decade.",
-        "rank": 999,
-        "headline": "Vomiting and Diarrhea",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal distress, which could indicate infection, food poisoning, medication side effects, or other systemic illnesses.",
-        "tags": [
-            "vomiting",
-            "diarrhea",
-            "gastrointestinal symptoms",
-            "infection"
-        ]
-    },
-    {
-        "qid": "bc8b7996-c328-43aa-92b0-d7e48c8ac75a",
-        "content": "Have you had any prior episodes of gallstones or gallbladder issues?",
-        "status": "asked",
-        "answer": "Gallstones know, never had that don't know much about it.",
-        "rank": 999,
-        "headline": "Gallbladder History",
-        "domain": "Medical History",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for pre-existing gastrointestinal conditions that may impact current health status or treatment.",
-        "tags": [
-            "gallstones",
-            "gallbladder",
-            "GI history"
-        ]
-    },
-    {
-        "qid": "85cc4822-add8-4602-817a-076ac6947351",
-        "content": "Have you had any recent fevers, chills, or flu-like symptoms prior to the onset of jaundice?",
-        "status": "asked",
-        "answer": "No fever, no chills.",
-        "rank": 999,
-        "headline": "Pre-Jaundice Symptoms",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To identify potential infectious or inflammatory causes preceding the onset of jaundice.",
-        "tags": [
-            "jaundice",
-            "fever",
-            "chills",
-            "flu-like symptoms",
-            "infection"
-        ]
-    },
-    {
-        "qid": "327688bf-375b-4dc4-87c8-6c73ea478d70",
-        "content": "Have you experienced any abdominal pain that is worse after consuming fatty meals?",
-        "status": "asked",
-        "answer": "no, not sharp pain, like that, just this dull heavy feeling under my ribs, and it's not the worst though.",
-        "rank": 999,
-        "headline": "Postprandial Abdominal Pain",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To evaluate for symptoms suggestive of gallbladder disease or other digestive disorders exacerbated by food intake.",
-        "tags": [
-            "abdominal pain",
-            "fatty meals",
-            "dyspepsia",
-            "gallbladder disease"
-        ]
-    },
-    {
-        "qid": "df7a848b-c6e8-4c9c-89ab-c10c2886df55",
-        "content": "Have you experienced any unintentional weight loss in the past few months?",
-        "status": "asked",
-        "answer": "Nah, I think I'm about the same. Maybe a little less if anything but I'm not really keeping track.",
-        "rank": 999,
-        "headline": "Unintentional Weight Loss",
-        "domain": "Symptom Triage",
-        "system_affected": "General",
-        "clinical_intent": "To screen for potential underlying medical conditions indicated by unexplained weight loss.",
-        "tags": [
-            "weight loss",
-            "unintentional weight loss",
-            "symptom screening"
-        ]
-    },
-    {
-        "qid": "7e176929-b2f3-4024-8655-b08fd07b3c5b",
-        "content": "Can you recall the exact dosage and frequency of the Extra Strength Tylenol you have been taking over the last week?",
-        "status": "asked",
-        "answer": "Ah maybe six or eight, something like that.",
-        "rank": 999,
-        "headline": "Tylenol Dosage Confirmation",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To confirm the precise dosage and frequency of over-the-counter medication use for accurate assessment of intake and potential side effects.",
-        "tags": [
-            "acetaminophen",
-            "Tylenol",
-            "medication dosage",
-            "OTC"
-        ]
-    },
-    {
-        "qid": "9f8e4f3c-3362-4e88-8d0d-2e7d5b3e8df2",
-        "content": "Have you had any recent infections, particularly viral ones, or any history of gallstones or pancreatitis?",
-        "status": "asked",
-        "answer": "No, not that. I recall in hepatitis. No one.",
-        "rank": 999,
-        "headline": "Infection and Gallstone History",
-        "domain": "Medical History",
-        "system_affected": "General",
-        "clinical_intent": "To identify potential contributing factors to current symptoms by inquiring about recent infections and history of gallstones or pancreatitis.",
-        "tags": [
-            "infection",
-            "viral infection",
-            "gallstones",
-            "pancreatitis"
-        ]
-    },
-    {
-        "qid": "d8fce555-990f-42ee-b23b-907605969b8e",
+        "qid": "2b266160-ae57-4790-8d8b-d5d2befd34e3",
         "content": "Have you experienced any nausea or vomiting since your symptoms began?",
         "status": "asked",
-        "answer": "Yeah, a little nauseous nothing. I've actually thrown up though",
+        "answer": "just the yellow and the tiredness. And this itching is constant now, feels like little bugs crawling under my skin.",
         "rank": 999,
-        "headline": "Nausea/Vomiting Assessment",
+        "headline": "Nausea and Vomiting",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal distress or systemic symptoms that may indicate various underlying conditions.",
+        "clinical_intent": "To assess for common gastrointestinal symptoms that may indicate various underlying conditions.",
         "tags": [
             "nausea",
             "vomiting",
@@ -988,75 +464,276 @@
         ]
     },
     {
-        "qid": "e2486368-7bb3-42a8-977e-e06cbb0a5b54",
-        "content": "Have you experienced any recent changes in your diet, particularly increased consumption of fatty foods?",
+        "qid": "6ee3c1d9-ad8f-482d-b487-969f18c91cb1",
+        "content": "Has the color of your urine changed, becoming darker than usual?",
+        "status": "asked",
+        "answer": "No, not really. I haven't really had much of an appetite lately.",
+        "rank": 999,
+        "headline": "Urine Color Change",
+        "domain": "Symptom Triage",
+        "system_affected": "Renal",
+        "clinical_intent": "To identify potential signs of dehydration, liver issues, or urinary tract problems.",
+        "tags": [
+            "urine color",
+            "hydration status",
+            "liver function",
+            "renal assessment"
+        ]
+    },
+    {
+        "qid": "ebc9286d-1ddf-4b87-bc97-f7e32dbbab58",
+        "content": "Have you experienced any abdominal pain that radiates to your back?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning, it was weird.",
+        "rank": 999,
+        "headline": "Abdominal Pain Radiation",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To evaluate the characteristics of abdominal pain, specifically its radiation to the back, which can indicate various pathologies.",
+        "tags": [
+            "abdominal pain",
+            "radiation",
+            "back pain",
+            "GI symptoms"
+        ]
+    },
+    {
+        "qid": "4e5a7b51-19a6-4bf5-b2b6-88e6492b955e",
+        "content": "Have you experienced any abdominal pain that is sharp or colicky, particularly after meals?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning, it was weird.",
+        "rank": 999,
+        "headline": "Abdominal Pain Assessment",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To evaluate the characteristics of abdominal pain, specifically looking for patterns suggestive of gastrointestinal distress or pathology.",
+        "tags": [
+            "abdominal pain",
+            "colicky pain",
+            "postprandial",
+            "GI symptoms"
+        ]
+    },
+    {
+        "qid": "e1a0f4bd-da89-455f-b3fc-1d2559083290",
+        "content": "Have you noticed any changes in the color of your urine, such as it becoming darker than usual?",
+        "status": "asked",
+        "answer": "No, no fever.",
+        "rank": 999,
+        "headline": "Urine Color Change",
+        "domain": "Symptom Triage",
+        "system_affected": "Renal",
+        "clinical_intent": "To assess for changes in urine color, which can be indicative of dehydration, liver issues, or urinary tract problems.",
+        "tags": [
+            "urine color",
+            "hematuria",
+            "jaundice",
+            "hydration"
+        ]
+    },
+    {
+        "qid": "60f7a426-a1cf-48df-a953-cde307038368",
+        "content": "Have you experienced any changes in the color of your urine, such as it becoming darker?",
+        "status": "asked",
+        "answer": "No, no fever.",
+        "rank": 999,
+        "headline": "Urine Color Change",
+        "domain": "Symptom Triage",
+        "system_affected": "Genitourinary",
+        "clinical_intent": "To identify changes in urine color that may indicate dehydration, urinary tract infection, liver issues, or other underlying medical conditions.",
+        "tags": [
+            "urine color",
+            "hematuria",
+            "jaundice",
+            "hydration"
+        ]
+    },
+    {
+        "qid": "e5772917-dac5-40ac-8f8e-f60253001648",
+        "content": "Have you traveled recently or had any close contact with individuals who have been ill?",
+        "status": "asked",
+        "answer": "No travel and no one. I know has been sick.",
+        "rank": 999,
+        "headline": "Recent Travel and Exposure",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To assess potential exposure to infectious agents or recent environmental factors contributing to current symptoms.",
+        "tags": [
+            "travel history",
+            "exposure",
+            "infectious disease",
+            "contact tracing"
+        ]
+    },
+    {
+        "qid": "5909039d-13ce-4d32-af2d-c4804075c1de",
+        "content": "Can you recall the exact dates you were taking the Augmentin and when you started taking the increased amount of Tylenol?",
+        "status": "asked",
+        "answer": "No, no wait, change.",
+        "rank": 999,
+        "headline": "Medication Dates",
+        "domain": "Medication Review",
+        "system_affected": "General",
+        "clinical_intent": "To establish a precise timeline of medication intake, including dosage changes, for accurate assessment of treatment efficacy and potential side effects.",
+        "tags": [
+            "medication",
+            "timeline",
+            "dosage",
+            "augmentin",
+            "tylenol"
+        ]
+    },
+    {
+        "qid": "6ebcb568-d3e7-43d6-8dee-16bcbcb83720",
+        "content": "Have you experienced any abdominal pain specifically in the upper right quadrant that radiates to your back?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there",
+        "rank": 999,
+        "headline": "Right Upper Quadrant Pain",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To identify potential biliary pathology (e.g., cholecystitis, choledocholithiasis) or referred pain patterns.",
+        "tags": [
+            "abdominal pain",
+            "RUQ pain",
+            "radiating pain",
+            "biliary system"
+        ]
+    },
+    {
+        "qid": "6b560456-2dd7-4b17-97a1-97cc78525e44",
+        "content": "Have you noticed any changes in the color of your urine, such as it appearing darker than usual?",
+        "status": null,
+        "answer": null,
+        "rank": 3,
+        "headline": "Urine Color Change",
+        "domain": "Symptom Triage",
+        "system_affected": "Genitourinary",
+        "clinical_intent": "To assess for potential signs of dehydration, liver dysfunction, or urinary tract issues.",
+        "tags": [
+            "urine color",
+            "hydration",
+            "liver function",
+            "UTI"
+        ]
+    },
+    {
+        "qid": "b2d69b8b-117f-4f74-a6b6-a53e0f134ea4",
+        "content": "Have you experienced any pain radiating to your back or shoulder blade?",
+        "status": "asked",
+        "answer": "No travel and no one. I know has been sick.",
+        "rank": 999,
+        "headline": "Referred Pain Assessment",
+        "domain": "Symptom Triage",
+        "system_affected": "Musculoskeletal",
+        "clinical_intent": "To identify potential referred pain patterns that may indicate underlying conditions affecting organs or structures distant from the reported pain site.",
+        "tags": [
+            "referred pain",
+            "back pain",
+            "shoulder pain",
+            "pain assessment"
+        ]
+    },
+    {
+        "qid": "674e6c28-d775-4c67-b602-676d0317ccc0",
+        "content": "Have you experienced any abdominal pain that is sharp or cramping, especially after eating fatty meals?",
+        "status": "asked",
+        "answer": "no sharper cramping pain?",
+        "rank": 999,
+        "headline": "Postprandial Abdominal Pain",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To evaluate for gastrointestinal distress, particularly biliary colic or peptic ulcer disease, triggered by fatty meal consumption.",
+        "tags": [
+            "abdominal pain",
+            "fatty meal",
+            "cramping pain",
+            "gastrointestinal"
+        ]
+    },
+    {
+        "qid": "637ecd4b-21c6-4ad5-be19-e9c0e9306b98",
+        "content": "Have you experienced any abdominal pain specifically in the upper right quadrant that radiates to your back or shoulder?",
+        "status": "asked",
+        "answer": "Yeah, there's like a dull heaviness under my ribs on the right side. It's not sharp just there and my stool this morning, it was weird.",
+        "rank": 999,
+        "headline": "RUQ Pain Referral",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To assess for symptoms suggestive of gallbladder disease (cholecystitis, cholelithiasis) or other hepatobiliary pathology presenting with right upper quadrant pain radiating to the back or shoulder.",
+        "tags": [
+            "right upper quadrant pain",
+            "gallbladder",
+            "referred pain",
+            "abdominal pain"
+        ]
+    },
+    {
+        "qid": "4640d0d6-13ff-494f-a296-41909534de62",
+        "content": "Have you experienced any abdominal pain that is sharp or colicky, particularly after consuming fatty foods?",
+        "status": null,
+        "answer": null,
+        "rank": 1,
+        "headline": "Postprandial Abdominal Pain",
+        "domain": "Symptom Triage",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To evaluate for symptoms suggestive of gallbladder disease, pancreatitis, or other gastrointestinal distress related to food intake.",
+        "tags": [
+            "abdominal pain",
+            "fatty foods",
+            "gallbladder",
+            "pancreatitis"
+        ]
+    },
+    {
+        "qid": "19b8c976-9528-4bc5-806d-8bc202193768",
+        "content": "Have you experienced any fevers or chills, especially in the last few days?",
+        "status": null,
+        "answer": null,
+        "rank": 2,
+        "headline": "Fever and Chills",
+        "domain": "Symptom Triage",
+        "system_affected": "General",
+        "clinical_intent": "To screen for signs of infection or inflammatory processes.",
+        "tags": [
+            "fever",
+            "chills",
+            "infection",
+            "inflammation"
+        ]
+    },
+    {
+        "qid": "e7dfa84f-5713-48c4-a223-7055bf8db450",
+        "content": "Can you recall the specific milligram strength of the Tylenol and Tylenol PM you have been taking?",
+        "status": null,
+        "answer": null,
+        "rank": 5,
+        "headline": "Acetaminophen Strength",
+        "domain": "Medication Review",
+        "system_affected": "General",
+        "clinical_intent": "To determine the precise dosage of acetaminophen and diphenhydramine being taken, crucial for assessing overdose risk and therapeutic efficacy.",
+        "tags": [
+            "acetaminophen",
+            "Tylenol",
+            "dosage",
+            "medication strength"
+        ]
+    },
+    {
+        "qid": "276117a3-d88c-4cbe-9617-ed0ddabe8e5a",
+        "content": "Have you experienced any dark urine or changes in the color of your urine recently?",
         "status": null,
         "answer": null,
         "rank": 4,
-        "headline": "Dietary Changes",
-        "domain": "Lifestyle",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess potential dietary triggers for gastrointestinal symptoms or to evaluate adherence to dietary recommendations.",
+        "headline": "Recent Urine Color Change",
+        "domain": "Symptom Triage",
+        "system_affected": "Genitourinary",
+        "clinical_intent": "To identify recent changes in urine color that may indicate underlying medical conditions such as dehydration, liver issues, or urinary tract problems.",
         "tags": [
-            "diet",
-            "nutrition",
-            "gastrointestinal",
-            "fatty foods"
+            "urine color",
+            "dehydration",
+            "liver function",
+            "UTI"
         ]
-    },
-    {
-        "qid": "223d449b-68f9-4c97-ad93-19509d691fd1",
-        "content": "Have you taken any other medications, including over-the-counter drugs or herbal supplements, in addition to Tylenol and Augmentin in the past month?",
-        "status": "asked",
-        "answer": "No, no vomiting. But my pee it's been really dark like Coke, you know. Happened a few days ago.",
-        "rank": 999,
-        "headline": "Medication Review",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To obtain a comprehensive list of all medications, including OTC and supplements, to identify potential drug interactions or duplications.",
-        "tags": [
-            "medication",
-            "over-the-counter",
-            "herbal supplements",
-            "drug interactions"
-        ]
-    },
-    {
-        "qid": "e4aacc98-0009-4e6f-af14-eec5a76d5693",
-        "content": "Have you taken any other over-the-counter or prescription medications in the past month besides Tylenol and Augmentin?",
-        "status": "asked",
-        "answer": "Nah, been steady here. Doing construction and new partners. Nope",
-        "rank": 999,
-        "headline": "Medication Review",
-        "domain": "Medication Review",
-        "system_affected": "General",
-        "clinical_intent": "To obtain a comprehensive list of all medications, including OTC and prescription, to identify potential drug interactions or duplications.",
-        "tags": [
-            "medication",
-            "over-the-counter",
-            "prescription",
-            "drug interactions"
-        ]
-    },
-    {
-        "qid": "958b7714-0386-4dc5-bef4-dc297990665d",
-        "content": "Can you recall the exact dosage and frequency of the Tylenol PM you were taking in addition to the Extra Strength Tylenol?",
-        "status": null,
-        "answer": null,
-        "rank": 3
-    },
-    {
-        "qid": "14c94632-e8ca-4dda-9ccb-04274440fb0d",
-        "content": "Have you taken any other pain medications or supplements in addition to the Tylenol recently?",
-        "status": null,
-        "answer": null,
-        "rank": 2
-    },
-    {
-        "qid": "7920eb8e-73f2-480d-ba72-f81e3023a5ea",
-        "content": "Have you experienced any unintentional weight loss or changes in appetite recently?",
-        "status": null,
-        "answer": null,
-        "rank": 1
     }
 ]

@@ -458,13 +458,79 @@ class InterviewSupervisor(BaseLogicAgent):
         except Exception as e:
             print(f"Error in InterviewSupervisor: {e}")
             return {"end": False, "state": "mid"}
+
+
+### OLD
+# class TranscribeStructureAgent(BaseLogicAgent):
+#     def __init__(self):
+#         super().__init__()
         
+#         # Updated Schema to include 'highlights'
+#         self.response_schema = {
+#             "type": "ARRAY",
+#             "items": {
+#                 "type": "OBJECT",
+#                 "properties": {
+#                     "role": {
+#                         "type": "STRING",
+#                         "description": "The identity of the speaker (Nurse or Patient)."
+#                     },
+#                     "message": {
+#                         "type": "STRING",
+#                         "description": "The verbatim transcript text."
+#                     },
+#                     "highlights": {
+#                         "type": "ARRAY",
+#                         "items": {
+#                             "type": "STRING"
+#                         },
+#                         "description": "List of important words (symptoms, durations, body parts, medications) found exactly in the message."
+#                     }
+#                 },
+#                 "required": ["role", "message", "highlights"]
+#             }
+#         }
+        
+#         try:
+#             with open("system_prompts/transcribe_structure_agent.md", "r", encoding="utf-8") as f: 
+#                 self.system_instruction = f.read()
+#         except Exception: 
+#             self.system_instruction = "Parse medical transcription into Nurse/Patient roles with highlights."
 
+#     async def structure_transcription(self, existing_transcript: list, new_raw_text: str):
+#         try:
+#             # We explicitly ask for the highlights in the content prompt as well
+#             prompt_content = (
+#                 f"Existing Structured Transcript:\n{json.dumps(existing_transcript)}\n\n"
+#                 f"New Raw Text to Parse:\n{new_raw_text}"
+#             )
 
-class TranscribeStructureAgent(BaseLogicAgent):
+#             response = await self.client.aio.models.generate_content(
+#                 model="gemini-2.5-flash-lite", 
+#                 contents=prompt_content,
+#                 config=types.GenerateContentConfig(
+#                     response_mime_type="application/json", 
+#                     response_schema=self.response_schema, 
+#                     system_instruction=self.system_instruction, 
+#                     temperature=0.0
+#                 )
+#             )
+            
+#             return json.loads(response.text)
+            
+#         except Exception as e:
+#             print(f"Error in structure_transcription: {e}")
+#             return existing_transcript
+
+# 
+#    
+
+class TranscribeStructureAgent():
     def __init__(self):
-        super().__init__()
-        
+        # super().__init__()
+        self.client = genai.Client(
+            api_key=os.getenv("GOOGLE_API_KEY")
+            )
         # Updated Schema to include 'highlights'
         self.response_schema = {
             "type": "ARRAY",
@@ -506,7 +572,7 @@ class TranscribeStructureAgent(BaseLogicAgent):
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.0-flash-lite", 
+                model="gemini-3-flash-preview", 
                 contents=prompt_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json", 
@@ -658,7 +724,7 @@ class ConsultationAnalyticAgent(BaseLogicAgent):
         if not structured_transcript: return {}
         try:
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.0-flash-lite",
+                model="gemini-2.5-flash-lite",
                 contents=f"Transcript for Analysis:\n{json.dumps(structured_transcript)}",
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
@@ -728,7 +794,7 @@ class PatientEducationAgent(BaseLogicAgent):
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.0-flash-lite", 
+                model="gemini-2.5-flash-lite", 
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
@@ -806,7 +872,7 @@ class ClinicalChecklistAgent(BaseLogicAgent):
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-2.0-flash-lite",
+                model="gemini-2.5-flash-lite",
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",

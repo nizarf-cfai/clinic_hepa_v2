@@ -1,21 +1,25 @@
 {
     "ranked": [
         {
-            "question": "Have you experienced any unintentional weight loss or changes in appetite recently?",
-            "qid": "7920eb8e-73f2-480d-ba72-f81e3023a5ea"
+            "question": "Have you experienced any abdominal pain that is sharp or colicky, particularly after consuming fatty foods?",
+            "qid": "4640d0d6-13ff-494f-a296-41909534de62"
         },
         {
-            "question": "Have you taken any other pain medications or supplements in addition to the Tylenol recently?",
-            "qid": "14c94632-e8ca-4dda-9ccb-04274440fb0d"
+            "question": "Have you experienced any fevers or chills, especially in the last few days?",
+            "qid": "19b8c976-9528-4bc5-806d-8bc202193768"
         },
         {
-            "question": "Can you recall the exact dosage and frequency of the Tylenol PM you were taking in addition to the Extra Strength Tylenol?",
-            "qid": "958b7714-0386-4dc5-bef4-dc297990665d"
+            "question": "Have you noticed any changes in the color of your urine, such as it appearing darker than usual?",
+            "qid": "6b560456-2dd7-4b17-97a1-97cc78525e44"
         },
         {
-            "question": "Have you experienced any recent changes in your diet, particularly increased consumption of fatty foods?",
-            "qid": "e2486368-7bb3-42a8-977e-e06cbb0a5b54"
+            "question": "Have you experienced any dark urine or changes in the color of your urine recently?",
+            "qid": "276117a3-d88c-4cbe-9617-ed0ddabe8e5a"
+        },
+        {
+            "question": "Can you recall the specific milligram strength of the Tylenol and Tylenol PM you have been taking?",
+            "qid": "e7dfa84f-5713-48c4-a223-7055bf8db450"
         }
     ],
-    "next_question": "Have you experienced any unintentional weight loss or changes in appetite recently?"
+    "next_question": "Have you experienced any abdominal pain that is sharp or colicky, particularly after consuming fatty foods?"
 }

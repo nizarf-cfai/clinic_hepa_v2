@@ -1,92 +1,65 @@
 [
     {
-        "headline": "Jaundice Emergency Warning",
+        "headline": "Jaundice Warning",
         "content": "You must go to the Emergency Room immediately if your skin or eyes turn yellow. This could indicate a serious liver problem.",
-        "reasoning": "Failure to warn about jaundice symptoms could lead to delayed diagnosis of a life-threatening condition, resulting in a malpractice claim.",
+        "reasoning": "Failure to warn about jaundice could lead to delayed diagnosis of a critical condition, resulting in a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient reports yellowing of skin and eyes.",
-        "status": "asked"
-    },
-    {
-        "headline": "Itching Symptom Clarification",
-        "content": "Itching can be a symptom of many conditions. We will investigate the cause. Do not scratch excessively, as this can lead to skin damage and infection.",
-        "reasoning": "Providing context for the itching symptom prevents the patient from assuming the worst and potentially seeking unnecessary emergency care. It also sets expectations for the diagnostic process.",
-        "category": "Reassurance",
-        "urgency": "Normal",
-        "context_reference": "Patient reports itching all over.",
+        "context_reference": "Patient states they are turning yellow.",
         "status": "asked"
     },
     {
         "headline": "Abdominal Pain Warning",
-        "content": "You must seek immediate medical attention if your abdominal pain worsens or becomes severe.",
-        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosing a serious condition, increasing the risk of a malpractice claim.",
+        "content": "You must return to the Emergency Room immediately if your abdominal pain becomes severe or unbearable.",
+        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient reports a heavy feeling under their ribs.",
+        "context_reference": "Patient reports dull heaviness under ribs.",
         "status": "asked"
     },
     {
-        "headline": "Pale Stool Warning",
-        "content": "You must inform your doctor immediately if your stool continues to be pale.",
-        "reasoning": "Pale stool can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
+        "headline": "Itching Warning",
+        "content": "You must inform your doctor immediately if the itching becomes unbearable or widespread. This could indicate a serious liver problem.",
+        "reasoning": "Failure to address severe itching could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient reports pale stool.",
+        "context_reference": "Patient reports that it itches.",
         "status": "asked"
     },
     {
-        "headline": "Dark Urine Warning",
-        "content": "You must inform your doctor immediately if your urine remains dark. This can indicate a serious liver issue.",
-        "reasoning": "Dark urine can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient reports dark urine.",
-        "status": "asked"
-    },
-    {
-        "headline": "Dark Urine Follow-Up",
-        "content": "You must inform your doctor immediately if your urine remains dark. This can indicate a serious liver issue.",
-        "reasoning": "Dark urine can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient reports dark urine.",
-        "status": "asked"
-    },
-    {
-        "headline": "Pale Stool Follow-Up",
-        "content": "You must inform your doctor immediately if your stool continues to be pale.",
-        "reasoning": "Pale stool can indicate a serious liver or gallbladder issue. Failure to advise the patient to report this symptom could lead to a delayed diagnosis and potential liability.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient reports pale stool.",
-        "status": "asked"
-    },
-    {
-        "headline": "Alcohol Consumption Clarification",
-        "content": "You must inform your doctor about your alcohol consumption.",
-        "reasoning": "Failure to document alcohol consumption could lead to misdiagnosis or improper treatment, increasing liability.",
-        "category": "Legal/Informed Consent",
+        "headline": "Fatigue Monitoring",
+        "content": "You must monitor your fatigue levels and report any worsening symptoms to your doctor. This is especially important given your other symptoms.",
+        "reasoning": "Failure to monitor and report fatigue could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
+        "category": "Monitoring",
         "urgency": "Normal",
-        "context_reference": "Patient reports a few beers with the guys.",
+        "context_reference": "Patient reports being tired and having to leave work early.",
         "status": "asked"
     },
     {
-        "headline": "Abdominal Pain Emergency Warning",
-        "content": "You must seek immediate medical attention if your abdominal pain worsens or becomes severe.",
-        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosing a serious condition, increasing the risk of a malpractice claim.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient reports a heavy feeling under their ribs.",
-        "status": "asked"
-    },
-    {
-        "headline": "Tylenol Dosage Warning",
-        "content": "You must not exceed the recommended daily dose of Tylenol. Overuse can cause liver damage.",
-        "reasoning": "Failure to warn about Tylenol overdose risks could lead to liver damage and a potential malpractice claim.",
+        "headline": "Tylenol Overuse Warning",
+        "content": "You must inform your doctor immediately if you are taking more than the recommended dose of Tylenol, as this can cause liver damage.",
+        "reasoning": "Failure to warn about Tylenol overuse could lead to a claim of negligence if liver damage occurs, as the patient was not informed of the risks.",
         "category": "Medication Risk",
-        "urgency": "High",
-        "context_reference": "Patient reports taking six to eight extra strength Tylenol.",
+        "urgency": "Normal",
+        "context_reference": "Nurse asks about Tylenol use.",
+        "status": "asked"
+    },
+    {
+        "headline": "Lisinopril Side Effect Monitoring",
+        "content": "You must report any dizziness, lightheadedness, or swelling to your doctor while taking lisinopril.",
+        "reasoning": "Failure to warn about lisinopril side effects could lead to a claim of negligence if the patient experiences adverse effects and was not informed of the need to report them.",
+        "category": "Medication Risk",
+        "urgency": "Normal",
+        "context_reference": "Patient states they are taking lisinopril.",
+        "status": "asked"
+    },
+    {
+        "headline": "Alcohol Consumption Warning",
+        "content": "You must inform your doctor about your alcohol consumption, as it may affect your liver function and interact with your medications.",
+        "reasoning": "Failure to inquire about and document alcohol consumption could lead to a claim of negligence if liver damage occurs, as the patient was not informed of the risks.",
+        "category": "Medication Risk",
+        "urgency": "Normal",
+        "context_reference": "Patient reports drinking alcohol.",
         "status": "asked"
     }
 ]
