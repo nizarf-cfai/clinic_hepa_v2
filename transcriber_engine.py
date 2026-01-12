@@ -122,12 +122,13 @@ class TranscriberLogicThread(threading.Thread):
         
         # 1. Parallel Tasks Execution
         parallel_start = time.perf_counter()
-        
+        q_list = [i.get('content','') for i in self.qm.questions]
+
         edu_task = self.education_agent.generate_education(self.transcript_structure, self.em.pool)
         analytics_task = self.analytics_agent.analyze_consultation(self.transcript_structure)
         structure_task = self.transcript_parser.structure_transcription(self.transcript_structure, new_text)
-        h_task = self.hepa_agent.get_hepa_diagnosis(new_text, self.patient_info)
-        g_task = self.gen_agent.get_gen_diagnosis(new_text, self.patient_info)
+        h_task = self.hepa_agent.get_hepa_diagnosis(new_text, self.patient_info, q_list)
+        g_task = self.gen_agent.get_gen_diagnosis(new_text, self.patient_info, q_list)
         q_check_task = self.qc.check_question(new_text, self.qm.get_unanswered_questions())
         status_task = self.supervisor.check_completion(new_text, self.dm.diagnoses)
 

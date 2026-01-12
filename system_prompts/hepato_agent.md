@@ -34,7 +34,7 @@ Return a strict JSON array containing **at least 2 objects** with the following 
 *   `indicators_point`: An array of direct quotes or paraphrased facts **confirmed** by the patient.
 *   `reasoning`: A clinical deduction explaining why the indicators lead to this diagnosis.
 *   `followup_question`: A single, targeted clinical question to ask next.
-    *   *Constraint:* This question must NOT exist in the input transcript.
+    *   *Constraint:* This question must NOT exist in the input transcript and existing question list.
     *   *Focus:* Look for complications or specific details to confirm *this specific* diagnosis vs the others.
 
 

@@ -162,12 +162,12 @@ class DiagnosisHepato(BaseLogicAgent):
             with open("system_prompts/hepato_agent.md", "r", encoding="utf-8") as f: self.system_instruction = f.read()
         except: self.system_instruction = "Return true if new info."
 
-    async def get_hepa_diagnosis(self, conversation_history, patient_info):
+    async def get_hepa_diagnosis(self, conversation_history, patient_info, existing_question):
         if not conversation_history: return False, "Empty"
         try:
             response = await self.client.aio.models.generate_content(
                 model="gemini-2.5-flash-lite", 
-                contents=f"Patient Info:\n{patient_info}\n\nTranscript:\n{json.dumps(conversation_history)}",
+                contents=f"Patient Info:\n{patient_info}\n\nTranscript:\n{json.dumps(conversation_history)}\n\nExisting Question:{json.dumps(existing_question)}",
                 config=types.GenerateContentConfig(response_mime_type="application/json", 
                 response_schema=self.response_schema, 
                 system_instruction=self.system_instruction, 
@@ -225,12 +225,12 @@ class DiagnosisGeneral(BaseLogicAgent):
             with open("system_prompts/general_agent.md", "r", encoding="utf-8") as f: self.system_instruction = f.read()
         except: self.system_instruction = "Return true if new info."
 
-    async def get_gen_diagnosis(self, conversation_history, patient_info):
+    async def get_gen_diagnosis(self, conversation_history, patient_info, existing_question):
         if not conversation_history: return False, "Empty"
         try:
             response = await self.client.aio.models.generate_content(
                 model="gemini-2.5-flash-lite", 
-                contents=f"Patient Info:\n{patient_info}\n\nHistory:\n{json.dumps(conversation_history)}",
+                contents=f"Patient Info:\n{patient_info}\n\nHistory:\n{json.dumps(conversation_history)}\n\nExisting Question:{json.dumps(existing_question)}",
                 config=types.GenerateContentConfig(response_mime_type="application/json", 
                 response_schema=self.response_schema, 
                 system_instruction=self.system_instruction, 
