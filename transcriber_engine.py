@@ -79,10 +79,11 @@ class TranscriberLogicThread(threading.Thread):
 
     async def run_initial_analysis(self):
         await self._push_to_ui({"type": "status", "data": {"end": False, "state": "initiate"}})
+        q_list = [i.get('content','') for i in self.qm.questions]
 
         initial_instruction = "Initial file review and patient history analysis."
-        h_coro = self.hepa_agent.get_hepa_diagnosis(initial_instruction, self.patient_info)
-        g_coro = self.gen_agent.get_gen_diagnosis(initial_instruction, self.patient_info)
+        h_coro = self.hepa_agent.get_hepa_diagnosis(initial_instruction, self.patient_info,q_list)
+        g_coro = self.gen_agent.get_gen_diagnosis(initial_instruction, self.patient_info,q_list)
         
         hepa_res, gen_res = await asyncio.gather(h_coro, g_coro)
         consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, hepa_res + gen_res)
