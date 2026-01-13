@@ -418,10 +418,10 @@ class TranscriberEngine:
                 if self.running:
                     logger.warning(f"🎙️ [STT Restarting], status {self.running}: {e}, retries: {retries_count}")
                     retries_count += 1
-                    if retries_count >= 10:
-                        logger.error("❌ [STT] Maximum retries reached. Stopping STT loop.")
-                        self.running = False
-                        break
+                    # if retries_count >= 20:
+                    #     logger.error("❌ [STT] Maximum retries reached. Stopping STT loop.")
+                    #     self.running = False
+                    #     break
                 time.sleep(0.1)
 
     def stop(self):

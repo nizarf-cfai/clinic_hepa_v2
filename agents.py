@@ -22,7 +22,11 @@ RANKER_MODEL = "gemini-2.5-flash-lite"
 
 class BaseLogicAgent:
     def __init__(self):
-        self.client = genai.Client(vertexai=True, project=os.getenv("PROJECT_ID"), location=os.getenv("PROJECT_LOCATION", "us-central1"))
+        self.client = genai.Client(
+            vertexai=True, 
+            project=os.getenv("PROJECT_ID"), 
+            location=os.getenv("PROJECT_LOCATION", "us-central1")
+            )
 
 
 class TextBridgeAgent:
