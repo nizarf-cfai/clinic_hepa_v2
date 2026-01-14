@@ -15,6 +15,7 @@ from transcriber_engine import TranscriberEngine
 from utils import fetch_gcs_text_internal # Assuming this helper exists
 # --- Local Modules ---
 from simulation import SimulationManager
+import simulation_scenario
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,6 +51,40 @@ class AdminPatientRequest(BaseModel):
     pid: str
 
 # --- Endpoints ---
+
+@app.websocket("/ws/simulation/audio")
+async def websocket_simulation_audio_endpoint(websocket: WebSocket):
+    """
+    WebSocket endpoint for Scripted/Audio-only simulation.
+    """
+    await websocket.accept()
+    
+    manager = None 
+    try:
+        # Wait for the initial configuration message
+        data = await websocket.receive_json()
+
+        if isinstance(data, dict) and data.get("type") == "start":
+            patient_id = data.get("patient_id", "P0001")
+            
+            # Optional: Allow frontend to specify which script file to load
+            # Default to 'scenario_script.json' if not provided
+            script_file = data.get("script_file", "scenario_script.json")
+            
+            logger.info(f"🎧 Starting Audio Simulation for {patient_id} using {script_file}")
+            
+            manager = simulation_scenario.SimulationAudioManager(websocket, patient_id, script_file="scenario_dumps/transcript.json")
+            await manager.run()
+            
+    except WebSocketDisconnect:
+        logger.info("Audio Simulation Client disconnected")
+        if manager:
+            manager.stop()
+    except Exception as e:
+        traceback.print_exc()
+        logger.error(f"Audio Simulation WebSocket Error: {e}")
+        if manager:
+            manager.stop()
 
 @app.websocket("/ws/transcriber")
 async def websocket_transcriber_endpoint(websocket: WebSocket):

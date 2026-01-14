@@ -1,65 +1,56 @@
 [
     {
-        "headline": "Jaundice Warning",
-        "content": "You must go to the Emergency Room immediately if your skin or eyes turn yellow. This could indicate a serious liver problem.",
-        "reasoning": "Failure to warn about jaundice could lead to delayed diagnosis of a critical condition, resulting in a malpractice claim.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient states they are turning yellow.",
+        "headline": "Introduction of Healthcare Provider",
+        "content": "You must be informed that I am Sarah, your nurse for this consultation.",
+        "reasoning": "Failure to identify oneself at the start of a consultation can lead to patient confusion and potential claims of impersonation or lack of professional introduction, impacting the clinic's liability.",
+        "category": "Legal/Informed Consent",
+        "urgency": "Low",
+        "context_reference": "hello, my name is Sarah and",
         "status": "asked"
     },
     {
-        "headline": "Abdominal Pain Warning",
-        "content": "You must return to the Emergency Room immediately if your abdominal pain becomes severe or unbearable.",
-        "reasoning": "Failure to warn about worsening abdominal pain could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
+        "headline": "Jaundice and Dark Urine Warning",
+        "content": "You must be informed that yellowing of the eyes (jaundice) and dark, cola-colored urine are critical symptoms that require immediate medical evaluation. These can indicate serious liver dysfunction.",
+        "reasoning": "Failure to immediately flag jaundice and dark urine as critical symptoms can lead to a delay in diagnosis and treatment, potentially worsening the patient's condition and resulting in a malpractice claim for delayed care.",
         "category": "Safety",
         "urgency": "High",
-        "context_reference": "Patient reports dull heaviness under ribs.",
+        "context_reference": "My eyes are yellow. My sister said it and my piss, looks like Coke.",
         "status": "asked"
     },
     {
-        "headline": "Itching Warning",
-        "content": "You must inform your doctor immediately if the itching becomes unbearable or widespread. This could indicate a serious liver problem.",
-        "reasoning": "Failure to address severe itching could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
-        "category": "Safety",
+        "headline": "Tylenol (Acetaminophen) Overdose Risk",
+        "content": "You must be warned that excessive intake of extra strength Tylenol or Tylenol PM can cause severe liver damage, which may present with symptoms such as jaundice and dark urine. You must not exceed the recommended dosage.",
+        "reasoning": "Failure to warn the patient about the hepatotoxic risks associated with Tylenol, especially when presenting with symptoms of liver dysfunction, can lead to a claim of negligent miscommunication or failure to warn regarding medication risks.",
+        "category": "Medication Risk",
         "urgency": "High",
-        "context_reference": "Patient reports that it itches.",
+        "context_reference": "Can you tell me about the extra strength, Tylenol, or Tylenol PM",
         "status": "asked"
     },
     {
-        "headline": "Fatigue Monitoring",
-        "content": "You must monitor your fatigue levels and report any worsening symptoms to your doctor. This is especially important given your other symptoms.",
-        "reasoning": "Failure to monitor and report fatigue could lead to a delay in diagnosis of a critical condition, resulting in a malpractice claim.",
+        "headline": "Severe Itching Warning",
+        "content": "You must be informed that severe, persistent itching, often described as 'ants under the skin,' can be a sign of serious liver disease. You must seek immediate medical evaluation if this symptom persists.",
+        "reasoning": "Failure to warn the patient that severe itching can be a critical symptom of liver disease can lead to a delay in diagnosis and treatment, potentially worsening the patient's condition and resulting in a malpractice claim for delayed care.",
+        "category": "Safety",
+        "urgency": "High",
+        "context_reference": "Feels like there are ants under my skin, the itching will not stop.",
+        "status": "asked"
+    },
+    {
+        "headline": "Tylenol Dosage and Liver Damage",
+        "content": "You must be warned that taking six to eight extra strength Tylenol or Tylenol PM pills per day for two weeks significantly increases the risk of severe liver damage. This dosage far exceeds the recommended safe limit and is a likely cause of your symptoms. You must stop taking Tylenol immediately and report any worsening symptoms.",
+        "reasoning": "The patient's reported dosage of Tylenol (6-8 pills/day for 2 weeks) is critically high and directly linked to liver damage. Failure to explicitly warn about this extreme dosage and its direct correlation to the patient's symptoms constitutes negligent miscommunication and failure to warn regarding medication risks, exposing the clinic to liability.",
+        "category": "Medication Risk",
+        "urgency": "High",
+        "context_reference": "Tylenol. Yeah. I was taking a few of those for a toothache. Maybe six to eight a day for the last couple weeks I stopped yesterday though.",
+        "status": "pending"
+    },
+    {
+        "headline": "Monitoring for Worsening Liver Function",
+        "content": "You must monitor yourself closely for any worsening of jaundice, dark urine, or severe itching. Report any changes or new symptoms immediately.",
+        "reasoning": "Shifting the burden of monitoring to the patient for critical symptoms like jaundice, dark urine, and severe itching is essential. This documentation proves the patient was instructed on self-monitoring, mitigating claims of the clinic failing to adequately track the patient's condition.",
         "category": "Monitoring",
         "urgency": "Normal",
-        "context_reference": "Patient reports being tired and having to leave work early.",
-        "status": "asked"
-    },
-    {
-        "headline": "Tylenol Overuse Warning",
-        "content": "You must inform your doctor immediately if you are taking more than the recommended dose of Tylenol, as this can cause liver damage.",
-        "reasoning": "Failure to warn about Tylenol overuse could lead to a claim of negligence if liver damage occurs, as the patient was not informed of the risks.",
-        "category": "Medication Risk",
-        "urgency": "Normal",
-        "context_reference": "Nurse asks about Tylenol use.",
-        "status": "asked"
-    },
-    {
-        "headline": "Lisinopril Side Effect Monitoring",
-        "content": "You must report any dizziness, lightheadedness, or swelling to your doctor while taking lisinopril.",
-        "reasoning": "Failure to warn about lisinopril side effects could lead to a claim of negligence if the patient experiences adverse effects and was not informed of the need to report them.",
-        "category": "Medication Risk",
-        "urgency": "Normal",
-        "context_reference": "Patient states they are taking lisinopril.",
-        "status": "asked"
-    },
-    {
-        "headline": "Alcohol Consumption Warning",
-        "content": "You must inform your doctor about your alcohol consumption, as it may affect your liver function and interact with your medications.",
-        "reasoning": "Failure to inquire about and document alcohol consumption could lead to a claim of negligence if liver damage occurs, as the patient was not informed of the risks.",
-        "category": "Medication Risk",
-        "urgency": "Normal",
-        "context_reference": "Patient reports drinking alcohol.",
-        "status": "asked"
+        "context_reference": "You've been taking, how many pills a day have you been taking over the last few weeks if you can estimate it?",
+        "status": "pending"
     }
 ]

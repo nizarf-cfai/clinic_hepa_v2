@@ -1,15 +1,11 @@
 [
     {
         "did": "A1B2C",
-        "headline": "Drug-Induced Liver Injury",
-        "diagnosis": "Hepatocellular Injury secondary to Drug-Induced Liver Injury (DILI)",
+        "headline": "Drug-Induced Liver Injury (DILI)",
+        "diagnosis": "Drug-Induced Liver Injury secondary to Acetaminophen Overdose, Acute",
         "indicators_point": [
             {
-                "criteria": "Jaundice",
-                "check": true
-            },
-            {
-                "criteria": "Pruritus",
+                "criteria": "Frequent acetaminophen use (e.g., Tylenol PM, Extra Strength Tylenol)",
                 "check": true
             },
             {
@@ -21,52 +17,44 @@
                 "check": true
             },
             {
-                "criteria": "Elevated Alk Phos",
+                "criteria": "Overt Jaundice",
                 "check": true
             },
             {
-                "criteria": "Elevated Total Bilirubin",
+                "criteria": "Pruritus (itching)",
                 "check": true
             },
             {
-                "criteria": "INR",
-                "check": false
-            },
-            {
-                "criteria": "Recent history of Amoxicillin-Clavulanate",
+                "criteria": "Elevated Alkaline Phosphatase",
                 "check": true
             },
             {
-                "criteria": "Frequent use of Acetaminophen",
+                "criteria": "Elevated Bilirubin",
                 "check": true
             },
             {
-                "criteria": "Malaise",
+                "criteria": "Dark urine ('piss, looks like Coke')",
                 "check": true
             },
             {
-                "criteria": "Anorexia",
-                "check": true
-            },
-            {
-                "criteria": "RUQ pain",
+                "criteria": "Pale stools",
                 "check": true
             }
         ],
-        "reasoning": "The patient presents with overt jaundice, pruritus, RUQ discomfort, fatigue, nausea, and decreased appetite, all consistent with liver dysfunction. Laboratory results confirm significant elevations in AST, ALT, Alk Phos, and Total Bilirubin, strongly indicating hepatocellular injury and cholestasis. The recent dental abscess treated with Augmentin and the frequent, high-dose use of acetaminophen (Tylenol/Tylenol PM) are significant potential hepatotoxic agents. Given the absence of fever, chills, or a history of gallstones, and the patient's denial of significant alcohol use, drug-induced liver injury (DILI) secondary to either Augmentin or acetaminophen toxicity is a primary concern. The acuity is suggested by the recent onset of symptoms and the urgent referral.",
-        "followup_question": "Have you experienced any abdominal pain that radiates to your back?"
+        "reasoning": "The patient's frequent and high-dose acetaminophen use, significantly elevated AST and ALT, overt jaundice, pruritus, dark urine, and pale stools strongly suggest drug-induced liver injury. The elevated alkaline phosphatase further supports this diagnosis.",
+        "followup_question": "Have you experienced any confusion or disorientation recently?"
     },
     {
         "did": "D3E4F",
         "headline": "Cholestatic Jaundice",
-        "diagnosis": "Cholestatic Jaundice secondary to Drug-Induced Liver Injury (DILI) of Unknown Etiology",
+        "diagnosis": "Cholestasis secondary to Biliary Obstruction, Suspected",
         "indicators_point": [
             {
-                "criteria": "Jaundice",
+                "criteria": "Patient reports 'eyes are yellow' (jaundice)",
                 "check": true
             },
             {
-                "criteria": "Pruritus",
+                "criteria": "Patient reports 'can't stop itching' (pruritus)",
                 "check": true
             },
             {
@@ -78,40 +66,36 @@
                 "check": true
             },
             {
-                "criteria": "Abdominal pain (RUQ)",
-                "check": true
-            },
-            {
-                "criteria": "Change in stool color (acholic)",
-                "check": true
-            },
-            {
-                "criteria": "INR",
+                "criteria": "Recent antibiotic use (e.g., Amoxicillin-Clavulanate)",
                 "check": false
             },
             {
-                "criteria": "Malaise",
+                "criteria": "Elevated AST",
                 "check": true
             },
             {
-                "criteria": "Anorexia",
+                "criteria": "Elevated ALT",
+                "check": true
+            },
+            {
+                "criteria": "Dark urine ('piss, looks like Coke')",
+                "check": true
+            },
+            {
+                "criteria": "Pale stools",
                 "check": true
             }
         ],
-        "reasoning": "The patient exhibits jaundice and elevated bilirubin and alkaline phosphatase, which can be indicative of cholestasis (impaired bile flow). The reported dull right-sided abdominal heaviness could be related to biliary obstruction or liver capsule distension. While acetaminophen toxicity is a strong contender, the elevated Alk Phos relative to AST/ALT could also suggest a primary cholestatic process. The absence of a history of gallstones or prior abdominal surgery means other causes of biliary obstruction or intrahepatic cholestasis need consideration.",
-        "followup_question": "Have you noticed any changes in the color of your urine, such as it becoming darker than usual?"
+        "reasoning": "The combination of jaundice, pruritus, dark urine, pale stools, and elevated alkaline phosphatase suggests a cholestatic process. While DILI is a strong possibility, biliary obstruction remains a significant differential diagnosis that needs to be investigated, especially given the elevated Alk Phos and pale stools. The elevated AST and ALT also support liver injury.",
+        "followup_question": "Have you had any prior surgeries on your gallbladder or bile ducts?"
     },
     {
-        "did": "A1B2C",
-        "headline": "Drug-Induced Liver Injury",
-        "diagnosis": "Hepatocellular Injury secondary to Acetaminophen Overdose, Acute",
+        "did": "aBcDe",
+        "headline": "Drug-Induced Liver Injury (DILI)",
+        "diagnosis": "Drug-Induced Liver Injury secondary to Acetaminophen Overdose, Acute",
         "indicators_point": [
             {
-                "criteria": "Jaundice",
-                "check": true
-            },
-            {
-                "criteria": "Pruritus",
+                "criteria": "Frequent acetaminophen use (e.g., Tylenol PM, Extra Strength Tylenol)",
                 "check": true
             },
             {
@@ -123,36 +107,56 @@
                 "check": true
             },
             {
-                "criteria": "Malaise",
+                "criteria": "Overt Jaundice",
                 "check": true
             },
             {
-                "criteria": "Anorexia",
+                "criteria": "Pruritus (itching)",
                 "check": true
             },
             {
-                "criteria": "Frequent use of Acetaminophen",
+                "criteria": "Elevated Alkaline Phosphatase",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Bilirubin",
+                "check": true
+            },
+            {
+                "criteria": "Dark urine ('piss, looks like Coke')",
+                "check": true
+            },
+            {
+                "criteria": "Pale stools",
                 "check": true
             }
         ],
-        "reasoning": "The patient presents with overt jaundice, significantly elevated liver enzymes (AST and ALT), and pruritus, all indicative of liver injury. The history of frequent and excessive Tylenol (acetaminophen) use, admitted to be 'six or eight' pills daily for pain, strongly suggests acetaminophen toxicity as the primary cause of hepatocellular injury. The timing of symptoms aligns with potential overdose, and the absence of other clear etiologies like viral hepatitis or gallstones (patient denies history of gallstones or abdominal surgery) further supports this diagnosis.",
-        "followup_question": "Have you experienced any abdominal pain specifically in the upper right quadrant that radiates to your back or shoulder?"
+        "reasoning": "The patient's frequent and high-dose acetaminophen use, significantly elevated AST and ALT, overt jaundice, pruritus, dark urine, and pale stools strongly suggest drug-induced liver injury. The elevated alkaline phosphatase and bilirubin further support this diagnosis.",
+        "followup_question": "Have you experienced any abdominal pain, particularly in the upper right quadrant, or any unintentional weight loss recently?"
     },
     {
-        "did": "D3E4F",
-        "headline": "Biliary Obstruction",
-        "diagnosis": "Rule Out Biliary Obstruction secondary to Choledocholithiasis",
+        "did": "xYz34",
+        "headline": "Acute Viral Hepatitis",
+        "diagnosis": "Cholestatic Jaundice of Unknown Etiology, Subacute",
         "indicators_point": [
             {
-                "criteria": "Jaundice",
+                "criteria": "Overt Jaundice",
                 "check": true
             },
             {
-                "criteria": "Pruritus",
+                "criteria": "Pruritus (itching)",
                 "check": true
             },
             {
-                "criteria": "Elevated Alk Phos",
+                "criteria": "Elevated AST",
+                "check": false
+            },
+            {
+                "criteria": "Elevated ALT",
+                "check": false
+            },
+            {
+                "criteria": "Elevated Alkaline Phosphatase",
                 "check": true
             },
             {
@@ -160,27 +164,72 @@
                 "check": true
             },
             {
-                "criteria": "Abdominal pain (RUQ)",
-                "check": true
-            },
-            {
-                "criteria": "Change in stool color (acholic)",
-                "check": true
-            },
-            {
-                "criteria": "INR",
+                "criteria": "Recent exposure to Hepatitis A, B, or C",
                 "check": false
             },
             {
-                "criteria": "Malaise",
+                "criteria": "Risk factors for Hepatitis B or C (e.g., IV drug use, unprotected sex)",
+                "check": false
+            },
+            {
+                "criteria": "Recent fevers, chills, or flu-like symptoms",
+                "check": false
+            },
+            {
+                "criteria": "Dark urine",
                 "check": true
             },
             {
-                "criteria": "Anorexia",
+                "criteria": "Pale stools",
                 "check": true
             }
         ],
-        "reasoning": "The patient's jaundice, pruritus, and elevated bilirubin and alkaline phosphatase are consistent with a cholestatic process. The report of a 'dull heaviness' in the RUQ and a change in stool color ('weird') could suggest impaired bile flow. While the patient denies a history of gallstones, common bile duct stones (choledocholithiasis) can form de novo or migrate from the gallbladder, leading to obstruction. This diagnosis needs to be considered as it presents with similar symptoms to DILI and other liver pathologies.",
-        "followup_question": "Have you experienced any fevers or chills, especially in the last few days?"
+        "reasoning": "The patient's presentation of jaundice, pruritus, dark urine, and pale stools, coupled with elevated alkaline phosphatase and bilirubin, is consistent with a cholestatic process. The absence of elevated AST/ALT and flu-like symptoms makes viral hepatitis less likely at this time.",
+        "followup_question": "Have you experienced any fever or chills since the dental abscess was treated?"
+    },
+    {
+        "did": "fGhIj",
+        "headline": "Cholestatic Jaundice secondary to Antibiotic-Associated Cholestasis",
+        "diagnosis": "Cholestatic Jaundice secondary to Antibiotic-Associated Cholestasis, Acute",
+        "indicators_point": [
+            {
+                "criteria": "Recent antibiotic use (e.g., Amoxicillin-Clavulanate)",
+                "check": true
+            },
+            {
+                "criteria": "Overt Jaundice",
+                "check": true
+            },
+            {
+                "criteria": "Pruritus (itching)",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Alkaline Phosphatase",
+                "check": true
+            },
+            {
+                "criteria": "Elevated Bilirubin",
+                "check": true
+            },
+            {
+                "criteria": "Elevated AST",
+                "check": false
+            },
+            {
+                "criteria": "Elevated ALT",
+                "check": false
+            },
+            {
+                "criteria": "Dark urine ('piss, looks like Coke')",
+                "check": true
+            },
+            {
+                "criteria": "Pale stools",
+                "check": true
+            }
+        ],
+        "reasoning": "The patient's recent completion of Augmentin and subsequent onset of jaundice, pruritus, dark urine, and pale stools, along with elevated alkaline phosphatase and bilirubin, strongly suggests antibiotic-associated cholestasis. The pattern of liver enzyme elevation, with less dramatic increases in AST/ALT compared to Alk Phos and Bilirubin, further supports a cholestatic process.",
+        "followup_question": "Have you had any prior surgeries on your gallbladder or bile ducts?"
     }
 ]

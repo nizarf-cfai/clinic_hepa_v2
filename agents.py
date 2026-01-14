@@ -576,7 +576,7 @@ class TranscribeStructureAgent():
             )
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-3-flash-preview", 
+                model="gemini-2.5-flash", 
                 contents=prompt_content,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json", 
@@ -1062,4 +1062,81 @@ class ComprehensiveReportAgent(BaseLogicAgent):
             return {"error": "Failed to generate report"}
         
 
+class QuestionIntegrationGatekeeper(BaseLogicAgent):
+    def __init__(self):
+        super().__init__()
+        
+        # Define the strict output schema: An ARRAY of STRINGS
+        # The AI is expected to return the subset of questions that are valid.
+        self.response_schema = {
+            "type": "ARRAY",
+            "description": "The list of valid new questions that are safe to add to the history.",
+            "items": {
+                "type": "STRING",
+                "description": "The text of the allowed question."
+            }
+        }
+        
+        # Load the prompt
+        try:
+            with open("system_prompts/integration_gatekeeper.md", "r", encoding="utf-8") as f:
+                self.system_instruction = f.read()
+        except FileNotFoundError:
+            # Fallback prompt
+            self.system_instruction = "Compare the new questions against the history. Return only the non-redundant ones as a JSON array of strings."
+
+    async def filter_new_questions(self, new_candidates: list[str], existing_history: list[str]):
+        """
+        Filters a list of new candidate questions against the existing session history.
+        
+        :param new_candidates: List of strings (The proposed new questions).
+        :param existing_history: List of strings (Everything asked so far).
+        :return: A list of strings (The subset of new_candidates that are valid).
+        """
+        
+        # Optimization 1: If there's no history, all new questions are valid (conceptually).
+        # We might still want to run semantic deduplication on the new list itself, 
+        # but this agent focuses on History vs New.
+        if not existing_history:
+            return new_candidates
+
+        # Optimization 2: If no candidates, return empty.
+        if not new_candidates:
+            return []
+
+        try:
+            # Prepare the context for the model
+            input_content = (
+                f"**Existing History (Already Asked):**\n{json.dumps(existing_history, indent=2)}\n\n"
+                f"**New Candidate Questions:**\n{json.dumps(new_candidates, indent=2)}"
+            )
+
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash-lite", 
+                contents=input_content,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=self.response_schema, 
+                    system_instruction=self.system_instruction, 
+                    temperature=0.0  # Zero temp for strict logical filtering
+                )
+            )
+            
+            # Parse the response
+            valid_questions = json.loads(response.text)
+            
+            # Validation: Ensure it's a list
+            if not isinstance(valid_questions, list):
+                print("Warning: Gatekeeper did not return a list. Returning original candidates as fallback.")
+                return new_candidates
+                
+            return valid_questions
+            
+        except Exception as e:
+            print(f"Error in filter_new_questions: {e}")
+            # Fallback Strategy:
+            # If the AI fails, we have a choice: block everything or allow everything.
+            # Allowing everything (returning new_candidates) is safer for the flow, 
+            # even if it risks a duplicate question.
+            return new_candidates
         

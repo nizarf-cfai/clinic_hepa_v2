@@ -34,6 +34,32 @@ class QuestionPoolManager:
         with open("question_pool.json", "w", encoding="utf-8") as file:
             json.dump(self.questions, file, indent=4)
     
+    def delete_by_content(self, content: str) -> bool:
+        """
+        Deletes question(s) matching the provided content string.
+        Comparison is case-insensitive and ignores leading/trailing whitespace.
+        Returns True if at least one item was deleted, False otherwise.
+        """
+        if not content or not isinstance(content, str):
+            return False
+
+        # Normalize the target string for comparison
+        target_normalized = content.strip().lower()
+        original_count = len(self.questions)
+
+        # Rebuild the list, keeping only items that DO NOT match the target
+        self.questions = [
+            q for q in self.questions 
+            if q.get("content", "").strip().lower() != target_normalized
+        ]
+
+        # If the list size changed, we successfully deleted something
+        if len(self.questions) < original_count:
+            self._save_to_file()
+            return True
+        
+        return False
+
     def update_pool(self):
         with open("question_pool.json", "r") as file:
             self.questions = json.load(file)

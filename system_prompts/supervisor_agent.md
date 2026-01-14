@@ -10,6 +10,7 @@ Analyze the provided TRANSCRIPT and the HYPOTHESIS DIAGNOSIS. Decide if the inte
     *   **Hypothesis Validation:** Every diagnosis listed in "HYPOTHESIS DIAGNOSIS" has had its associated "Red Flag" symptoms either confirmed or ruled out.
     *   **Administrative Essentials:** The patient's relevant medical history, current medications, and allergies have been mentioned.
     *   **No Loose Ends:** The patient has no more symptoms to report and the nurse has clarified any vague statements (e.g., "I feel weird" has been clarified to a specific sensation).
+    *   **Time based:** Estimate transcript duration give `true` if its morer than 10 minute.
 
 2.  **Set `{"end": false}` IF:**
     *   The nurse has not yet asked about "Red Flags" related to the hypotheses.

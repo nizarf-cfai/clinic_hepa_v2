@@ -1,25 +1,37 @@
 {
     "ranked": [
         {
-            "question": "Have you experienced any abdominal pain that is sharp or colicky, particularly after consuming fatty foods?",
-            "qid": "4640d0d6-13ff-494f-a296-41909534de62"
+            "question": "Have you experienced any confusion or disorientation recently?",
+            "qid": "562c1691-8a9c-4216-b1fc-23f7bf1762fa"
         },
         {
-            "question": "Have you experienced any fevers or chills, especially in the last few days?",
-            "qid": "19b8c976-9528-4bc5-806d-8bc202193768"
+            "question": "Have you consumed any alcohol in the past month?",
+            "qid": "3f294c1c-375e-4362-b9c3-e27a84b28fba"
         },
         {
-            "question": "Have you noticed any changes in the color of your urine, such as it appearing darker than usual?",
-            "qid": "6b560456-2dd7-4b17-97a1-97cc78525e44"
+            "question": "Have you consumed any alcohol in the past two weeks?",
+            "qid": "27152a8b-a084-4366-8b49-dd23d54ba902"
         },
         {
-            "question": "Have you experienced any dark urine or changes in the color of your urine recently?",
-            "qid": "276117a3-d88c-4cbe-9617-ed0ddabe8e5a"
+            "question": "Have you had any prior surgeries on your gallbladder or bile ducts?",
+            "qid": "f424ff86-080a-4e7c-a1be-5985329032dd"
         },
         {
-            "question": "Can you recall the specific milligram strength of the Tylenol and Tylenol PM you have been taking?",
-            "qid": "e7dfa84f-5713-48c4-a223-7055bf8db450"
+            "question": "Have you had any contact with individuals diagnosed with hepatitis or engaged in any activities that might put you at risk for viral hepatitis exposure, such as sharing needles or unprotected sexual contact?",
+            "qid": "7ba9dc8f-0c80-4b67-9f4d-f7c00a141f0d"
+        },
+        {
+            "question": "Have you had any recent travel, new sexual partners, or exposure to anyone with hepatitis in the past few months?",
+            "qid": "xYz34"
+        },
+        {
+            "question": "Drug Allergies",
+            "qid": "00005"
+        },
+        {
+            "question": "Past Surgeries",
+            "qid": "00006"
         }
     ],
-    "next_question": "Have you experienced any abdominal pain that is sharp or colicky, particularly after consuming fatty foods?"
+    "next_question": "Have you experienced any confusion or disorientation recently?"
 }

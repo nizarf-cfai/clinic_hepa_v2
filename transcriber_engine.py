@@ -40,6 +40,8 @@ class TranscriberLogicThread(threading.Thread):
         # Chat State
         self.transcript_structure = []
         self.analytics_pool = {}
+        self.check_count = 0
+        self.consultation_start = time.perf_counter()
 
 
     def run(self):
@@ -60,6 +62,7 @@ class TranscriberLogicThread(threading.Thread):
 
         self.checklist_agent = agents.ClinicalChecklistAgent()
         self.report_agent = agents.ComprehensiveReportAgent()
+        self.q_dedup = agents.QuestionIntegrationGatekeeper()
 
         # Clear transcript file
         with open(TRANSCRIPT_FILE, "w", encoding="utf-8") as f:
@@ -119,110 +122,127 @@ class TranscriberLogicThread(threading.Thread):
 
     async def _check_logic(self, new_text):
         """Main AI Reasoning Branch: Questions, Education, Analytics, and Diagnosis."""
-        total_start = time.perf_counter()
-        
-        # 1. Parallel Tasks Execution
-        parallel_start = time.perf_counter()
-        q_list = [i.get('content','') for i in self.qm.questions]
+        try:
+            total_start = time.perf_counter()
+            
+            # 1. Parallel Tasks Execution
+            parallel_start = time.perf_counter()
+            q_list = [i.get('content','') for i in self.qm.questions]
 
-        edu_task = self.education_agent.generate_education(self.transcript_structure, self.em.pool)
-        analytics_task = self.analytics_agent.analyze_consultation(self.transcript_structure)
-        structure_task = self.transcript_parser.structure_transcription(self.transcript_structure, new_text)
-        h_task = self.hepa_agent.get_hepa_diagnosis(new_text, self.patient_info, q_list)
-        g_task = self.gen_agent.get_gen_diagnosis(new_text, self.patient_info, q_list)
-        q_check_task = self.qc.check_question(new_text, self.qm.get_unanswered_questions())
-        status_task = self.supervisor.check_completion(new_text, self.dm.diagnoses)
+            edu_task = self.education_agent.generate_education(self.transcript_structure, self.em.pool)
+            analytics_task = self.analytics_agent.analyze_consultation(self.transcript_structure)
+            structure_task = self.transcript_parser.structure_transcription(self.transcript_structure, new_text)
+            h_task = self.hepa_agent.get_hepa_diagnosis(new_text, self.patient_info, q_list)
+            g_task = self.gen_agent.get_gen_diagnosis(new_text, self.patient_info, q_list)
+            q_check_task = self.qc.check_question(new_text, self.qm.get_unanswered_questions())
+            status_task = self.supervisor.check_completion(new_text, self.dm.diagnoses)
 
-        (edu_res, analytics_res, structured_chat, h_res, g_res, answered_qs, status_res) = await asyncio.gather(
-            edu_task, analytics_task, structure_task, h_task, g_task, q_check_task, status_task
-        )
-        
-        parallel_duration = time.perf_counter() - parallel_start
-        logger.info(f"⏱️ [Parallel Tasks] Completed in {parallel_duration:.2f}s")
-
-
-        with open('diagnosis_result.json', 'w', encoding='utf-8') as f:
-            json.dump({
-                "general_diagnosis": g_res,
-                "hepato_diagnosis": h_res
-            }, f, indent=4)
-
-        # 2. Sequential Processing Start
-        processing_start = time.perf_counter()
-
-        # Update Chat
-        self.transcript_structure = structured_chat
-        await self._push_to_ui({"type": "chat", "data": self.transcript_structure})
-
-        # Update Questions State
-        for aq in answered_qs:
-            self.qm.update_status(aq['qid'], "asked")
-            self.qm.update_answer(aq['qid'], aq['answer'])
-        
-        # Consolidate Diagnosis
-        consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, h_res + g_res)
-        with open('diagnosis_consolidate.json', 'w', encoding='utf-8') as f:
-            json.dump(consolidated, f, indent=4)
-        self.dm.diagnoses = consolidated
-        
-        generated_questions = [i.get('followup_question') for i in h_res] + [i.get('followup_question') for i in g_res]
-        self.qm.add_from_strings(generated_questions)
-
-        ranked_questions = await self.ranker.rank_questions(new_text, self.qm.get_questions_basic())
-        with open('ranked_questions.json', 'w', encoding='utf-8') as f:
-            json.dump(ranked_questions, f, indent=4)
-        # Rerank and Enrich Questions
-        # ranked_questions = await self.merger_agent.process_question(new_text,  h_res + g_res, self.qm.get_questions_basic())
-        print(f"RANKED QUESTIONS: {ranked_questions}")
-
-        self.qm.add_questions(ranked_questions.get('ranked',[]))
-        enriched_q = await self.q_enrich.enrich_questions(self.qm.get_questions_basic())
-        self.qm.update_enriched_questions(enriched_q)
-
-        # Handle Education
-        self.em.add_new_points(edu_res)
-        next_ed = self.em.pick_and_mark_asked()
-
-        self.analytics_pool = analytics_res
-
-        # Final UI Push
-        await self._push_to_ui({"type": "diagnosis", "diagnosis": self.dm.get_diagnoses()})
-        await self._push_to_ui({"type": "questions", "questions": self.qm.questions})
-        await self._push_to_ui({"type": "analytics", "data": analytics_res})
-        await self._push_to_ui({"type": "status", "data": status_res})
-        await self._push_to_ui({"type": "education", "data": self.em.pool})
+            (edu_res, analytics_res, structured_chat, h_res, g_res, answered_qs, status_res) = await asyncio.gather(
+                edu_task, analytics_task, structure_task, h_task, g_task, q_check_task, status_task
+            )
+            
+            parallel_duration = time.perf_counter() - parallel_start
+            logger.info(f"⏱️ [Parallel Tasks] Completed in {parallel_duration:.2f}s")
 
 
-        with open('master_question.json', 'w', encoding='utf-8') as f:
-            json.dump(self.qm.questions, f, indent=4)
-        # Update status_update.json
-        hr_q = self.qm.get_high_rank_question()
-        # self.qm.update_status(hr_q['qid'], "asked")
-        
+            with open('diagnosis_result.json', 'w', encoding='utf-8') as f:
+                json.dump({
+                    "general_diagnosis": g_res,
+                    "hepato_diagnosis": h_res
+                }, f, indent=4)
 
-        self.status = status_res.get("end", False)
-        if self.status:
-            self.running = False
-        logger.info(f"🤖 [AI Agent] Consultation status - running: {self.running}, complete: {self.status}")
-        if not self.qm.get_high_rank_question():
-            self.status = True
+            # 2. Sequential Processing Start
+            processing_start = time.perf_counter()
 
-        update_object = {
-                "is_finished": self.status,
-                "question": hr_q.get("content") if hr_q else None,
-                "education": next_ed.get("content", "") if next_ed else ""
-            }
-        logger.info(f"✅ [AI Agent] status_update.json: {update_object}")
-        
+            # Update Chat
+            self.transcript_structure = structured_chat
+            await self._push_to_ui({"type": "chat", "data": self.transcript_structure})
 
-        with open('status_update.json', 'w', encoding='utf-8') as f:
-            json.dump(update_object, f, indent=4)
+            # Update Questions State
+            for aq in answered_qs:
+                self.qm.update_status(aq['qid'], "asked")
+                self.qm.update_answer(aq['qid'], aq['answer'])
+            
+            # Consolidate Diagnosis
+            consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, h_res + g_res)
+            with open('diagnosis_consolidate.json', 'w', encoding='utf-8') as f:
+                json.dump(consolidated, f, indent=4)
+            self.dm.diagnoses = consolidated
+            
+            generated_questions = [i.get('followup_question') for i in h_res] + [i.get('followup_question') for i in g_res]
+            self.qm.add_from_strings(generated_questions)
 
-        processing_duration = time.perf_counter() - processing_start
-        total_duration = time.perf_counter() - total_start
+            ranked_questions = await self.ranker.rank_questions(new_text, self.qm.get_questions_basic())
+            with open('ranked_questions.json', 'w', encoding='utf-8') as f:
+                json.dump(ranked_questions, f, indent=4)
+            # Rerank and Enrich Questions
+            # ranked_questions = await self.merger_agent.process_question(new_text,  h_res + g_res, self.qm.get_questions_basic())
+            print(f"RANKED QUESTIONS: {ranked_questions}")
 
-        logger.info(f"⏱️ [Processing] UI & Logic updates took {processing_duration:.2f}s")
-        logger.info(f"✅ [AI Agent] Logic cycle complete. Total time: {total_duration:.2f}s")
+            self.qm.add_questions(ranked_questions.get('ranked',[]))
+            enriched_q = await self.q_enrich.enrich_questions(self.qm.get_questions_basic())
+            self.qm.update_enriched_questions(enriched_q)
+
+            
+                
+            # Handle Education
+            self.em.add_new_points(edu_res)
+            next_ed = self.em.pick_and_mark_asked()
+
+            self.analytics_pool = analytics_res
+
+            # Final UI Push
+            await self._push_to_ui({"type": "diagnosis", "diagnosis": self.dm.get_diagnoses()})
+            await self._push_to_ui({"type": "questions", "questions": self.qm.questions})
+            await self._push_to_ui({"type": "analytics", "data": analytics_res})
+            await self._push_to_ui({"type": "status", "data": status_res})
+            await self._push_to_ui({"type": "education", "data": self.em.pool})
+
+
+            with open('master_question.json', 'w', encoding='utf-8') as f:
+                json.dump(self.qm.questions, f, indent=4)
+            # Update status_update.json
+            hr_q = self.qm.get_high_rank_question()
+            # self.qm.update_status(hr_q['qid'], "asked")
+            
+
+            self.status = status_res.get("end", False)
+            if self.status:
+                self.running = False
+            logger.info(f"🤖 [AI Agent] Consultation status - running: {self.running}, complete: {self.status}")
+            if not self.qm.get_high_rank_question():
+                self.status = True
+
+
+            logger.info(f"🤖 [AI Agent] Check status - count: {self.check_count}")
+
+            if self.check_count < 15:
+                update_object = {
+                        "is_finished": self.status,
+                        "question": hr_q.get("content") if hr_q else None,
+                        "education": next_ed.get("content", "") if next_ed else ""
+                    }
+            else:
+                self.status = True
+                update_object = {
+                        "is_finished": True,
+                        "question": "",
+                        "education": ""
+                    }
+            logger.info(f"✅ [AI Agent] status_update.json: {update_object}")
+            
+
+            with open('status_update.json', 'w', encoding='utf-8') as f:
+                json.dump(update_object, f, indent=4)
+
+            processing_duration = time.perf_counter() - processing_start
+            total_duration = time.perf_counter() - total_start
+
+            logger.info(f"⏱️ [Processing] UI & Logic updates took {processing_duration:.2f}s")
+            logger.info(f"✅ [AI Agent] Logic cycle complete. Total time: {total_duration:.2f}s")
+            self.check_count += 1
+        except Exception as e:
+            print("Check logic  error :", e)
 
     async def _final_wrap(self):
         logger.info("🛑 [Finalization] Consultation complete. Generating final outputs...")
@@ -418,10 +438,10 @@ class TranscriberEngine:
                 if self.running:
                     logger.warning(f"🎙️ [STT Restarting], status {self.running}: {e}, retries: {retries_count}")
                     retries_count += 1
-                    # if retries_count >= 20:
-                    #     logger.error("❌ [STT] Maximum retries reached. Stopping STT loop.")
-                    #     self.running = False
-                    #     break
+                    if retries_count >= 20:
+                        logger.error("❌ [STT] Maximum retries reached. Stopping STT loop.")
+                        self.running = False
+                        break
                 time.sleep(0.1)
 
     def stop(self):
