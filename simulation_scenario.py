@@ -8,15 +8,19 @@ import os
 import base64
 import time
 from fastapi import WebSocket
+logger = logging.getLogger("medforce-backend-audio")
 
 # Try to import mutagen for accurate audio duration
 try:
     from mutagen import File as MutagenFile
     MUTAGEN_AVAILABLE = True
+    logger.warning(f"MUTAGEN : Available")
+
 except ImportError:
     MUTAGEN_AVAILABLE = False
+    logger.warning(f"MUTAGEN : Not Available")
 
-logger = logging.getLogger("medforce-backend-audio")
+
 
 class TranscriptManager:
     """Thread-safe manager for the simulation history."""
@@ -188,8 +192,9 @@ class SimulationAudioManager:
             
             # Use buffer of 2.5s
             wait_time = max(remaining_audio_time, 0) + 2.5
-            await asyncio.sleep(wait_time)
             logger.info(f"WAIT TIME : {wait_time}")
+
+            await asyncio.sleep(wait_time)
 
             print("After wait")
 
