@@ -1,62 +1,60 @@
 {
     "general_diagnosis": [
         {
-            "did": "a1b2c",
-            "diagnosis": "Acute Liver Injury due to Acetaminophen Overdose",
+            "did": "aBcDe",
+            "diagnosis": "Drug-Induced Liver Injury, Acute",
             "indicators_point": [
-                "Patient reports taking 6-8 Extra Strength Tylenol or Tylenol PM pills daily for jaw pain.",
+                "Elevated AST (450 U/L)",
+                "Elevated ALT (620 U/L)",
+                "Elevated Alk Phos (180 U/L)",
+                "Overt Jaundice (Total Bilirubin 5.2 mg/dL)",
+                "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently.",
                 "Patient stopped Tylenol yesterday.",
-                "Elevated AST (450 U/L) and ALT (620 U/L).",
-                "Overt Jaundice (Total Bilirubin 5.2 mg/dL).",
-                "Severe itching.",
-                "Nausea and decreased appetite.",
-                "Dull ache and heaviness under the ribs."
+                "Recent prescription for Amoxicillin-Clavulanate (Augmentin) for dental abscess."
             ],
-            "reasoning": "The patient presents with overt jaundice, elevated liver enzymes (AST, ALT), itching, nausea, and a dull ache under the ribs, all indicative of liver injury. The history of taking 6-8 Extra Strength Tylenol or Tylenol PM pills daily for several weeks, combined with the timing of symptom onset (jaundice appearing after finishing Augmentin, but likely exacerbated by recent Tylenol use), strongly suggests acetaminophen-induced hepatotoxicity as the primary cause. The INR is borderline, which can be seen in acute liver injury.",
-            "followup_question": "Have you consumed any alcohol in the past month?"
+            "reasoning": "The patient presents with overt jaundice and significantly elevated liver enzymes (AST, ALT, Alk Phos). The recent history of frequent Tylenol (acetaminophen) use, coupled with the cessation of Tylenol yesterday, strongly suggests a drug-induced liver injury. While Augmentin was also prescribed, acetaminophen is a more common cause of acute liver injury in such quantities. The elevated bilirubin and liver enzymes, along with jaundice and itching, are consistent with an acute hepatic insult.",
+            "followup_question": "Have you consumed any alcohol in the past month, and if so, how much?"
         },
         {
-            "did": "d3e4f",
-            "diagnosis": "Cholestatic Jaundice of Unknown Etiology",
+            "did": "fGhIj",
+            "diagnosis": "Cholestatic Jaundice, Secondary to Biliary Obstruction, Acute",
             "indicators_point": [
-                "Overt Jaundice (Total Bilirubin 5.2 mg/dL).",
-                "Elevated Alk Phos (180 U/L).",
-                "Severe itching.",
-                "Dull ache and heaviness under the ribs.",
-                "Nausea and decreased appetite.",
-                "Recent dental abscess treated with Augmentin."
+                "Overt Jaundice (Total Bilirubin 5.2 mg/dL)",
+                "Elevated Alk Phos (180 U/L)",
+                "Patient reports itching.",
+                "Recent dental abscess treated with Augmentin.",
+                "Elevated AST (450 U/L)",
+                "Elevated ALT (620 U/L)"
             ],
-            "reasoning": "The patient exhibits jaundice, elevated alkaline phosphatase, itching, and a dull ache in the upper abdomen, which are consistent with cholestasis. While acetaminophen toxicity is a strong possibility, the elevated Alk Phos also points towards a biliary obstruction or intrahepatic cholestasis. The recent Augmentin use could potentially be a trigger for drug-induced cholestasis, or there could be an underlying biliary issue not yet identified. The elevated AST/ALT could be secondary to the cholestasis or a co-existing hepatocellular process.",
-            "followup_question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?"
+            "reasoning": "The patient's presentation of jaundice, itching, and elevated alkaline phosphatase, along with elevated AST and ALT, could indicate a cholestatic process. While drug-induced liver injury is a strong possibility, a biliary obstruction (e.g., from a stone or inflammation secondary to infection/medication) could also cause these findings. The recent dental abscess and antibiotic use (Augmentin) could potentially be related to a systemic inflammatory process or even a rare drug reaction affecting the biliary system. The elevated bilirubin points to impaired bile flow.",
+            "followup_question": "Have you experienced any pale or clay-colored stools, or dark, tea-colored urine?"
         }
     ],
     "hepato_diagnosis": [
         {
             "did": "A1B2C",
-            "diagnosis": "Acetaminophen-Induced Hepatotoxicity Acute",
+            "diagnosis": "Drug-Induced Liver Injury secondary to Acetaminophen Overdose, Acute",
             "indicators_point": [
-                "Patient reports taking 'six to eight pills a day' of Extra Strength Tylenol or Tylenol PM for jaw pain over the past few weeks.",
-                "Patient's eyes are yellow (jaundice).",
-                "Patient reports severe itching (pruritus).",
-                "Elevated AST (450 U/L), ALT (620 U/L), and Total Bilirubin (5.2 mg/dL).",
-                "Patient stopped taking Tylenol yesterday."
+                "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently for lingering jaw pain.",
+                "Patient states 'I stopped taking Tylenol yesterday.'",
+                "Elevated AST (450 U/L) and ALT (620 U/L).",
+                "Overt Jaundice (Total Bilirubin: 5.2 mg/dL) and reported scleral icterus ('My eyes are yellow').",
+                "Patient reports itching ('I can\u2019t stop itching')."
             ],
-            "reasoning": "The patient's significant intake of acetaminophen (Tylenol) exceeding recommended doses, coupled with elevated liver enzymes (AST, ALT) and overt jaundice, strongly suggests acute liver injury due to acetaminophen overdose. The timing of symptom onset relative to medication use and the resolution of symptoms after cessation further support this diagnosis.",
+            "reasoning": "The patient's history of frequent acetaminophen use (Tylenol PM, Extra Strength Tylenol) for jaw pain, coupled with significantly elevated AST and ALT levels, overt jaundice, and pruritus, strongly suggests drug-induced liver injury (DILI). The timing of stopping Tylenol yesterday also aligns with a potential acute insult. While Augmentin was also prescribed, acetaminophen is a more common cause of acute liver injury in this pattern.",
             "followup_question": "Have you consumed any alcohol in the past month?"
         },
         {
             "did": "D3E4F",
-            "diagnosis": "Cholestatic Liver Injury Secondary to Augmentin Probable",
+            "diagnosis": "Cholestatic Liver Injury secondary to Medication, Subacute",
             "indicators_point": [
-                "Patient was prescribed Amoxicillin-Clavulanate (Augmentin) for a dental abscess 3 weeks ago.",
-                "Patient reports finishing the Augmentin pills 3 weeks ago.",
-                "Patient reports yellowing of eyes (jaundice) started approximately 2 days ago.",
-                "Patient reports severe itching (pruritus) starting around the same time as jaundice.",
-                "Elevated Alk Phos (180 U/L) can be indicative of cholestasis.",
-                "Patient reports a dull ache under the ribs and constant nausea."
+                "Elevated Alk Phos (180 U/L).",
+                "Overt Jaundice (Total Bilirubin: 5.2 mg/dL).",
+                "Pruritus ('I can\u2019t stop itching').",
+                "Recent prescription of Amoxicillin-Clavulanate (Augmentin) for a dental abscess."
             ],
-            "reasoning": "While acetaminophen toxicity is a primary concern, the recent use of Augmentin, a known cause of drug-induced liver injury, particularly cholestatic patterns, warrants consideration. The timing of jaundice and pruritus appearing after the completion of the Augmentin course, along with elevated Alk Phos, suggests a possible drug-induced cholestatic injury. The dull ache and nausea could be related to biliary obstruction or inflammation.",
-            "followup_question": "Have you experienced any changes in your bowel or urine color since the jaundice began?"
+            "reasoning": "The elevated alkaline phosphatase, in conjunction with jaundice and pruritus, suggests a cholestatic pattern of liver injury. While acetaminophen is a strong contender, the recent use of Augmentin also presents a potential cause for drug-induced cholestasis. This serves as a differential diagnosis to consider, especially if acetaminophen toxicity is less severe than initially presumed or if other factors emerge.",
+            "followup_question": "Do you have any history of gallstones or gallbladder disease?"
         }
     ]
 }

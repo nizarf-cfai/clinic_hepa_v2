@@ -270,7 +270,16 @@ class TranscriberLogicThread(threading.Thread):
             self.analytics_pool = analytics_res
 
             # Final UI Push
-            await self._push_to_ui({"type": "diagnosis", "diagnosis": self.dm.get_diagnoses()})
+            check_diagnosis = []
+            diag_list = self.dm.get_diagnoses()
+            for d in diag_list:
+                check_diagnosis.append({
+                    "headline" : d.get("headline"),
+                    "rank" : d.get("rank"),
+                    "severity" : d.get("severity")
+                })
+            print("Diagnosis rank :", check_diagnosis)
+            await self._push_to_ui({"type": "diagnosis", "diagnosis": diag_list})
             await self._push_to_ui({"type": "questions", "questions": self.qm.questions})
             await self._push_to_ui({"type": "analytics", "data": analytics_res})
             await self._push_to_ui({"type": "status", "data": status_res})

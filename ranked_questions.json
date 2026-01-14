@@ -1,36 +1,40 @@
 {
     "ranked": [
         {
-            "question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?",
-            "qid": "7639dcd1-84c8-4072-ac19-5641383626ef"
+            "question": "Have you experienced any pale or clay-colored stools, or dark, tea-colored urine?",
+            "qid": "d1556ef4-e75c-416d-85d5-4279de82b874"
         },
         {
-            "question": "Have you noticed any pale or clay-colored stools, or any dark urine since your symptoms began?",
-            "qid": "f5266c77-6093-4e10-ad77-2d03177ecd7a"
-        },
-        {
-            "question": "Have you experienced any changes in your bowel or urine color since the jaundice began?",
-            "qid": "1690882f-ac26-4577-bbe7-704d45a093dc"
+            "question": "When did you start noticing the yellowing of your eyes and the itching after you finished your Augmentin prescription?",
+            "qid": "aBc12"
         },
         {
             "question": "Have you noticed any changes in the color of your stool or urine?",
-            "qid": "4c278658-99d1-4139-9ff4-46e070d716a5"
+            "qid": "8631b96d-7f3d-4a0e-886c-df3f52b887bd"
         },
         {
-            "question": "Have you experienced any confusion or changes in your mental state recently?",
-            "qid": "20e32f7b-2ca7-4e76-b51e-4ccdb0c8c700"
+            "question": "Have you experienced any nausea, vomiting, or abdominal pain since starting the Augmentin?",
+            "qid": "D3E4F"
         },
         {
-            "question": "Have you had any recent fevers, chills, or flu-like symptoms in the past month?",
-            "qid": "99b8a2a6-0b09-41fa-85dd-ca2c8248e1e6"
-        },
-        {
-            "question": "Have you consumed any alcohol in the past month?",
-            "qid": "c76acce0-3f48-4001-8c71-d18cec926cac"
+            "question": "Have you experienced any fever, chills, or a rash since starting the Augmentin?",
+            "qid": "6a7f80af-3ef6-40b2-8321-0ca65e5ae4df"
         },
         {
             "question": "Have you had any recent travel, new sexual partners, or exposure to anyone with hepatitis in the past few months?",
             "qid": "xYz34"
+        },
+        {
+            "question": "Have you consumed any alcohol in the past month, and if so, how much?",
+            "qid": "107416b5-8bc4-4dfc-b199-67fc7f9551a8"
+        },
+        {
+            "question": "Do you have any history of gallstones or gallbladder disease?",
+            "qid": "836f2588-bd0e-4a57-a7d4-5197f7851453"
+        },
+        {
+            "question": "Have you experienced any confusion or changes in your mental state recently?",
+            "qid": "daef4276-c64e-40f2-b49c-eac737f88e77"
         },
         {
             "question": "Drug Allergies",
@@ -41,5 +45,5 @@
             "qid": "00006"
         }
     ],
-    "next_question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?"
+    "next_question": "Have you experienced any pale or clay-colored stools, or dark, tea-colored urine?"
 }

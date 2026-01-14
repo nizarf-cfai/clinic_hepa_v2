@@ -5,14 +5,14 @@
         "rank": 999,
         "status": "asked",
         "answer": "My eyes are yellow.",
-        "headline": "Chief Complaint",
+        "headline": "Reason for Visit",
         "domain": "Symptom Triage",
         "system_affected": "General",
-        "clinical_intent": "To understand the primary reason for the patient's visit and initiate the clinical encounter.",
+        "clinical_intent": "To understand the chief complaint and primary reason for seeking medical attention.",
         "tags": [
-            "reason for visit",
             "chief complaint",
-            "presenting problem"
+            "reason for visit",
+            "triage"
         ]
     },
     {
@@ -20,27 +20,27 @@
         "qid": "00004",
         "rank": 999,
         "status": "asked",
-        "answer": "I stopped taking Tylenol yesterday.",
+        "answer": "I take listen Oprah from my blood pressure.",
         "headline": "Current Medications",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To obtain a comprehensive list of all current medications, including dosage and frequency, for medication reconciliation and safety.",
+        "clinical_intent": "To obtain a comprehensive list of all current medications, including dosage and frequency, to assess for interactions, adherence, and appropriateness.",
         "tags": [
             "medication list",
             "current drugs",
-            "pharmacotherapy"
+            "pharmacology"
         ]
     },
     {
         "content": "Drug Allergies",
         "qid": "00005",
-        "rank": 9,
+        "rank": 10,
         "status": null,
         "answer": null,
         "headline": "Drug Allergies",
         "domain": "Medical History",
         "system_affected": "General",
-        "clinical_intent": "To identify potential adverse drug reactions and contraindications for future treatments.",
+        "clinical_intent": "To identify potential adverse reactions to medications.",
         "tags": [
             "allergy",
             "medication",
@@ -50,13 +50,13 @@
     {
         "content": "Past Surgeries",
         "qid": "00006",
-        "rank": 10,
+        "rank": 11,
         "status": null,
         "answer": null,
         "headline": "Past Surgeries",
         "domain": "Surgical History",
         "system_affected": "General",
-        "clinical_intent": "To gather information on previous surgical interventions that may impact current health status or require specific considerations.",
+        "clinical_intent": "To document previous surgical interventions and their potential impact on current health.",
         "tags": [
             "surgery",
             "procedure",
@@ -67,29 +67,29 @@
         "qid": "A1B2C",
         "content": "Can you estimate how many Extra Strength Tylenol or Tylenol PM pills you have been taking daily over the past few weeks?",
         "status": "asked",
-        "answer": "I was taking a bunch of it for a toothache.",
+        "answer": "I stopped taking Tylenol yesterday.",
         "rank": 999,
-        "headline": "Acetaminophen Use",
+        "headline": "OTC Pain Reliever Use",
         "domain": "Medication Review",
         "system_affected": "General",
-        "clinical_intent": "To quantify the use of over-the-counter analgesics to assess potential for overuse or toxicity.",
+        "clinical_intent": "To quantify the use of over-the-counter analgesics to assess for potential overuse, toxicity, or masking of underlying symptoms.",
         "tags": [
+            "over-the-counter",
+            "analgesics",
             "acetaminophen",
-            "tylenol",
-            "overuse",
-            "analgesic"
+            "medication overuse"
         ]
     },
     {
         "qid": "D3E4F",
         "content": "Have you experienced any nausea, vomiting, or abdominal pain since starting the Augmentin?",
-        "status": "asked",
-        "answer": "I've had a dull ache under my ribs like if it feels heavy, no vomiting.",
-        "rank": 999,
-        "headline": "Augmentin GI Side Effects",
+        "status": null,
+        "answer": null,
+        "rank": 4,
+        "headline": "GI Symptoms Post-Augmentin",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for gastrointestinal adverse effects related to Augmentin therapy.",
+        "clinical_intent": "To assess for gastrointestinal side effects of Augmentin.",
         "tags": [
             "nausea",
             "vomiting",
@@ -100,18 +100,18 @@
     {
         "qid": "aBc12",
         "content": "When did you start noticing the yellowing of your eyes and the itching after you finished your Augmentin prescription?",
-        "status": "asked",
-        "answer": "I finished the pills three weeks ago. The yellow started maybe two days ago this itching.",
-        "rank": 999,
-        "headline": "Post-Antibiotic Jaundice & Pruritus",
+        "status": null,
+        "answer": null,
+        "rank": 2,
+        "headline": "Jaundice and Pruritus Post-Augmentin",
         "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for potential drug-induced liver injury or other adverse reactions following antibiotic use.",
+        "system_affected": "General",
+        "clinical_intent": "To investigate potential hepatobiliary side effects of Augmentin, such as jaundice and pruritus.",
         "tags": [
             "jaundice",
             "pruritus",
-            "drug reaction",
-            "Augmentin"
+            "Augmentin",
+            "hepatobiliary"
         ]
     },
     {
@@ -119,168 +119,115 @@
         "content": "Have you had any recent travel, new sexual partners, or exposure to anyone with hepatitis in the past few months?",
         "status": null,
         "answer": null,
-        "rank": 8,
-        "headline": "Exposure Risk Assessment",
-        "domain": "Social History",
-        "system_affected": "General",
-        "clinical_intent": "To assess potential exposure to infectious agents through travel, sexual history, or contact with infected individuals, particularly concerning for hepatitis.",
+        "rank": 6,
+        "headline": "Hepatitis Exposure Risk",
+        "domain": "Medical History",
+        "system_affected": "Gastrointestinal",
+        "clinical_intent": "To screen for potential exposures that could lead to hepatitis.",
         "tags": [
+            "hepatitis",
             "travel",
             "sexual history",
-            "hepatitis",
             "exposure"
         ]
     },
     {
-        "qid": "20e32f7b-2ca7-4e76-b51e-4ccdb0c8c700",
+        "qid": "daef4276-c64e-40f2-b49c-eac737f88e77",
         "content": "Have you experienced any confusion or changes in your mental state recently?",
         "status": null,
         "answer": null,
-        "rank": 5,
-        "headline": "Mental Status Change",
+        "rank": 9,
+        "headline": "Neurological Changes",
         "domain": "Symptom Triage",
         "system_affected": "Neurological",
-        "clinical_intent": "To screen for acute neurological changes, cognitive impairment, or delirium that may indicate an underlying medical condition.",
+        "clinical_intent": "To assess for any recent changes in mental status or cognitive function.",
         "tags": [
             "confusion",
-            "mental status",
-            "neurological",
-            "delirium"
+            "mental state",
+            "neurological"
         ]
     },
     {
-        "qid": "4c278658-99d1-4139-9ff4-46e070d716a5",
+        "qid": "8631b96d-7f3d-4a0e-886c-df3f52b887bd",
         "content": "Have you noticed any changes in the color of your stool or urine?",
         "status": null,
         "answer": null,
-        "rank": 4,
-        "headline": "Stool/Urine Color Change",
+        "rank": 3,
+        "headline": "Stool and Urine Color Changes",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for changes in gastrointestinal or urinary output color, which can be indicative of liver dysfunction, biliary obstruction, or other systemic issues.",
+        "clinical_intent": "To evaluate for potential abnormalities in liver or biliary function indicated by stool and urine color.",
         "tags": [
             "stool color",
             "urine color",
-            "gastrointestinal",
-            "liver function"
+            "liver function",
+            "biliary"
         ]
     },
     {
-        "qid": "99b8a2a6-0b09-41fa-85dd-ca2c8248e1e6",
-        "content": "Have you had any recent fevers, chills, or flu-like symptoms in the past month?",
+        "qid": "6a7f80af-3ef6-40b2-8321-0ca65e5ae4df",
+        "content": "Have you experienced any fever, chills, or a rash since starting the Augmentin?",
         "status": null,
         "answer": null,
-        "rank": 6,
-        "headline": "Recent Infection Symptoms",
+        "rank": 5,
+        "headline": "Systemic Symptoms Post-Augmentin",
         "domain": "Symptom Triage",
         "system_affected": "General",
-        "clinical_intent": "To screen for recent onset of infectious symptoms such as fever, chills, or flu-like illness, which may indicate an active infection.",
+        "clinical_intent": "To assess for systemic side effects of Augmentin, including fever, chills, or rash.",
         "tags": [
             "fever",
             "chills",
-            "flu-like symptoms",
-            "infection"
+            "rash",
+            "Augmentin"
         ]
     },
     {
-        "qid": "7c2fc549-0842-4d9d-981e-1a07a97f8b98",
-        "content": "Have you experienced any abdominal pain, particularly in the upper right quadrant, since your symptoms began?",
-        "status": "asked",
-        "answer": "I've had a dull ache under my ribs. Like if it feels heavy, no vomiting. But I just feel nauseous all the time. I haven't been very hungry, either.",
-        "rank": 999,
-        "headline": "Right Upper Quadrant Pain",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To assess for localized abdominal pain, specifically in the RUQ, which can be indicative of hepatobiliary pathology.",
-        "tags": [
-            "abdominal pain",
-            "RUQ pain",
-            "hepatobiliary",
-            "gallbladder"
-        ]
-    },
-    {
-        "qid": "a2062e1c-5fb7-40c6-a4d6-2cfd1391440b",
-        "content": "Have you experienced any abdominal pain, particularly in the upper right quadrant, or any changes in your urine color since noticing the yellowing of your eyes?",
-        "status": "asked",
-        "answer": "I've had a dull ache under my ribs. Like if it feels heavy, no vomiting. But I just feel nauseous all the time. I haven't been very hungry, either.",
-        "rank": 999,
-        "headline": "Jaundice, RUQ Pain, Urine Color",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To correlate symptoms of jaundice, abdominal pain, and urine changes to evaluate potential hepatobiliary issues.",
-        "tags": [
-            "jaundice",
-            "RUQ pain",
-            "urine color",
-            "hepatobiliary"
-        ]
-    },
-    {
-        "qid": "f5266c77-6093-4e10-ad77-2d03177ecd7a",
-        "content": "Have you noticed any pale or clay-colored stools, or any dark urine since your symptoms began?",
-        "status": null,
-        "answer": null,
-        "rank": 2,
-        "headline": "Stool/Urine Color Since Onset",
-        "domain": "Symptom Triage",
-        "system_affected": "Gastrointestinal",
-        "clinical_intent": "To specifically inquire about changes in stool (pale/clay-colored) and urine (dark) color since the onset of symptoms, often related to biliary issues.",
-        "tags": [
-            "stool color",
-            "urine color",
-            "jaundice",
-            "biliary obstruction"
-        ]
-    },
-    {
-        "qid": "c76acce0-3f48-4001-8c71-d18cec926cac",
-        "content": "Have you consumed any alcohol in the past month?",
+        "qid": "107416b5-8bc4-4dfc-b199-67fc7f9551a8",
+        "content": "Have you consumed any alcohol in the past month, and if so, how much?",
         "status": null,
         "answer": null,
         "rank": 7,
         "headline": "Alcohol Consumption",
         "domain": "Social History",
         "system_affected": "General",
-        "clinical_intent": "To assess alcohol intake, which can be a contributing factor to various medical conditions and affect treatment plans.",
+        "clinical_intent": "To assess alcohol intake, which can impact health and medication metabolism.",
         "tags": [
             "alcohol",
-            "substance use",
+            "consumption",
             "social history"
         ]
     },
     {
-        "qid": "1690882f-ac26-4577-bbe7-704d45a093dc",
-        "content": "Have you experienced any changes in your bowel or urine color since the jaundice began?",
+        "qid": "836f2588-bd0e-4a57-a7d4-5197f7851453",
+        "content": "Do you have any history of gallstones or gallbladder disease?",
         "status": null,
         "answer": null,
-        "rank": 3,
-        "headline": "Bowel/Urine Color Since Jaundice",
-        "domain": "Symptom Triage",
+        "rank": 8,
+        "headline": "Gallbladder History",
+        "domain": "Medical History",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To track changes in bowel and urine color specifically in the context of established jaundice, monitoring disease progression or resolution.",
+        "clinical_intent": "To identify pre-existing risk factors for gallbladder-related issues.",
         "tags": [
-            "jaundice",
-            "stool color",
-            "urine color",
-            "liver disease"
+            "gallstones",
+            "gallbladder disease",
+            "medical history"
         ]
     },
     {
-        "qid": "7639dcd1-84c8-4072-ac19-5641383626ef",
-        "content": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?",
+        "qid": "d1556ef4-e75c-416d-85d5-4279de82b874",
+        "content": "Have you experienced any pale or clay-colored stools, or dark, tea-colored urine?",
         "status": null,
         "answer": null,
         "rank": 1,
-        "headline": "Pale/Clay-Colored Stools",
+        "headline": "Pale Stool or Dark Urine",
         "domain": "Symptom Triage",
         "system_affected": "Gastrointestinal",
-        "clinical_intent": "To identify the presence of pale or clay-colored stools, a significant indicator of potential biliary obstruction or liver dysfunction.",
+        "clinical_intent": "To assess for signs of cholestasis or biliary obstruction.",
         "tags": [
-            "stool color",
             "pale stool",
             "clay-colored stool",
-            "gastrointestinal"
+            "dark urine",
+            "cholestasis"
         ]
     }
 ]

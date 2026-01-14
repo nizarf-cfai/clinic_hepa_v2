@@ -26,24 +26,24 @@
             },
             {
                 "criteria": "Elevated Alkaline Phosphatase",
-                "check": false
+                "check": true
             },
             {
                 "criteria": "Elevated Bilirubin",
                 "check": true
             },
             {
-                "criteria": "Dull ache under ribs",
-                "check": true
+                "criteria": "Alcohol consumption",
+                "check": false
             }
         ],
-        "reasoning": "The patient's frequent use of acetaminophen-containing products (Tylenol PM, Extra Strength Tylenol) for jaw pain, coupled with significantly elevated AST and ALT levels, overt jaundice, pruritus, and a dull ache under the ribs, strongly suggests drug-induced liver injury. Acetaminophen is a common culprit for DILI, especially with overuse.",
+        "reasoning": "The patient's frequent use of acetaminophen (Tylenol PM, Extra Strength Tylenol) for jaw pain, coupled with significantly elevated AST, ALT, and bilirubin, overt jaundice, and pruritus, strongly suggests acute drug-induced liver injury. The elevated alkaline phosphatase also supports a hepatic insult. The patient stopped Tylenol yesterday, which is consistent with an acute event.",
         "followup_question": "Have you consumed any alcohol in the past month?"
     },
     {
         "did": "D3E4F",
         "headline": "Cholestatic Liver Injury",
-        "diagnosis": "Cholestasis secondary to Biliary Obstruction, Subacute",
+        "diagnosis": "Cholestasis secondary to Medication, Subacute",
         "indicators_point": [
             {
                 "criteria": "Overt Jaundice",
@@ -67,33 +67,25 @@
             },
             {
                 "criteria": "Elevated AST",
-                "check": false
+                "check": true
             },
             {
                 "criteria": "Elevated ALT",
-                "check": false
+                "check": true
             },
             {
-                "criteria": "Dull ache under ribs",
-                "check": true
+                "criteria": "History of gallstones or gallbladder disease",
+                "check": false
             }
         ],
-        "reasoning": "The combination of jaundice, significant pruritus, elevated alkaline phosphatase, and recent antibiotic use points towards a cholestatic process, which can be indicative of biliary obstruction or drug-induced cholestatic injury. The dull ache under the ribs is also consistent with biliary issues.",
-        "followup_question": "Have you experienced any changes in your bowel or urine color since the jaundice began?"
+        "reasoning": "The elevated alkaline phosphatase, jaundice, and pruritus suggest a cholestatic pattern of liver injury. The recent use of Amoxicillin-Clavulanate for a dental abscess is a potential trigger for drug-induced cholestasis. The elevated AST and ALT, along with bilirubin, further support a hepatic insult.",
+        "followup_question": "Do you have any history of gallstones or gallbladder disease?"
     },
     {
-        "did": "aBc12",
-        "headline": "Acetaminophen Overdose Liver Injury",
-        "diagnosis": "Hepatocellular Injury due to Acetaminophen Overdose Acute",
+        "did": "aBcDe",
+        "headline": "Drug-Induced Liver Injury",
+        "diagnosis": "Drug-Induced Liver Injury, Acute",
         "indicators_point": [
-            {
-                "criteria": "Jaundice",
-                "check": true
-            },
-            {
-                "criteria": "Pruritus (itching)",
-                "check": true
-            },
             {
                 "criteria": "Elevated AST",
                 "check": true
@@ -103,68 +95,72 @@
                 "check": true
             },
             {
-                "criteria": "Elevated Alkaline Phosphatase",
+                "criteria": "Elevated Alk Phos",
+                "check": true
+            },
+            {
+                "criteria": "Overt Jaundice",
+                "check": true
+            },
+            {
+                "criteria": "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently.",
+                "check": true
+            },
+            {
+                "criteria": "Patient stopped Tylenol yesterday.",
+                "check": true
+            },
+            {
+                "criteria": "Recent prescription for Amoxicillin-Clavulanate (Augmentin) for dental abscess.",
+                "check": true
+            },
+            {
+                "criteria": "Alcohol consumption",
                 "check": false
-            },
-            {
-                "criteria": "Elevated Total Bilirubin",
-                "check": true
-            },
-            {
-                "criteria": "Frequent use of acetaminophen (e.g., Tylenol PM, Extra Strength Tylenol)",
-                "check": true
-            },
-            {
-                "criteria": "INR (synthetic function)",
-                "check": false
-            },
-            {
-                "criteria": "Dull ache under ribs",
-                "check": true
             }
         ],
-        "reasoning": "The patient presents with overt jaundice and pruritus, supported by significantly elevated liver enzymes (AST, ALT) and bilirubin. The recent history of frequent acetaminophen (Tylenol) use, especially in conjunction with a dental abscess treated with Augmentin, strongly suggests acetaminophen-induced hepatocellular injury. The dull ache under the ribs is also concerning for liver inflammation.",
-        "followup_question": "Have you consumed any alcohol in the past month?"
+        "reasoning": "The patient presents with overt jaundice and significantly elevated liver enzymes (AST, ALT, Alk Phos) and bilirubin. The recent history of frequent Tylenol (acetaminophen) use, coupled with the cessation of Tylenol yesterday, strongly suggests a drug-induced liver injury. While Augmentin was also prescribed, acetaminophen is a more common cause of acute liver injury in such quantities. The elevated bilirubin and liver enzymes, along with jaundice and itching, are consistent with an acute hepatic insult.",
+        "followup_question": "Have you consumed any alcohol in the past month, and if so, how much?"
     },
     {
-        "did": "xYz78",
+        "did": "fGhIj",
         "headline": "Cholestatic Jaundice",
-        "diagnosis": "Cholestatic Jaundice of Unknown Etiology Subacute",
+        "diagnosis": "Cholestatic Jaundice, Secondary to Biliary Obstruction, Acute",
         "indicators_point": [
             {
-                "criteria": "Jaundice",
+                "criteria": "Overt Jaundice",
                 "check": true
             },
             {
-                "criteria": "Pruritus (itching)",
+                "criteria": "Elevated Alk Phos",
                 "check": true
             },
             {
-                "criteria": "Elevated Alkaline Phosphatase",
+                "criteria": "Patient reports itching.",
                 "check": true
             },
             {
-                "criteria": "Elevated Total Bilirubin",
-                "check": true
-            },
-            {
-                "criteria": "Recent Amoxicillin-Clavulanate use",
+                "criteria": "Recent dental abscess treated with Augmentin.",
                 "check": true
             },
             {
                 "criteria": "Elevated AST",
-                "check": false
+                "check": true
             },
             {
                 "criteria": "Elevated ALT",
-                "check": false
+                "check": true
             },
             {
-                "criteria": "Dull ache under ribs",
+                "criteria": "Elevated Bilirubin",
                 "check": true
+            },
+            {
+                "criteria": "Pale or clay-colored stools, or dark, tea-colored urine",
+                "check": false
             }
         ],
-        "reasoning": "The patient's jaundice and pruritus, coupled with elevated alkaline phosphatase and bilirubin, could indicate a cholestatic process. While acetaminophen toxicity is a strong contender, the recent antibiotic use and elevated Alk Phos might also point towards a drug-induced cholestatic hepatitis or biliary obstruction. The dull ache under the ribs could be related to biliary issues.",
-        "followup_question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?"
+        "reasoning": "The patient's presentation of jaundice, itching, and elevated alkaline phosphatase, along with elevated AST, ALT, and bilirubin, could indicate a cholestatic process. While drug-induced liver injury is a strong possibility, a biliary obstruction (e.g., from a stone or inflammation secondary to infection/medication) could also cause these findings. The recent dental abscess and antibiotic use (Augmentin) could potentially be related to a systemic inflammatory process or even a rare drug reaction affecting the biliary system. The elevated bilirubin points to impaired bile flow.",
+        "followup_question": "Have you experienced any pale or clay-colored stools, or dark, tea-colored urine?"
     }
 ]

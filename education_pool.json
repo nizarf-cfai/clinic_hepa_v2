@@ -9,39 +9,12 @@
         "status": "asked"
     },
     {
-        "headline": "Acetaminophen (Tylenol) Overdose Risk",
-        "content": "You must inform us of the exact quantity of Acetaminophen (Tylenol) you consumed. Excessive intake can lead to severe liver damage, requiring immediate medical intervention.",
-        "reasoning": "Failure to obtain precise dosage information for Acetaminophen overdose prevents accurate assessment of liver toxicity risk. This omission could lead to a claim of negligent miscommunication if the patient suffers liver damage due to unaddressed excessive intake.",
+        "headline": "Acetaminophen (Tylenol) Overdose Warning",
+        "content": "You must be aware that excessive use of Acetaminophen, the active ingredient in Tylenol, can cause serious liver damage. It is critical to adhere to recommended dosages and durations of use.",
+        "reasoning": "Failure to warn the patient about the potential for severe liver damage from excessive Acetaminophen use, especially given their recent high intake for a toothache, could lead to a claim of medical negligence if liver damage occurs. This documentation proves the patient was informed of the risks.",
         "category": "Medication Risk",
         "urgency": "High",
-        "context_reference": "Nurse: 'Can you estimate how many extra strength or Tylenol PM pills you were taking?'",
+        "context_reference": "Patient: 'I stopped taking Tylenol yesterday. I was taking a bunch of it for a toothache.'",
         "status": "asked"
-    },
-    {
-        "headline": "Augmentin Side Effect Warning",
-        "content": "You must report any nausea, vomiting, or abdominal pain while taking Augmentin. A dull ache under the ribs and a feeling of heaviness may indicate a serious adverse reaction.",
-        "reasoning": "Failure to warn the patient about potential serious side effects of Augmentin, such as liver toxicity indicated by abdominal pain and nausea, could lead to a claim of negligent miscommunication if the patient's condition worsens due to delayed recognition.",
-        "category": "Medication Risk",
-        "urgency": "High",
-        "context_reference": "Patient: 'I've had a dull ache under my ribs, like it feels heavy. No vomiting, but I just feel nauseous.'",
-        "status": "asked"
-    },
-    {
-        "headline": "Acetaminophen Overdose Liver Damage",
-        "content": "You must understand that taking six to eight extra strength Tylenol pills daily for weeks can cause severe liver damage. This level of intake requires immediate medical evaluation.",
-        "reasoning": "The patient's reported intake of six to eight Tylenol pills daily for an unspecified duration, combined with jaundice and abdominal discomfort, strongly suggests a risk of acute liver injury. Failure to explicitly warn about the severe consequences and the need for immediate evaluation constitutes negligent miscommunication.",
-        "category": "Medication Risk",
-        "urgency": "High",
-        "context_reference": "Patient: 'It was probably six to eight pills a day. My tooth was really throbbing. I just needed the pain to stop.'",
-        "status": "asked"
-    },
-    {
-        "headline": "Liver Damage and Jaundice Correlation",
-        "content": "You must understand that the yellowing of your skin and eyes (jaundice), along with severe itching, can be indicators of significant liver damage. Immediate medical evaluation is required.",
-        "reasoning": "Failure to explicitly connect the patient's reported symptoms of jaundice and severe itching to potential liver damage and the necessity of immediate medical evaluation could result in a delay in diagnosis and treatment, leading to a claim of medical negligence.",
-        "category": "Safety",
-        "urgency": "High",
-        "context_reference": "Patient: 'I finished the pills three weeks ago. The yellow started maybe two days ago. This itching, it's the worst though.'",
-        "status": "pending"
     }
 ]
