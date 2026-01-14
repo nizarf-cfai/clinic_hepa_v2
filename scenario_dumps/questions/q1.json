@@ -1,10 +1,21 @@
 [
+
     {
         "content": "What brings you in today?",
         "qid": "00001",
-        "rank": 999,
+       "rank": 999,
         "status": "asked",
-        "answer": "My eyes are yellow. My sister saw it two days ago."
+        "answer": "My eyes are yellow. My sister saw it two days ago.",
+        "headline": "Chief Complaint",
+        "domain": "Initial Assessment",
+        "system_affected": "General",
+        "clinical_intent": "To identify the primary reason for the medical encounter and understand the patient's most pressing symptoms or concerns.",
+        "tags": [
+            "intake",
+            "triage",
+            "symptoms",
+            "reason-for-visit"
+        ]
     },
     {
         "content": "Current Medications",
