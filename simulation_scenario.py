@@ -191,7 +191,7 @@ class SimulationAudioManager:
             remaining_audio_time = audio_duration - elapsed_upload_time
             
             # Use buffer of 2.5s
-            wait_time = max(remaining_audio_time, 0) + 3.5
+            wait_time = max(remaining_audio_time, 0) + 2.5
             logger.info(f"WAIT TIME : {wait_time}")
 
             await asyncio.sleep(wait_time)
@@ -227,9 +227,9 @@ class SimulationAudioManager:
             await self.websocket.send_json({"type": "turn", "data": "finish cycle"})
 
             # Check disconnect
-            if self.websocket.client_state.name == "DISCONNECTED": 
-                self.running = False
-                break
+            # if self.websocket.client_state.name == "DISCONNECTED": 
+            #     self.running = False
+            #     break
 
         await asyncio.sleep(3)
         try:
