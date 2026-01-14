@@ -189,6 +189,7 @@ class SimulationAudioManager:
             # Use buffer of 2.5s
             wait_time = max(remaining_audio_time, 0) + 2.5
             await asyncio.sleep(wait_time)
+            logger.info(f"WAIT TIME : {wait_time}")
 
             print("After wait")
 
