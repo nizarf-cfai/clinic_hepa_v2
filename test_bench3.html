@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedForce AI - Audio File Injector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .json-box { height: 250px; overflow-y: auto; background: #000; border: 1px solid #1f2937; border-radius: 0.75rem; }
+        pre { font-size: 10px; line-height: 1.2; padding: 10px; color: #10b981; tab-size: 2; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; }
+        .header-tag { font-size: 9px; font-weight: 800; letter-spacing: 0.05em; }
+        .q-card { transition: transform 0.2s ease; border-left-width: 4px; }
+        .q-card:hover { transform: translateY(-2px); }
+        
+        input[type="file"]::file-selector-button {
+            margin-right: 10px; border: none; background: #2563eb; padding: 5px 10px; border-radius: 5px;
+            color: #fff; cursor: pointer; font-size: 10px; font-weight: bold; transition: background .2s ease-in-out;
+        }
+        input[type="file"]::file-selector-button:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 p-4 font-sans min-h-screen">
+
+    <!-- Top Navigation -->
+    <header class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+        <div>
+            <h1 class="text-2xl font-black text-blue-500">MedForce <span class="text-white">INJECTOR</span></h1>
+            <div class="flex items-center gap-3 mt-1">
+                <p class="text-gray-500 text-xs">Triggered Mic Input Mode</p>
+                <span id="byteCounter" class="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">0 bytes streamed</span>
+            </div>
+        </div>
+        
+        <div class="flex gap-4 items-center">
+            
+            <div class="flex flex-col items-end border-r border-gray-700 pr-4 mr-2">
+                <span class="text-[9px] text-gray-500 uppercase font-bold mb-1">Source Audio</span>
+                <input type="file" id="audioFileInput" accept="audio/*" class="text-xs text-gray-400 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"/>
+            </div>
+
+            <div class="flex flex-col items-end mr-4">
+                <span class="text-[9px] text-gray-500 uppercase font-bold mb-1">Target Environment</span>
+                <select id="serverSelect" class="bg-gray-900 text-xs text-blue-400 border border-gray-700 rounded px-2 py-1 outline-none focus:border-blue-500">
+                    <option value="ws://localhost:8000">Local (localhost:8000)</option>
+                    <option value="wss://clinic-hepa-v2-481780815788.europe-west1.run.app">Deployed (Cloud Run)</option>
+                </select>
+            </div>
+            
+            <button id="startBtn" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold text-sm transition-all active:scale-95 shadow-lg shadow-blue-900/20 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed">
+                Connect & Wait
+            </button>
+            
+            <button id="finishBtn" class="bg-red-600 hover:bg-red-500 px-6 py-2 rounded-lg font-bold text-sm transition-all active:scale-95 shadow-lg shadow-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                End Session
+            </button>
+
+            <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold text-sm transition">Reset</button>
+        </div>
+    </header>
+
+    <!-- Content Sections -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xs font-black uppercase tracking-widest text-yellow-500 flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                </span>
+                Priority Clinical Questions
+            </h2>
+            <span id="qCount" class="text-[10px] font-mono text-gray-500">0 Pending</span>
+        </div>
+        <div id="priorityQuestions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-h-[100px]">
+            <div class="col-span-full py-10 border-2 border-dashed border-gray-800 rounded-2xl text-center text-gray-600 text-sm italic">
+                Awaiting initial analysis...
+            </div>
+        </div>
+    </section>
+
+    <!-- Raw Data Grid -->
+    <div class="header-tag text-gray-500 mb-4 border-t border-gray-800 pt-4 uppercase italic">● Raw System Streams</div>
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section><div class="header-tag text-purple-500 mb-1 uppercase">● Chat Transcript</div><div class="json-box" id="box-chat"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-blue-500 mb-1 uppercase">● Diagnosis Pool</div><div class="json-box" id="box-diagnosis"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-yellow-500 mb-1 uppercase">● Question Pool</div><div class="json-box" id="box-questions"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-pink-500 mb-1 uppercase">● Analytics</div><div class="json-box" id="box-analytics"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-emerald-500 mb-1 uppercase">● Education</div><div class="json-box" id="box-education"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-gray-400 mb-1 uppercase">● Status</div><div class="json-box" id="box-status"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-orange-500 mb-1 uppercase">● Checklist</div><div class="json-box" id="box-checklist"><pre>Waiting...</pre></div></section>
+        <section><div class="header-tag text-red-500 mb-1 uppercase">● Report</div><div class="json-box" id="box-report"><pre>Waiting...</pre></div></section>
+    </main>
+
+    <script>
+        let transSocket;
+        let audioCtx;
+        let sourceNode;
+        let processorNode;
+        let bytesTotal = 0;
+        let isAudioStreaming = false;
+        let selectedFile = null;
+        
+        // Backend expects 24k audio from "simulation", forcing context to 24k ensures clean downsampling
+        const TARGET_SAMPLE_RATE = 24000; 
+
+        const startPayload = { "type": "start", "patient_id": "P0001", "gender": "Male" };
+        const relevantTypes = ["chat", "diagnosis", "questions", "analytics", "status", "education", "checklist", "report"];
+
+        function getServerUrl() { return document.getElementById('serverSelect').value; }
+
+        // --- AUDIO ENGINE ---
+
+        // We must Initialize Audio Context ON CLICK to satisfy browser autoplay policies
+        async function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: TARGET_SAMPLE_RATE });
+            }
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+        }
+
+        async function startStreaming() {
+            if (!selectedFile || isAudioStreaming) return;
+            isAudioStreaming = true;
+            
+            console.log("Starting Audio Stream...");
+            document.getElementById('startBtn').innerText = "🔊 Streaming Audio...";
+            document.getElementById('startBtn').classList.add('animate-pulse');
+
+            const arrayBuffer = await selectedFile.arrayBuffer();
+            const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+            // Source -> Processor -> Destination
+            sourceNode = audioCtx.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+
+            processorNode = audioCtx.createScriptProcessor(4096, 1, 1);
+
+            processorNode.onaudioprocess = (e) => {
+                const inputData = e.inputBuffer.getChannelData(0); 
+                
+                // Convert Float32 to Int16 PCM
+                const pcmData = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    let s = Math.max(-1, Math.min(1, inputData[i]));
+                    pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                }
+
+                if (transSocket && transSocket.readyState === WebSocket.OPEN) {
+                    transSocket.send(pcmData.buffer); 
+                    bytesTotal += pcmData.byteLength;
+                    document.getElementById('byteCounter').innerText = `${bytesTotal.toLocaleString()} bytes streamed`;
+                }
+            };
+
+            sourceNode.connect(processorNode);
+            processorNode.connect(audioCtx.destination); // Hear it locally
+            sourceNode.connect(audioCtx.destination); 
+
+            sourceNode.start(0);
+            
+            sourceNode.onended = () => {
+                console.log("Audio file finished.");
+                document.getElementById('startBtn').innerText = "Audio Finished";
+                document.getElementById('startBtn').classList.remove('animate-pulse');
+                sourceNode.disconnect();
+                processorNode.disconnect();
+            };
+        }
+
+        // --- UI & SOCKET LOGIC ---
+
+        function renderQuestions(questions) {
+            const container = document.getElementById('priorityQuestions');
+            const unasked = (questions || []).filter(q => q.status === null).sort((a, b) => a.rank - b.rank);
+            document.getElementById('qCount').innerText = `${unasked.length} Pending`;
+            
+            if (unasked.length > 0) {
+                container.innerHTML = unasked.map(q => `
+                    <div class="q-card bg-gray-900 border-gray-800 ${q.rank <= 3 ? 'border-l-red-500' : 'border-l-yellow-500'} p-4 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[9px] bg-black/50 text-gray-400 px-2 py-0.5 rounded font-mono">RANK ${q.rank}</span>
+                            <span class="text-[9px] text-yellow-600 font-bold uppercase">${q.domain}</span>
+                        </div>
+                        <h3 class="text-xs font-bold text-gray-100 mb-1">${q.headline || 'Query'}</h3>
+                        <p class="text-[11px] text-gray-400 italic">"${q.content}"</p>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-600 text-xs py-4">All questions cleared.</div>';
+            }
+        }
+
+        // --- BUTTON HANDLERS ---
+
+        document.getElementById('startBtn').onclick = async () => {
+            const fileInput = document.getElementById('audioFileInput');
+            if (fileInput.files.length === 0) {
+                alert("Please select an audio file first.");
+                return;
+            }
+            selectedFile = fileInput.files[0];
+
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').innerText = "Connecting...";
+
+            // 1. Un-suspend AudioContext (Required on Click)
+            await initAudioContext();
+
+            // 2. Connect to Socket
+            await connectTranscriber();
+        };
+
+        document.getElementById('finishBtn').onclick = () => {
+            if (transSocket && transSocket.readyState === WebSocket.OPEN) {
+                transSocket.send(JSON.stringify({ "status": true }));
+                document.getElementById('finishBtn').disabled = true;
+                document.getElementById('finishBtn').innerText = "Ending...";
+                if(sourceNode) { try { sourceNode.stop(); } catch(e){} }
+            }
+        };
+
+        async function connectTranscriber() {
+            return new Promise((resolve, reject) => {
+                const baseUrl = getServerUrl();
+                transSocket = new WebSocket(`${baseUrl}/ws/transcriber`);
+                transSocket.binaryType = "arraybuffer";
+                
+                transSocket.onopen = () => {
+                    transSocket.send(JSON.stringify(startPayload));
+                    document.getElementById('startBtn').innerText = "⏳ Waiting for Analysis...";
+                    document.getElementById('finishBtn').disabled = false;
+                    resolve();
+                };
+
+                transSocket.onmessage = (event) => {
+                    try {
+                        const msg = JSON.parse(event.data);
+                        
+                        // 1. RENDER DATA
+                        if (relevantTypes.includes(msg.type)) {
+                            const box = document.getElementById(`box-${msg.type}`);
+                            if (box) {
+                                box.querySelector('pre').innerText = JSON.stringify(msg.diagnosis || msg.questions || msg.data || msg, null, 2);
+                                if (msg.type === 'chat') box.scrollTop = box.scrollHeight;
+                            }
+                            if (msg.type === 'questions') renderQuestions(msg.questions);
+                        }
+
+                        // 2. CHECK FOR TRIGGER: source == "initial_analysis"
+                        if (msg.source === "initial_analysis" && !isAudioStreaming) {
+                            console.log("🚀 TRIGGER RECEIVED: Initial Analysis Complete. Playing Audio.");
+                            startStreaming();
+                        }
+
+                    } catch (e) { console.error("Socket Error:", e); }
+                };
+
+                transSocket.onerror = (e) => {
+                    console.error("Socket Connect Error", e);
+                    alert("Failed to connect.");
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('startBtn').innerText = "Connect & Wait";
+                    reject(e);
+                };
+            });
+        }
+    </script>
+</body>
+</html>

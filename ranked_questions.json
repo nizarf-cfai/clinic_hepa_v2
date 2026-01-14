@@ -1,24 +1,32 @@
 {
     "ranked": [
         {
-            "question": "Have you experienced any confusion or disorientation recently?",
-            "qid": "562c1691-8a9c-4216-b1fc-23f7bf1762fa"
+            "question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?",
+            "qid": "7639dcd1-84c8-4072-ac19-5641383626ef"
+        },
+        {
+            "question": "Have you noticed any pale or clay-colored stools, or any dark urine since your symptoms began?",
+            "qid": "f5266c77-6093-4e10-ad77-2d03177ecd7a"
+        },
+        {
+            "question": "Have you experienced any changes in your bowel or urine color since the jaundice began?",
+            "qid": "1690882f-ac26-4577-bbe7-704d45a093dc"
+        },
+        {
+            "question": "Have you noticed any changes in the color of your stool or urine?",
+            "qid": "4c278658-99d1-4139-9ff4-46e070d716a5"
+        },
+        {
+            "question": "Have you experienced any confusion or changes in your mental state recently?",
+            "qid": "20e32f7b-2ca7-4e76-b51e-4ccdb0c8c700"
+        },
+        {
+            "question": "Have you had any recent fevers, chills, or flu-like symptoms in the past month?",
+            "qid": "99b8a2a6-0b09-41fa-85dd-ca2c8248e1e6"
         },
         {
             "question": "Have you consumed any alcohol in the past month?",
-            "qid": "3f294c1c-375e-4362-b9c3-e27a84b28fba"
-        },
-        {
-            "question": "Have you consumed any alcohol in the past two weeks?",
-            "qid": "27152a8b-a084-4366-8b49-dd23d54ba902"
-        },
-        {
-            "question": "Have you had any prior surgeries on your gallbladder or bile ducts?",
-            "qid": "f424ff86-080a-4e7c-a1be-5985329032dd"
-        },
-        {
-            "question": "Have you had any contact with individuals diagnosed with hepatitis or engaged in any activities that might put you at risk for viral hepatitis exposure, such as sharing needles or unprotected sexual contact?",
-            "qid": "7ba9dc8f-0c80-4b67-9f4d-f7c00a141f0d"
+            "qid": "c76acce0-3f48-4001-8c71-d18cec926cac"
         },
         {
             "question": "Have you had any recent travel, new sexual partners, or exposure to anyone with hepatitis in the past few months?",
@@ -33,5 +41,5 @@
             "qid": "00006"
         }
     ],
-    "next_question": "Have you experienced any confusion or disorientation recently?"
+    "next_question": "Have you experienced any changes in the color of your stools, such as pale or clay-colored stools?"
 }

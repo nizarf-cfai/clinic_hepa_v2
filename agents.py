@@ -1107,7 +1107,7 @@ class QuestionIntegrationGatekeeper(BaseLogicAgent):
         try:
             # Prepare the context for the model
             input_content = (
-                f"**Existing History (Already Asked):**\n{json.dumps(existing_history, indent=2)}\n\n"
+                f"**Existing question:**\n{json.dumps(existing_history, indent=2)}\n\n"
                 f"**New Candidate Questions:**\n{json.dumps(new_candidates, indent=2)}"
             )
 
@@ -1140,3 +1140,70 @@ class QuestionIntegrationGatekeeper(BaseLogicAgent):
             # even if it risks a duplicate question.
             return new_candidates
         
+
+
+class ConsultationTranscriber(BaseLogicAgent):
+    """
+    Agent responsible for converting Full Audio -> Structured Diarized Text (JSON)
+    """
+    def __init__(self):
+        super().__init__()
+        self.response_schema = {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "role": {
+                        "type": "STRING",
+                        "enum": ["Nurse", "Patient"],
+                        "description": "The speaker of the dialogue."
+                    },
+                    "message": {
+                        "type": "STRING",
+                        "description": "Verbatim transcription. Capitalize medical terms like 'Bilirubin' correctly."
+                    }
+                },
+                "required": ["role", "message"]
+            }
+        }
+        
+        self.system_instruction = """
+        You are an expert medical transcriber. 
+        1. Listen to the entire audio file provided.
+        2. Transcribe the conversation verbatim from start to finish.
+        3. Identify the speaker as either 'Nurse' or 'Patient'.
+        4. Return the result strictly as a structured JSON list.
+        """
+
+    async def transcribe_audio(self, audio_file_path):
+        try:
+            # FIX: Vertex AI cannot use client.files.upload.
+            # We must read the file bytes and send them INLINE.
+            
+            with open(audio_file_path, "rb") as f:
+                audio_bytes = f.read()
+
+            # Generate content with Inline Audio
+            response = await self.client.aio.models.generate_content(
+                model="gemini-2.5-flash", 
+                contents=[
+                    types.Part.from_bytes(data=audio_bytes, mime_type="audio/wav"),
+                    "Transcribe the full consultation."
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", 
+                    response_schema=self.response_schema, 
+                    system_instruction=self.system_instruction, 
+                    temperature=0.0
+                )
+            )
+            
+            res = json.loads(response.text)
+            return res
+        except Exception as e:
+            logger.error(f"Error in ConsultationTranscriber: {e}")
+            # print(traceback.format_exc()) # Optional: Print full trace for debugging
+            return []
+
+
+

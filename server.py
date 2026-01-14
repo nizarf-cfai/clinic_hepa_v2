@@ -11,7 +11,7 @@ from google.cloud import storage
 from dotenv import load_dotenv
 import asyncio
 import threading
-from transcriber_engine import TranscriberEngine
+from transcriber_engine_new import TranscriberEngine
 from utils import fetch_gcs_text_internal # Assuming this helper exists
 # --- Local Modules ---
 from simulation import SimulationManager
@@ -108,8 +108,6 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
 
     await websocket.accept()
     
-    # We capture the main event loop to allow background threads 
-    # to send JSON updates back to this specific websocket.
     main_loop = asyncio.get_running_loop()
     engine = None
 
@@ -125,15 +123,21 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
                 try:
                     data = json.loads(message["text"])
                     
-                    if data.get("type") == "start":
+                    # CASE A: Manual Stop Signal {"status": True}
+                    if data.get("status") is True:
+                        logger.info("🛑 Frontend requested End of Consultation.")
+                        if engine:
+                            engine.finish_consultation()
+                        else:
+                            logger.warning("Frontend sent stop signal, but engine is not running.")
+
+                    # CASE B: Start Signal
+                    elif data.get("type") == "start":
                         patient_id = data.get("patient_id", "P0001")
                         logger.info(f"🚀 Starting Transcriber Engine for {patient_id}")
                         
-                        # Fetch patient context from GCS
                         patient_info = fetch_gcs_text_internal(patient_id, "patient_info.md")
                         
-                        # Initialize the Engine
-                        # Note: This automatically starts the TranscriberLogicThread internally
                         engine = TranscriberEngine(
                             patient_id=patient_id,
                             patient_info=patient_info,
@@ -141,7 +145,6 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
                             loop=main_loop
                         )
                         
-                        # Start the Google STT stream in its own background thread
                         stt_thread = threading.Thread(
                             target=engine.stt_loop, 
                             daemon=True,
@@ -160,11 +163,7 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
             # --- 2. HANDLE BINARY AUDIO DATA ---
             elif "bytes" in message:
                 if engine and engine.running:
-                    # Pass the raw audio bytes into the engine's audio queue
                     engine.add_audio(message["bytes"])
-                else:
-                    # Optional: Log if audio is arriving before 'start' command
-                    pass
 
     except WebSocketDisconnect:
         logger.info("👋 Frontend disconnected from /ws/transcriber")
@@ -172,7 +171,6 @@ async def websocket_transcriber_endpoint(websocket: WebSocket):
         logger.error(f"❌ Transcriber WebSocket Error: {e}")
         traceback.print_exc()
     finally:
-        # --- 3. CLEANUP ---
         if engine:
             logger.info("🧹 Stopping Transcriber Engine...")
             engine.stop()

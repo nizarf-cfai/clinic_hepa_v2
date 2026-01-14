@@ -24,65 +24,6 @@ logger = logging.getLogger("medforce-backend")
 TRANSCRIPT_FILE = "simulation_transcript.txt"
 
 # --- NEW AGENT CLASS ---
-class ConsultationTranscriber(agents.BaseLogicAgent):
-    """
-    Agent responsible for converting Full Audio -> Structured Diarized Text (JSON)
-    """
-    def __init__(self):
-        super().__init__()
-        self.response_schema = {
-            "type": "ARRAY",
-            "items": {
-                "type": "OBJECT",
-                "properties": {
-                    "role": {
-                        "type": "STRING",
-                        "enum": ["Nurse", "Patient"],
-                        "description": "The speaker of the dialogue."
-                    },
-                    "message": {
-                        "type": "STRING",
-                        "description": "Verbatim transcription. Capitalize medical terms like 'Bilirubin' correctly."
-                    }
-                },
-                "required": ["role", "message"]
-            }
-        }
-        
-        self.system_instruction = """
-        You are an expert medical transcriber. 
-        1. Listen to the entire audio file provided.
-        2. Transcribe the conversation verbatim from start to finish.
-        3. Identify the speaker as either 'Nurse' or 'Patient'.
-        4. Return the result strictly as a structured JSON list.
-        """
-
-    async def transcribe_audio(self, audio_file_path):
-        try:
-            # Upload file to Gemini
-            uploaded_file = self.client.files.upload(file=audio_file_path)
-            
-            # Generate content
-            # Note: Flash is very fast, good for re-processing growing files
-            response = await self.client.aio.models.generate_content(
-                model="gemini-2.5-flash", 
-                contents=[uploaded_file, "Transcribe the full consultation."],
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json", 
-                    response_schema=self.response_schema, 
-                    system_instruction=self.system_instruction, 
-                    temperature=0.0
-                )
-            )
-            
-            # Cleanup Gemini file object (optional but recommended)
-            # await self.client.files.delete(name=uploaded_file.name)
-
-            res = json.loads(response.text)
-            return res
-        except Exception as e:
-            logger.error(f"Error in ConsultationTranscriber: {e}")
-            return []
 
 # --- LOGIC THREAD ---
 class TranscriberLogicThread(threading.Thread):
@@ -119,7 +60,7 @@ class TranscriberLogicThread(threading.Thread):
         asyncio.set_event_loop(loop)
         
         # Initialize Agents
-        self.transcriber_agent = ConsultationTranscriber() # <--- NEW AGENT
+        self.transcriber_agent = agents.ConsultationTranscriber() # <--- NEW AGENT
         self.hepa_agent = agents.DiagnosisHepato()
         self.gen_agent = agents.DiagnosisGeneral()
         self.consolidate_agent = agents.DiagnosisConsolidate()
@@ -198,29 +139,47 @@ class TranscriberLogicThread(threading.Thread):
         if not raw_audio_data or len(raw_audio_data) < 1000: # Ignore tiny chunks
             return []
 
-        # 2. Convert Raw PCM (16k, mono, 16bit) to WAV
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
-            temp_wav_name = temp_wav.name
-            try:
+        temp_wav_name = None
+
+        try:
+            # 2. Create the file and WRITE to it, then CLOSE it immediately.
+            # We use delete=False so it persists after closing, allowing us to read it again for upload.
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
+                temp_wav_name = temp_wav.name
+                
+                # Use the wave library to write the frames to the file object
                 with wave.open(temp_wav, "wb") as wf:
                     wf.setnchannels(1)
                     wf.setsampwidth(2) # 2 bytes = 16 bit
                     wf.setframerate(16000)
                     wf.writeframes(raw_audio_data)
-                
-                # 3. Send to Gemini Agent
-                logger.info(f"🎧 [ConsultationTranscriber] Processing full audio: {len(raw_audio_data)} bytes...")
-                full_transcript = await self.transcriber_agent.transcribe_audio(temp_wav_name)
-                logger.info(f"📝 [ConsultationTranscriber] Full Transcript Items: {len(full_transcript)}")
-                return full_transcript
+            
+            # AT THIS POINT: The 'with' block is done. 
+            # Both 'wave' and 'tempfile' have closed their handles. 
+            # The file exists on disk and is not locked.
 
-            except Exception as e:
-                logger.error(f"Audio Processing Error: {e}")
-                return []
-            finally:
-                # Cleanup temp file
-                if os.path.exists(temp_wav_name):
+            # 3. Send to Gemini Agent
+            logger.info(f"🎧 [ConsultationTranscriber] Processing full audio: {len(raw_audio_data)} bytes...")
+            
+            # The upload function will open/read/close the file internally
+            full_transcript = await self.transcriber_agent.transcribe_audio(temp_wav_name)
+            
+            logger.info(f"📝 [ConsultationTranscriber] Full Transcript Items: {len(full_transcript)}")
+            return full_transcript
+
+        except Exception as e:
+            logger.error(f"Audio Processing Error: {e}")
+            return []
+            
+        finally:
+            # 4. Cleanup
+            # Now safe to remove because we are outside the 'with' block 
+            # and we are sure the file is closed.
+            if temp_wav_name and os.path.exists(temp_wav_name):
+                try:
                     os.remove(temp_wav_name)
+                except Exception as cleanup_error:
+                    logger.warning(f"⚠️ Could not remove temp file {temp_wav_name}: {cleanup_error}")
 
     async def _check_logic(self, raw_stt_text):
         """Main AI Reasoning Branch."""
@@ -240,7 +199,7 @@ class TranscriberLogicThread(threading.Thread):
             full_clean_transcript_text = "\n".join([f"{item['role']}: {item['message']}" for item in self.transcript_structure])
             
             # Use Gemini text if available, else fallback to Google STT (Trigger) text
-            text_for_analysis = full_clean_transcript_text if full_clean_transcript_text else raw_stt_text
+            text_for_analysis = raw_stt_text
 
             # 1. Parallel Tasks Execution
             parallel_start = time.perf_counter()
@@ -280,14 +239,19 @@ class TranscriberLogicThread(threading.Thread):
                 self.qm.update_status(aq['qid'], "asked")
                 self.qm.update_answer(aq['qid'], aq['answer'])
             
+
+            consolidated_task = self.consolidate_agent.consolidate_diagnosis(self.dm.get_diagnoses_basic(), h_res + g_res)
+
+            generated_questions = [i.get('followup_question') for i in h_res] + [i.get('followup_question') for i in g_res]
+            filtered_q_task = self.q_dedup.filter_new_questions(generated_questions,[i.get('content','') for i in self.qm.questions])
+            (consolidated, filtered_q) = await asyncio.gather(
+                consolidated_task, filtered_q_task
+            )
             # Consolidate Diagnosis
-            consolidated = await self.consolidate_agent.consolidate_diagnosis(self.dm.diagnoses, h_res + g_res)
             with open('diagnosis_consolidate.json', 'w', encoding='utf-8') as f:
                 json.dump(consolidated, f, indent=4)
+
             self.dm.diagnoses = consolidated
-            
-            generated_questions = [i.get('followup_question') for i in h_res] + [i.get('followup_question') for i in g_res]
-            filtered_q = await self.q_dedup.filter_new_questions(generated_questions,[i.get('content','') for i in self.qm.questions])
             self.qm.add_from_strings(filtered_q)
 
             ranked_questions = await self.ranker.rank_questions(text_for_analysis, self.qm.get_questions_basic())
@@ -319,7 +283,9 @@ class TranscriberLogicThread(threading.Thread):
             # Status Update
             hr_q = self.qm.get_high_rank_question()
 
-            self.status = status_res.get("end", False)
+            if not self.status:
+                self.status = status_res.get("end", False)
+
             if self.status:
                 self.running = False
             
@@ -341,6 +307,7 @@ class TranscriberLogicThread(threading.Thread):
                         "question": "",
                         "education": ""
                     }
+            logger.info(f"Status Update : {self.status}")
             
             with open('status_update.json', 'w', encoding='utf-8') as f:
                 json.dump(update_object, f, indent=4)
@@ -390,6 +357,8 @@ class TranscriberLogicThread(threading.Thread):
                 sentence_was_finalized = self.last_line_count < len(lines)
                 
                 logger.info(f"🤖 LOGIC LOOP] transcript lines: {len(full_text)},  last_line_count: {len(lines)}")
+                
+                
 
                 if text_has_grown:
                     logger.info(f"🤖 [AI Agent] Analyzing updated transcript...")
@@ -406,6 +375,8 @@ class TranscriberLogicThread(threading.Thread):
                     print("Waiting for new transcript lines...")
 
                 if self.status:
+                    logger.info(f"✅ [Logic Thread] Start Wrap Up.")
+
                     await self._final_wrap()
                     self.running = False
                     logger.info(f"✅ [Logic Thread] Consultation complete. Exiting.")
@@ -415,6 +386,11 @@ class TranscriberLogicThread(threading.Thread):
                 logger.error(f"❌ [Logic Thread] Error: {e}")
                 traceback.print_exc()
                 await asyncio.sleep(2)
+
+    def trigger_manual_finish(self):
+        """Called externally to force the consultation to end."""
+        logger.info("🛑 [Logic Thread] Received MANUAL END signal from Frontend.")
+        self.status = True
 
     def stop(self):
         self.running = False
@@ -544,12 +520,18 @@ class TranscriberEngine:
 
             except Exception as e:
                 if self.running:
-                    logger.warning(f"🎙️ [STT Restarting]: {e}")
+                    logger.warning(f"🎙️ [STT Restarting] {retries_count}: {e}")
                     retries_count += 1
                     if retries_count >= 20:
                         self.running = False
                         break
                 time.sleep(0.1)
+
+    def finish_consultation(self):
+        """Passes the manual finish signal to the logic thread."""
+        if self.logic_thread and self.logic_thread.is_alive():
+            self.logic_thread.trigger_manual_finish()
+            self.running = False
 
     def stop(self):
         self.running = False

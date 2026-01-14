@@ -47,8 +47,11 @@ class DiagnosisManager:
         for item in self.diagnoses:
             simplified_list.append({
                 "did": item["did"],
+                "headline": item.get("headline"),
                 "diagnosis": item["diagnosis"],
-                "indicators_point": item["indicators_point"]
+                "indicators_point": item["indicators_point"],
+                "reasoning": item.get("reasoning"),
+
             })
         return simplified_list
 

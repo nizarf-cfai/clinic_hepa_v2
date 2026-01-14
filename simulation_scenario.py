@@ -191,7 +191,7 @@ class SimulationAudioManager:
             remaining_audio_time = audio_duration - elapsed_upload_time
             
             # Use buffer of 2.5s
-            wait_time = max(remaining_audio_time, 0) + 2.5
+            wait_time = max(remaining_audio_time, 0) + 3.5
             logger.info(f"WAIT TIME : {wait_time}")
 
             await asyncio.sleep(wait_time)
